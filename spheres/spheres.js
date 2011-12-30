@@ -64,7 +64,7 @@ var aaScale = 2;
 
         renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
-		renderer.setClearColorHex(0x333333);
+		//renderer.setClearColorHex(0x333333);
 
 		renderTexture = new THREE.WebGLRenderTarget( window.innerWidth*aaScale, window.innerHeight*aaScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
 
