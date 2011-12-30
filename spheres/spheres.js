@@ -5,6 +5,8 @@ var planes = [];
 
 var renderTexture, screenScene, screenCamera, screen;
 
+var aaScale = 2;
+
 	window.onload = function() {
 		init();
 		animate();
@@ -64,7 +66,7 @@ var renderTexture, screenScene, screenCamera, screen;
         renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.setClearColorHex(0x333333);
 
-		renderTexture = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
+		renderTexture = new THREE.WebGLRenderTarget( window.innerWidth*aaScale, window.innerHeight*aaScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
 
 		screenCamera = new THREE.Camera();
 		screenCamera.projectionMatrix = THREE.Matrix4.makeOrtho( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, -10000, 10000 );
@@ -101,7 +103,10 @@ var renderTexture, screenScene, screenCamera, screen;
 
     function render() {
 
+        renderer.setViewport(0,0, window.innerWidth*aaScale, window.innerHeight*aaScale );
         renderer.render( scene, camera, renderTexture );
+
+        renderer.setViewport(0,0, window.innerWidth, window.innerHeight );
         renderer.render( screenScene, screenCamera );
 
     }
