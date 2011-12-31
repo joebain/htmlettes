@@ -1,6 +1,6 @@
 <head>
 	<title>Spheres</title>
-	<script src="Three.js"></script>
+	<script src="ThreeDebug.js"></script>
 	<script src="RequestAnimationFrame.js"></script>
 	<script src="engine.js"></script>
 	<script src="spheres.js"></script>
@@ -8,6 +8,23 @@
 	<style>
 		body {margin:0; padding:0}
 	</style>
+
+	<script id="ssaoFrag" type="x-shader/x-fragment">
+		uniform float mNear;
+		uniform float mFar;
+		uniform float opacity;
+
+		void main() {
+			float depth = gl_FragCoord.z / gl_FragCoord.w;
+			float color = 1.0 - smoothstep( mNear, mFar, depth );
+			gl_FragColor = vec4( vec3( color ), opacity );
+		}		
+	</script>
+	<script id="plainVert" type="x-shader/x-vertex">
+		void main() {
+			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+		}		
+	</script>
 </head>
 <body>
 </body>
