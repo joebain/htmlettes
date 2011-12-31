@@ -1,5 +1,5 @@
 <head>
-  <title>Kilk53 - Reactor Control</title>
+  <title>Klik53 - Reactor Control</title>
   <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="klik53.js"></script>
   <style>
@@ -14,7 +14,10 @@
     }
     a:hover {
       text-decoration:underline;
-    }
+  }
+  .highlight {
+	  color:#ff0000;
+  }
     #time {
       font-size:50px;
       text-align:right;
@@ -73,7 +76,7 @@
 </head>
 <body>
   <div id="wrapper">
-    <div id="clues">Q Z P and . to control the reactor. Don't let it blow.</div>
+	  <div id="clues"><span class="highlight">Q</span>, <span class="highlight">Z</span>, <span class="highlight">P</span> and <span class="highlight">.</span> to control the reactor. Don't let it blow.</div>
     <canvas id="canvas" width="600" height="600"></canvas>
     <div id="time"></div>
     <div id="info">A 2 hour (plus a bit more after) game by <a href="http://adam-a.co.uk">Joe Bain</a> for <a href="http://www.glorioustrainwrecks.com/node/2010">Klik of the Month Klub #53</a></div>
@@ -82,7 +85,7 @@
         Submit your score:
         <form action="javascript: submitScore();">
           <input type="text" id="nameInput" value="name" onclick="$('#nameInput').val('');"/>
-          <input type="submit" />
+          <input type="submit" value="Submit score"/>
         </form>
       </div>
       <div id="scoreLegend1">High</div><div id="scoreLegend2">scores</div>
