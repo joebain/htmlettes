@@ -9,7 +9,92 @@
 		body {margin:0; padding:0}
 	</style>
 
-	<script id="ssaoFrag" type="x-shader/x-fragment">
+	<script id="aoFrag" type="x-shader/x-fragment">
+		uniform sampler2D depthMap;
+		uniform float depthTextureScale;
+
+		varying vec2 vUv;
+
+		void main()
+		{
+			float step = 0.005;
+			vec2 texCoord = vec2( vUv.x, 1.0-vUv.y );
+			vec2 texCoord1 = vec2( vUv.x+step, 1.0-vUv.y );
+			vec2 texCoord2 = vec2( vUv.x-step, 1.0-vUv.y );
+			vec2 texCoord3 = vec2( vUv.x, 1.0-(vUv.y+step) );
+			vec2 texCoord4 = vec2( vUv.x, 1.0-(vUv.y-step) );
+
+			float depth = texture2D( depthMap, texCoord).r;
+			float depth1 = texture2D( depthMap, texCoord1).r;
+			float depth2 = texture2D( depthMap, texCoord2).r;
+			float depth3 = texture2D( depthMap, texCoord3).r;
+			float depth4 = texture2D( depthMap, texCoord4).r;
+
+			float shadow = 0.0;
+			float minDiff = 0.001;
+			float maxDiff = 0.1;
+			float diff1 = abs(depth-depth1);
+			float diff2 = abs(depth-depth2);
+			float diff3 = abs(depth-depth3);
+			float diff4 = abs(depth-depth4);
+			if (diff1 > minDiff && diff1 < maxDiff) {
+				shadow += diff1/minDiff;
+			}
+			if (diff2 > minDiff && diff2 < maxDiff) {
+				shadow += diff2/minDiff;
+			}
+			if (diff3 > minDiff && diff3 < maxDiff) {
+				shadow += diff3/minDiff;
+			}
+			if (diff4 > minDiff && diff4 < maxDiff) {
+				shadow += diff4/minDiff;
+			}
+			gl_FragColor = vec4 (0.0, 0.0, 0.0, shadow);
+
+		}
+
+	</script>
+	<script id="outlineFrag" type="x-shader/x-fragment">
+		uniform sampler2D depthMap;
+		uniform float depthTextureScale;
+
+		varying vec2 vUv;
+
+		void main()
+		{
+			float step = 0.005;
+			vec2 texCoord = vec2( vUv.x, 1.0-vUv.y );
+			vec2 texCoord1 = vec2( vUv.x+step, 1.0-vUv.y );
+			vec2 texCoord2 = vec2( vUv.x-step, 1.0-vUv.y );
+			vec2 texCoord3 = vec2( vUv.x, 1.0-(vUv.y+step) );
+			vec2 texCoord4 = vec2( vUv.x, 1.0-(vUv.y-step) );
+
+			float depth = texture2D( depthMap, texCoord).r;
+			float depth1 = texture2D( depthMap, texCoord1).r;
+			float depth2 = texture2D( depthMap, texCoord2).r;
+			float depth3 = texture2D( depthMap, texCoord3).r;
+			float depth4 = texture2D( depthMap, texCoord4).r;
+
+			float shadow = 0.0;
+			float diff = 0.01;
+			if (abs(depth - depth1) > diff) {
+				shadow = 1.0;
+			}
+			if (abs(depth - depth2) > diff) {
+				shadow = 1.0;
+			}
+			if (abs(depth - depth3) > diff) {
+				shadow = 1.0;
+			}
+			if (abs(depth - depth4) > diff) {
+				shadow = 1.0;
+			}
+			gl_FragColor = vec4 (0.0, 0.0, 0.0, shadow);
+
+		}
+
+	</script>
+	<script id="depthFrag" type="x-shader/x-fragment">
 		uniform float mNear;
 		uniform float mFar;
 		uniform float opacity;
@@ -18,6 +103,13 @@
 			float depth = gl_FragCoord.z / gl_FragCoord.w;
 			float color = 1.0 - smoothstep( mNear, mFar, depth );
 			gl_FragColor = vec4( vec3( color ), opacity );
+		}		
+	</script>
+	<script id="uvVert" type="x-shader/x-vertex">
+		varying vec2 vUv;
+		void main() {
+			vUv = uv;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 		}		
 	</script>
 	<script id="plainVert" type="x-shader/x-vertex">

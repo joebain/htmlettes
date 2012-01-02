@@ -3,11 +3,11 @@ var camera, scene, renderer;
 var spheres = [];
 var planes = [];
 
-var renderTexture, depthTexture, screenScene, screenCamera, screen, depthScreen;
+var renderTexture, depthTexture, aoTexture, screenScene, screenCamera, screen, depthScreen, aoRenderScreen, aoScreenScene, aoScreenCamera;
 
 var aaScale = 2, depthTextureScale = 2;
 
-var depthMaterial, redPhongMaterial, bluePhongMaterial;
+var depthMaterial, redPhongMaterial, bluePhongMaterial, aoMaterial;
 
 window.onload = function() {
 	init();
@@ -22,8 +22,13 @@ function init() {
 	camera.position.z = 300;
 	scene.add( camera );
 
+	renderTexture = new THREE.WebGLRenderTarget( window.innerWidth*aaScale, window.innerHeight*aaScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
+	depthTexture = new THREE.WebGLRenderTarget( window.innerWidth/depthTextureScale, window.innerHeight/depthTextureScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
+	aoTexture = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter } );
+
+
 	// depth writer material
-	var depthFragmentShader = document.getElementById("ssaoFrag").innerHTML;
+	var depthFragmentShader = document.getElementById("depthFrag").innerHTML;
 	var depthVertexShader = document.getElementById("plainVert").innerHTML;
 	var depthUniforms = THREE.UniformsUtils.merge([
 			THREE.UniformsLib[ "common" ],
@@ -32,6 +37,17 @@ function init() {
 
 	var depthParameters = { fragmentShader: depthFragmentShader, vertexShader: depthVertexShader, uniforms: depthUniforms };
 	depthMaterial = new THREE.ShaderMaterial( depthParameters );
+	
+	// ao display material
+	var aoFragmentShader = document.getElementById("aoFrag").innerHTML;
+	var aoVertexShader = document.getElementById("uvVert").innerHTML;
+	var aoUniforms = THREE.UniformsUtils.merge([
+			THREE.UniformsLib[ "common" ],
+			{depthTextureScale: {type:"f", value:depthTextureScale}, depthMap:{type:"t", value:0, texture:depthTexture}}
+			]);
+
+	var aoParameters = { fragmentShader: aoFragmentShader, vertexShader: aoVertexShader, uniforms: aoUniforms };
+	aoMaterial = new THREE.ShaderMaterial( aoParameters );
 
 	redPhongMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );	
 	bluePhongMaterial = new THREE.MeshPhongMaterial( { color: 0x0000ff } );	
@@ -68,26 +84,24 @@ function init() {
 
 	}
 
-	// create a point light
-	var pointLight = new THREE.PointLight( 0xFFFFFF );
+	var pointLight1 = new THREE.PointLight( 0xFFFFFF );
+	pointLight1.position.x = 10;
+	pointLight1.position.y = 50;
+	pointLight1.position.z = 200;
+	scene.add(pointLight1);
 
-	// set its position
-	pointLight.position.x = 10;
-	pointLight.position.y = 50;
-	pointLight.position.z = 130;
-
-	// add to the scene
-	scene.add(pointLight);
+	var pointLight2 = new THREE.PointLight( 0xFFFFFF );
+	pointLight2.position.x = 10;
+	pointLight2.position.y = 50;
+	pointLight2.position.z = -100;
+	scene.add(pointLight2);
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	//renderer.setClearColorHex(0x333333);
 
-	renderTexture = new THREE.WebGLRenderTarget( window.innerWidth*aaScale, window.innerHeight*aaScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
-	depthTexture = new THREE.WebGLRenderTarget( window.innerWidth/depthTextureScale, window.innerHeight/depthTextureScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
 
-	screenCamera = new THREE.Camera();
-	screenCamera.projectionMatrix = THREE.Matrix4.makeOrtho( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, -10000, 10000 );
+	screenCamera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, -10000, 10000 );
 	screenCamera.position.z = 100;
 
 	screenScene = new THREE.Scene();
@@ -98,15 +112,29 @@ function init() {
 	screen.mesh = new THREE.Mesh( screen.geometry, screen.material );
 	screen.mesh.position.z = -100;
 
-	depthScreen = {};
-	depthScreen.geometry = new THREE.PlaneGeometry( window.innerWidth, window.innerHeight );
-	depthScreen.material = new THREE.MeshBasicMaterial( {map:depthTexture, opacity:0.5, transparent:true} );
-	depthScreen.mesh = new THREE.Mesh( depthScreen.geometry, depthScreen.material );
-	depthScreen.mesh.position.z = -90;
+	aoScreen = {};
+	aoScreen.geometry = new THREE.PlaneGeometry( window.innerWidth, window.innerHeight );
+	aoScreen.material = new THREE.MeshBasicMaterial( {map:aoTexture, transparent:true} );
+	aoScreen.mesh = new THREE.Mesh( aoScreen.geometry, aoScreen.material );
+	aoScreen.mesh.position.z = -90;
 
 	screenScene.add( screen.mesh );
-	screenScene.add( depthScreen.mesh );
+	screenScene.add( aoScreen.mesh );
 	screenScene.add( screenCamera );
+
+	// where we render the ao
+	aoScreenCamera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, -10000, 10000 );
+	aoScreenCamera.position.z = 100;
+
+	aoRenderScreen = {};
+	aoRenderScreen.geometry = new THREE.PlaneGeometry( window.innerWidth, window.innerHeight );
+	aoRenderScreen.material = aoMaterial; 
+	aoRenderScreen.mesh = new THREE.Mesh( aoRenderScreen.geometry, aoRenderScreen.material );
+	aoRenderScreen.mesh.position.z = -100;
+
+	aoScreenScene = new THREE.Scene();
+	aoScreenScene.add(aoScreenCamera);
+	aoScreenScene.add(aoRenderScreen.mesh);
 
 	document.body.appendChild( renderer.domElement );
 
@@ -132,10 +160,15 @@ function render() {
 	renderer.setViewport(0,0, window.innerWidth/depthTextureScale, window.innerHeight/depthTextureScale );
 	renderer.render( scene, camera, depthTexture );
 
+	// render the ao
+	renderer.setViewport(0,0, window.innerWidth, window.innerHeight );
+	renderer.render( aoScreenScene, aoScreenCamera, aoTexture );
+
 	// render the scene normally
 	scene.overrideMaterial = undefined;
 	renderer.setViewport(0,0, window.innerWidth*aaScale, window.innerHeight*aaScale );
 	renderer.render( scene, camera, renderTexture );
+
 
 	// render the final output
 	renderer.setViewport(0,0, window.innerWidth, window.innerHeight );
