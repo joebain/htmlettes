@@ -153,6 +153,7 @@ function animate() {
 //    camera.lookAt({x:0, y:0, z:0});
 
 //    requestAnimationFrame( animate );
+	setTimeout(animate, 1000);
 	render();
 
 }
