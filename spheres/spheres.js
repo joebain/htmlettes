@@ -61,9 +61,9 @@ function init() {
 
 		sphere.mesh = new THREE.Mesh( sphere.geometry, sphere.material );
 		scene.add( sphere.mesh );
-		sphere.mesh.position.x = (Math.random() - 0.5)*200;
-		sphere.mesh.position.y = (Math.random() - 0.5)*200;
-		sphere.mesh.position.z = (Math.random() - 0.5)*200;
+//        sphere.mesh.position.x = (Math.random() - 0.5)*200;
+//        sphere.mesh.position.y = (Math.random() - 0.5)*200;
+//        sphere.mesh.position.z = (Math.random() - 0.5)*200;
 	}
 
 	var planeGeometry = new THREE.CubeGeometry( 1, 100, 100 );
@@ -76,12 +76,13 @@ function init() {
 
 		plane.mesh = new THREE.Mesh( plane.geometry, plane.material );
 		scene.add( plane.mesh );
-		plane.mesh.position.x = (Math.random() - 0.5)*200;
-		plane.mesh.position.y = (Math.random() - 0.5)*200;
-		plane.mesh.position.z = (Math.random() - 0.5)*200;
-		plane.mesh.rotation.x = (Math.random() - 0.5)*Math.PI*2;
-		plane.mesh.rotation.y = (Math.random() - 0.5)*Math.PI*2;
-		plane.mesh.rotation.z = (Math.random() - 0.5)*Math.PI*2;
+//        plane.mesh.position.x = (Math.random() - 0.5)*200;
+//        plane.mesh.position.y = (Math.random() - 0.5)*200;
+//        plane.mesh.position.z = (Math.random() - 0.5)*200;
+//        plane.mesh.rotation.x = (Math.random() - 0.5)*Math.PI*2;
+//        plane.mesh.rotation.y = (Math.random() - 0.5)*Math.PI*2;
+//        plane.mesh.rotation.z = (Math.random() - 0.5)*Math.PI*2;
+		plane.mesh.rotation.z = Math.PI*0.2;
 
 	}
 
