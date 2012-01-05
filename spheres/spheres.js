@@ -83,20 +83,21 @@ function init() {
 //        plane.mesh.rotation.y = (Math.random() - 0.5)*Math.PI*2;
 //        plane.mesh.rotation.z = (Math.random() - 0.5)*Math.PI*2;
 		plane.mesh.rotation.z = Math.PI*0.2;
+		plane.mesh.rotation.y = Math.PI*0.4;
 
 	}
 
 	var pointLight1 = new THREE.PointLight( 0xFFFFFF );
 	pointLight1.position.x = 10;
-	pointLight1.position.y = 50;
-	pointLight1.position.z = 200;
+	pointLight1.position.y = -100;
+	pointLight1.position.z = 20;
 	scene.add(pointLight1);
 
 	var pointLight2 = new THREE.PointLight( 0xFFFFFF );
-	pointLight2.position.x = 10;
-	pointLight2.position.y = 50;
+	pointLight2.position.x = 100;
+	pointLight2.position.y = -50;
 	pointLight2.position.z = -100;
-	scene.add(pointLight2);
+//    scene.add(pointLight2);
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -146,12 +147,12 @@ function animate() {
 
 	var rotation = new Date() / 10000;
 	var radius = 200;
-	camera.position.x = Math.sin(rotation)*radius;
-	camera.position.z = Math.cos(rotation)*radius;
+//    camera.position.x = Math.sin(rotation)*radius;
+//    camera.position.z = Math.cos(rotation)*radius;
 
-	camera.lookAt({x:0, y:0, z:0});
+//    camera.lookAt({x:0, y:0, z:0});
 
-	requestAnimationFrame( animate );
+//    requestAnimationFrame( animate );
 	render();
 
 }
