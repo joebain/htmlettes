@@ -50,13 +50,13 @@ function init() {
 	aoMaterial = new THREE.ShaderMaterial( aoParameters );
 
 	redPhongMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );	
-	bluePhongMaterial = new THREE.MeshPhongMaterial( { color: 0x0000ff } );	
+	bluePhongMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff } );	
 
-
-	for (var i = 0 ; i < 100 ; i++) {
+	var sphereGeometry = new THREE.SphereGeometry( 10, 20, 20 );
+	for (var i = 0 ; i < 1 ; i++) {
 		spheres[i] = {};
 		var sphere = spheres[i];
-		sphere.geometry = new THREE.SphereGeometry( 10, 20, 20 );
+		sphere.geometry = sphereGeometry;
 		sphere.material = redPhongMaterial;
 
 		sphere.mesh = new THREE.Mesh( sphere.geometry, sphere.material );
@@ -66,11 +66,12 @@ function init() {
 		sphere.mesh.position.z = (Math.random() - 0.5)*200;
 	}
 
-	for (var i = 0 ; i < 5 ; i++) {
+	var planeGeometry = new THREE.CubeGeometry( 1, 100, 100 );
+	for (var i = 0 ; i < 1 ; i++) {
 		planes[i] = {};
 		var plane = planes[i];
 
-		plane.geometry = new THREE.CubeGeometry( 1, 100, 100 );
+		plane.geometry = planeGeometry; 
 		plane.material = bluePhongMaterial;
 
 		plane.mesh = new THREE.Mesh( plane.geometry, plane.material );
