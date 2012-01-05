@@ -3,7 +3,7 @@ var camera, scene, renderer;
 var spheres = [];
 var planes = [];
 
-var renderTexture, depthTexture, aoTexture, screenScene, screenCamera, screen, depthScreen, aoRenderScreen, aoScreenScene, aoScreenCamera;
+var renderTexture, depthNormalTexture, aoTexture, screenScene, screenCamera, screen, depthScreen, aoRenderScreen, aoScreenScene, aoScreenCamera;
 
 var aaScale = 2, depthTextureScale = 2;
 
@@ -23,13 +23,13 @@ function init() {
 	scene.add( camera );
 
 	renderTexture = new THREE.WebGLRenderTarget( window.innerWidth*aaScale, window.innerHeight*aaScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
-	depthTexture = new THREE.WebGLRenderTarget( window.innerWidth/depthTextureScale, window.innerHeight/depthTextureScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
+	depthNormalTexture = new THREE.WebGLRenderTarget( window.innerWidth/depthTextureScale, window.innerHeight/depthTextureScale, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } );
 	aoTexture = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter } );
 
 
 	// depth writer material
 	var depthFragmentShader = document.getElementById("depthFrag").innerHTML;
-	var depthVertexShader = document.getElementById("plainVert").innerHTML;
+	var depthVertexShader = document.getElementById("normalVert").innerHTML;
 	var depthUniforms = THREE.UniformsUtils.merge([
 			THREE.UniformsLib[ "common" ],
 			{mNear:{type:"f", value:0}, mFar:{type:"f", value:1000}, opacity:{type:"f", value: 1}}
@@ -39,11 +39,11 @@ function init() {
 	depthMaterial = new THREE.ShaderMaterial( depthParameters );
 	
 	// ao display material
-	var aoFragmentShader = document.getElementById("aoFrag").innerHTML;
+	var aoFragmentShader = document.getElementById("cssgiFrag").innerHTML;
 	var aoVertexShader = document.getElementById("uvVert").innerHTML;
 	var aoUniforms = THREE.UniformsUtils.merge([
 			THREE.UniformsLib[ "common" ],
-			{depthTextureScale: {type:"f", value:depthTextureScale}, depthMap:{type:"t", value:0, texture:depthTexture}}
+			{depthTextureScale: {type:"f", value:depthTextureScale}, depthNormalMap:{type:"t", value:0, texture:depthNormalTexture}, colorMap:{type:"t", value:0, texture:renderTexture}}
 			]);
 
 	var aoParameters = { fragmentShader: aoFragmentShader, vertexShader: aoVertexShader, uniforms: aoUniforms };
@@ -119,7 +119,7 @@ function init() {
 	aoScreen.mesh.position.z = -90;
 
 	screenScene.add( screen.mesh );
-	screenScene.add( aoScreen.mesh );
+//    screenScene.add( aoScreen.mesh );
 	screenScene.add( screenCamera );
 
 	// where we render the ao
@@ -158,17 +158,16 @@ function render() {
 	// render the depth texture
 	scene.overrideMaterial = depthMaterial;
 	renderer.setViewport(0,0, window.innerWidth/depthTextureScale, window.innerHeight/depthTextureScale );
-	renderer.render( scene, camera, depthTexture );
-
-	// render the ao
-	renderer.setViewport(0,0, window.innerWidth, window.innerHeight );
-	renderer.render( aoScreenScene, aoScreenCamera, aoTexture );
+	renderer.render( scene, camera, depthNormalTexture );
 
 	// render the scene normally
 	scene.overrideMaterial = undefined;
 	renderer.setViewport(0,0, window.innerWidth*aaScale, window.innerHeight*aaScale );
 	renderer.render( scene, camera, renderTexture );
 
+	// render the ao
+	renderer.setViewport(0,0, window.innerWidth, window.innerHeight );
+	renderer.render( aoScreenScene, aoScreenCamera, aoTexture );
 
 	// render the final output
 	renderer.setViewport(0,0, window.innerWidth, window.innerHeight );
