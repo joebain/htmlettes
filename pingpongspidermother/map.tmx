@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Scenery" tilewidth="32" tileheight="32">
+  <image source="scenery.png" width="128" height="32"/>
+ </tileset>
+ <tileset firstgid="5" name="entities" tilewidth="32" tileheight="32">
+  <image source="entities.png" width="128" height="32"/>
+ </tileset>
+ <layer name="scenery" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt1jEKwCAMBVDp/Q/taqGYpETa4T1wkIBDPlHHAIDvXcEiJ+pjtq9va9xVeiWP86p5ZGZn3buvak73ShY1nfPxdJb5qOl6P3Z1eeR1/a+iswAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4lwkOugCZ
+  </data>
+ </layer>
+ <layer name="entities" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7A9+LeMjJHQKmgCAAAAXDPtAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8tls9AAY=
+  </data>
+ </layer>
+</map>
