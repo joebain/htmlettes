@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="Scenery" tilewidth="32" tileheight="32">
-  <image source="scenery.png" width="128" height="32"/>
- </tileset>
- <tileset firstgid="5" name="entities" tilewidth="32" tileheight="32">
-  <image source="entities.png" width="128" height="32"/>
- </tileset>
+ <tileset firstgid="1" source="Scenery.tsx"/>
+ <tileset firstgid="5" source="entities.tsx"/>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
    eJzt1lsKgCAQAEDp/ofuK4iyyEdG6wxEhaK1i6spAcD3lkFXdL3iMSJWs+SjR9/aWPWaP4LSGlCydp6up/09N8bdezRf/t8xH9vzks45mmUPaakxJbHKtefy8XTuqFrq1VV7zTe82f9vep43R5xzo+fjD2bZPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC6FVJmARM=
@@ -13,7 +9,7 @@
  </layer>
  <layer name="entities" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt08EJACAQA8H7KPZfsSUICgZlpoIlkCoAgLtGOuBx9oMzPgR7WjqApZ4OAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPjIBEN0ACQ=
+   eJzt09EJACAMQ8H+KN1/YocQLJG7CR6BVAEAvNXTAeHsB3d8iDRrOoAYezoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4CMHRhwAJA==
   </data>
  </layer>
 </map>
