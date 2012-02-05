@@ -30,8 +30,10 @@ var SOLID_TILE = 2;
 var ICE_TILE = 1;
 var SPIKE_TILE = 4;
 
-var currentLevel = 2;
-var lastLevel = 2;
+var currentLevel = 1;
+var lastLevel = 5;
+
+var stateChangeTime = new Date();
 
 function init() {
 	loadLevel(currentLevel);
@@ -101,6 +103,7 @@ function loadLevel(levelNumber) {
 		}
 
 		gameState = LOADED;
+		stateChangeTime = new Date();
 	});
 }
 
@@ -112,16 +115,25 @@ function draw() {
 
 	if (gameState === LOADED) {
 		context.textAlign = "center";
-		context.font = "30pt monospace";
+		context.font = "40pt monospace";
 		context.strokeStyle = "#ffffff";
 		context.lineWidth = 2;
 		context.fillStyle = "#000000";
 		var text = "Level " + currentLevel;
 		context.strokeText(text, screenSize.x/2, screenSize.y/2);
 		context.fillText(text, screenSize.x/2, screenSize.y/2);
+
+		context.textAlign = "center";
+		context.font = "20pt monospace";
+		context.strokeStyle = "#ffffff";
+		context.lineWidth = 2;
+		context.fillStyle = "#000000";
+		text = "press space";
+		context.strokeText(text, screenSize.x/2, screenSize.y/2+40);
+		context.fillText(text, screenSize.x/2, screenSize.y/2+40);
 	} else if (gameState === GAME_WON) {
 		context.textAlign = "center";
-		context.font = "30pt monospace";
+		context.font = "40pt monospace";
 		context.strokeStyle = "#ffffff";
 		context.lineWidth = 2;
 		context.fillStyle = "#000000";
@@ -209,7 +221,7 @@ function draw() {
 		// draw the lose
 		if (gameState === LEVEL_LOST) {
 			context.textAlign = "center";
-			context.font = "30pt monospace";
+			context.font = "40pt monospace";
 			context.strokeStyle = "#ffffff";
 			context.lineWidth = 2;
 			context.fillStyle = "#000000";
@@ -219,7 +231,7 @@ function draw() {
 		}
 		else if (gameState === LEVEL_WON) {
 			context.textAlign = "center";
-			context.font = "30pt monospace";
+			context.font = "40pt monospace";
 			context.strokeStyle = "#ffffff";
 			context.lineWidth = 2;
 			context.fillStyle = "#000000";
@@ -230,16 +242,21 @@ function draw() {
 	}
 }
 
+function blockIsEmpty(x,y) {
+	return map[x][y] === 0 || map[x][y] === SPIKE_TILE;
+}
+
 function update(delta) {
 	Math.seedrandom(new Date().getMilliseconds());
 	if (gameState === LOADING) return;
 
 	if (gameState === LOADED) {
-		if (keys[key_space]) {
+		if (keys[key_space] && new Date() - stateChangeTime > 500) {
 			gameState = PLAYING;
+			stateChangeTime = new Date();
 		}
 	} else if (gameState === LEVEL_LOST) {
-		if (keys[key_space]) {
+		if (keys[key_space] && new Date() - stateChangeTime > 500) {
 			loadLevel(currentLevel);
 		}
 	} else if (gameState === PLAYING) {
@@ -268,17 +285,16 @@ function update(delta) {
 		if (Math.floor(mother.x/tileSize) === endPoint.x && Math.floor(mother.y/tileSize) === endPoint.y) {
 			if (babiesRescued === babies.length) {
 				gameState = LEVEL_WON;
+				stateChangeTime = new Date();
 			}
 		}
 
 		// spike tiles kill
 		var x = Math.floor(mother.x/tileSize);
 		var y = Math.floor(mother.y/tileSize);
-		if (map[x][y-1] === SPIKE_TILE ||
-			map[x][y+1] === SPIKE_TILE ||
-			map[x+1][y] === SPIKE_TILE ||
-			map[x-1][y] === SPIKE_TILE) {
+		if (map[x][y] === SPIKE_TILE) {
 			gameState = LEVEL_LOST;
+			stateChangeTime = new Date();
 			return;
 		}
 
@@ -307,10 +323,10 @@ function update(delta) {
 				// ice tiles slide
 				var emptyBlocks = 0;
 				var iceBlocks = 0;
-				if (map[x][y+1] === 0) emptyBlocks++;
-				if (map[x][y-1] === 0) emptyBlocks++;
-				if (map[x+1][y] === 0) emptyBlocks++;
-				if (map[x-1][y] === 0) emptyBlocks++;
+				if (blockIsEmpty(x,y+1)) emptyBlocks++;
+				if (blockIsEmpty(x,y-1)) emptyBlocks++;
+				if (blockIsEmpty(x+1,y)) emptyBlocks++;
+				if (blockIsEmpty(x-1,y)) emptyBlocks++;
 				if (mother.wasMoving.y === 0) {
 					if (map[x][y+1] === ICE_TILE) iceBlocks++;
 					if (map[x][y-1] === ICE_TILE) iceBlocks++;
@@ -333,12 +349,12 @@ function update(delta) {
 		} else {
 			var x = Math.floor(mother.x/tileSize);
 			var y = Math.floor(mother.y/tileSize);
-			if ((map[x][y+1] === 0 &&
-				map[x][y-1] === 0 &&
-				map[x+1][y] === 0 &&
-				map[x-1][y] === 0)) {
-				mother.moving = {x:0, y:+1};
-				mother.aim = {x:mother.x, y:mother.y+tileSize};
+			if (blockIsEmpty(x, y+1) &&
+				blockIsEmpty(x, y-1) &&
+				blockIsEmpty(x-1, y) &&
+				blockIsEmpty(x+1, y)) {
+					mother.moving = {x:0, y:+1};
+					mother.aim = {x:mother.x, y:mother.y+tileSize};
 			} else {
 				var desiredMove = {x:0, y:0};
 				if (!mother.moving) {
@@ -376,7 +392,7 @@ function update(delta) {
 					}
 				}
 				if (desiredMove.x !== 0 || desiredMove.y !== 0) {
-					if (map[x+desiredMove.x][y+desiredMove.y] === 0) {
+					if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
 						mother.moving = desiredMove;
 						mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
 					}
@@ -419,7 +435,7 @@ function update(delta) {
 	}
 
 	if (gameState === LEVEL_WON) {
-		if (keys[key_space]) {
+		if (keys[key_space] && new Date() - stateChangeTime > 500) {
 			loadLevel(currentLevel+1);
 		}
 	}
