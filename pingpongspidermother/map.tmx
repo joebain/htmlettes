@@ -8,7 +8,7 @@
  </tileset>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt1jEKwCAMBVDp/Q/taqGYpETa4T1wkIBDPlHHAIDvXcEiJ+pjtq9va9xVeiWP86p5ZGZn3buvak73ShY1nfPxdJb5qOl6P3Z1eeR1/a+iswAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4lwkOugCZ
+   eJzt1lsKgCAQAEDp/ofuK4iyyEdG6wxEhaK1i6spAcD3lkFXdL3iMSJWs+SjR9/aWPWaP4LSGlCydp6up/09N8bdezRf/t8xH9vzks45mmUPaakxJbHKtefy8XTuqFrq1VV7zTe82f9vep43R5xzo+fjD2bZPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC6FVJmARM=
   </data>
  </layer>
  <layer name="entities" width="100" height="100">

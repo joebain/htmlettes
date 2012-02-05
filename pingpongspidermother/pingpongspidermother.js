@@ -80,7 +80,7 @@ function draw() {
 			switch (map[x][y]) {
 				case 2: // solid tile
 					context.fillStyle = "#ff00ff";
-					context.fillRect(x*tileSize+1, y*tileSize+1, tileSize-1, tileSize-1);
+					context.fillRect((x-camera.x)*tileSize+1, (y-camera.y)*tileSize+1, tileSize-1, tileSize-1);
 				break;
 			}
 		}
@@ -88,11 +88,13 @@ function draw() {
 
 	// draw the mother
 
+	context.beginPath();
 	context.strokeStyle = "#ffffff";
 	for (var t = 0; t < mother.tentacles.length ; t++) {
 		context.moveTo(mother.x-camera.x*tileSize, mother.y-camera.y*tileSize);
 		context.lineTo(mother.tentacles[t].x-camera.x*tileSize, mother.tentacles[t].y-camera.y*tileSize);
 	}
+	context.closePath();
 	context.stroke();
 
 
@@ -147,47 +149,52 @@ function update(delta) {
 			mother.moving = {x:0, y:+1};
 			mother.aim = {x:mother.x, y:mother.y+tileSize};
 		} else {
-			if (map[x][y-1] === SOLID_TILE || map[x][y+1] === SOLID_TILE) {
-				if (keys[key_left] && map[x-1][y] === 0) {
-					mother.moving = {x:-1, y:0};
-					mother.aim = {x:mother.x-tileSize, y:mother.y};
-					if (map[x][y-1] === SOLID_TILE) {
+			var desiredMove = {x:0, y:0};
+			if (!mother.moving) {
+				if (keys[key_right]) {
+					desiredMove.x += 1;
+					if (map[x][y+1] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation + Math.PI/2;
-					} else {
+					} else if (map[x][y-1] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation - Math.PI/2;
 					}
 				}
-				if (keys[key_right] && map[x+1][y] === 0) {
-					mother.moving = {x:1, y:0};
-					mother.aim = {x:mother.x+tileSize, y:mother.y};
-					if (map[x][y-1] === SOLID_TILE) {
+				if (keys[key_left]) {
+					desiredMove.x -= 1;
+					if (map[x][y+1] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation - Math.PI/2;
-					} else {
+					} else if (map[x][y-1] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation + Math.PI/2;
 					}
 				}
-			}
-			if (map[x-1][y] === SOLID_TILE || map[x+1][y] === SOLID_TILE) {
-				if (keys[key_up] && map[x][y-1] === 0) {
-					mother.moving = {x:0, y:-1};
-					mother.aim = {x:mother.x, y:mother.y-tileSize};
-					if (map[x-1][y] === SOLID_TILE) {
+				if (keys[key_down]) {
+					desiredMove.y += 1;
+					if (map[x+1][y] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation - Math.PI/2;
-					} else {
+					} else if (map[x-1][y] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation + Math.PI/2;
 					}
 				}
-				if (keys[key_down] && map[x][y+1] === 0) {
-					mother.moving = {x:0, y:1};
-					mother.aim = {x:mother.x, y:mother.y+tileSize};
-					if (map[x-1][y] === SOLID_TILE) {
+				if (keys[key_up]) {
+					desiredMove.y -= 1;
+					if (map[x+1][y] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation + Math.PI/2;
-					} else {
+					} else if (map[x-1][y] === SOLID_TILE) {
 						mother.aimRotation = mother.rotation - Math.PI/2;
 					}
 				}
 			}
+			if (desiredMove.x !== 0 || desiredMove.y !== 0) {
+				if (map[x+desiredMove.x][y+desiredMove.y] === 0) {
+					mother.moving = desiredMove;
+					mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
+				}
+			}
+			
 		}
+
+		camera.x = Math.floor((mother.x/tileSize) / viewWidth)*viewWidth;
+		camera.y = Math.floor((mother.y/tileSize) / viewHeight)*viewHeight;
 	}
 
 	for (var t = 0 ; t < mother.tentacles.length ; t++) {
