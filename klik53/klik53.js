@@ -76,10 +76,8 @@ function submitScore() {
         "scores.php",
         {name: name, time:time},
         function(a,b,c,d) {
-          console.log("success");
           showScores();
         }).error(function(a,b,c,d) {
-      console.log("erorr sending score");
     });
   }
 }
@@ -88,7 +86,6 @@ function showScores() {
   $.getJSON(
       "scores.php",
       function(scores) {
-        console.log("got scores");
         scoreDiv.empty();
         for (var i in scores) {
           var score = scores[i];
@@ -105,8 +102,6 @@ function showScores() {
         }
       }).error(
         function(dunno,message,error) {
-          console.log("an error getting scores");
-          console.log(error.message);
         });
 }
 
