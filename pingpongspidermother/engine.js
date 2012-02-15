@@ -48,8 +48,57 @@ function _init() {
   lastTime = new Date().getTime();
   gameDuration = 0;
   paused = false;
+  
+  setupSM();
+
   if (init) init();
   loop();
+}
+
+function setupSM() {
+	soundManager.url = '';
+	soundManager.flashVersion = 9;
+	soundManager.useFlashBlock = false;
+	
+	soundManager.onready(initSounds);
+	soundManager.ontimeout(soundError);
+
+	var soundToggleEl = document.getElementById("soundToggle");
+	soundToggleEl.onchange = function() {
+		if (soundToggleEl.checked) {
+			soundManager.unmute();
+		} else {
+			soundManager.mute();
+		}
+	};
+}
+
+function initSounds() {
+}
+
+var soundIds = 1;
+function makeSFX(url) {
+	var dontReactToFinish = false;
+	var sound = soundManager.createSound({
+		id: soundIds++,
+		url:url,
+		multishot:true,
+		volume:0,
+		autoLoad:true,
+		onload:function() {
+			sound.play();
+		},
+		onfinish: function() {
+			if (dontReactToFinish) return;
+			sound.setVolume(40);
+			dontReactToFinish = true;
+		}
+	});
+	return sound;
+}
+
+function soundError() {
+	console.log("there was an error with the sounds");
 }
 
 function keysup(e) {

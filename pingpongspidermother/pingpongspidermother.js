@@ -30,13 +30,30 @@ var SOLID_TILE = 2;
 var ICE_TILE = 1;
 var SPIKE_TILE = 4;
 
-var currentLevel = 1;
+var currentLevel = 3;
 var lastLevel = 5;
 
 var stateChangeTime = new Date();
 
+var walkSound;
+var fallSound;
+var babySound;
+var nestSound;
+var deathSound;
+var themeMusic;
+
 function init() {
 	loadLevel(currentLevel);
+}
+
+function initSounds() {
+	themeMusic = soundManager.createSound({id:"theme", url:"adam adamant - brogues.mp3", loops:10000, autoLoad:true, onload: function(){themeMusic.play();}});
+
+	walkSound = makeSFX("walk.wav");
+	fallSound = makeSFX("fall.wav");
+	babySound = makeSFX("baby.wav");
+	nestSound = makeSFX("nest.wav");
+	deathSound = makeSFX("death.wav");
 }
 
 function loadLevel(levelNumber) {
@@ -256,7 +273,7 @@ function update(delta) {
 			stateChangeTime = new Date();
 		}
 	} else if (gameState === LEVEL_LOST) {
-		if (keys[key_space] && new Date() - stateChangeTime > 500) {
+		if (new Date() - stateChangeTime > 2000) {
 			loadLevel(currentLevel);
 		}
 	} else if (gameState === PLAYING) {
@@ -278,6 +295,7 @@ function update(delta) {
 				lastBabyRescued = baby;
 			} else if (Math.floor(mother.x/tileSize) === Math.floor(baby.x/tileSize) && Math.floor(mother.y/tileSize) === Math.floor(baby.y/tileSize)) {
 				baby.rescued = true;
+				babySound.play();
 			}
 		}
 
@@ -286,6 +304,7 @@ function update(delta) {
 			if (babiesRescued === babies.length) {
 				gameState = LEVEL_WON;
 				stateChangeTime = new Date();
+				nestSound.play();
 			}
 		}
 
@@ -295,6 +314,7 @@ function update(delta) {
 		if (map[x][y] === SPIKE_TILE) {
 			gameState = LEVEL_LOST;
 			stateChangeTime = new Date();
+			deathSound.play();
 			return;
 		}
 
@@ -340,6 +360,7 @@ function update(delta) {
 					mother.aim.y += mother.wasMoving.y*tileSize;
 					mother.moving.x = mother.wasMoving.x;
 					mother.moving.y = mother.wasMoving.y;
+					fallSound.play();
 				} else {
 					mother.moving = undefined;
 					mother.wasMoving = {x:0, y:0};
@@ -355,6 +376,7 @@ function update(delta) {
 				blockIsEmpty(x+1, y)) {
 					mother.moving = {x:0, y:+1};
 					mother.aim = {x:mother.x, y:mother.y+tileSize};
+					fallSound.play();
 			} else {
 				var desiredMove = {x:0, y:0};
 				if (!mother.moving) {
@@ -395,6 +417,7 @@ function update(delta) {
 					if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
 						mother.moving = desiredMove;
 						mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
+						walkSound.play();
 					}
 				}
 				
@@ -435,7 +458,7 @@ function update(delta) {
 	}
 
 	if (gameState === LEVEL_WON) {
-		if (keys[key_space] && new Date() - stateChangeTime > 500) {
+		if (new Date() - stateChangeTime > 2000) {
 			loadLevel(currentLevel+1);
 		}
 	}
