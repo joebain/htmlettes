@@ -30,7 +30,7 @@ var SOLID_TILE = 2;
 var ICE_TILE = 1;
 var SPIKE_TILE = 4;
 
-var currentLevel = 3;
+var currentLevel = 1;
 var lastLevel = 5;
 
 var stateChangeTime = new Date();
