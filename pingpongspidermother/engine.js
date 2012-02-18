@@ -115,6 +115,20 @@ function clear(colour) {
   context.fillRect(0,0,screenSize.x, screenSize.y);
 }
 
+function line(p1, p2, colour, width) {
+	if (colour) {
+		context.strokeStyle = colour;
+	}
+	if (width) {
+		context.strokeWidth = width;
+	}
+	context.beginPath();
+	context.moveTo(p1.x, p1.y);
+	context.lineTo(p2.x, p2.y);
+	context.closePath();
+	context.stroke();
+}
+
 window.onload = _init;
 
 // constants
