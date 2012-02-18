@@ -129,6 +129,17 @@ function line(p1, p2, colour, width) {
 	context.stroke();
 }
 
+function FastRandom(x) {
+	this.x = x;
+
+	this.random = function() {
+		this.x += 021398;
+		this.x *= 1343;
+		this.x /= 298;
+		return (this.x % 10000)/10000;
+	}
+}
+
 window.onload = _init;
 
 // constants

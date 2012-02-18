@@ -2,6 +2,7 @@ var mapWidth, mapHeight;
 var viewWidth, viewWidth;
 
 var map = [];
+var mapExtra = [];
 var endPoint = {x:0, y:0};
 
 var mother = {x:0, y:0, speed:0.004, rotation:0, aimRotation:0,
@@ -26,14 +27,15 @@ var LEVEL_LOST = 5;
 var GAME_WON = 6;
 var gameState = LOADING;
 
+var NO_TILE = 0;
 var SOLID_TILE = 2;
 var ICE_TILE = 1;
 var SPIKE_TILE = 4;
-var PLAIN_TILE = 5;
-var CRUMBLE_TILE = 6;
+var PLAIN_TILE = 100;
+var CRUMBLE_TILE = 5;
 
-var currentLevel = 3;
-var lastLevel = 5;
+var currentLevel = 6;
+var lastLevel = 6;
 
 var stateChangeTime = new Date();
 
@@ -94,9 +96,11 @@ function loadLevel(levelNumber) {
 					for (var x = 0 ; x < mapWidth ; x++) {
 						if (!map[x]) {
 							map[x] = [];
+							mapExtra[x] = [];
 						}
 						for (var y = 0 ; y < mapHeight ; y++) {
 							map[x][y] = layer.data[y*mapWidth+x];
+							mapExtra[x][y] = {};
 						}
 					}
 					break;
@@ -105,14 +109,14 @@ function loadLevel(levelNumber) {
 						for (var y = 0 ; y < mapHeight ; y++) {
 							var item = layer.data[y*mapWidth+x];
 							switch (item) {
-								case 5: // start point
+								case 6: // start point
 									mother.x = (x+0.5)*tileSize;
 									mother.y = (y+0.5)*tileSize;
 									break;
-								case 6: // end point
+								case 7: // end point
 									endPoint = {x:x, y:y};
 									break;
-								case 8: // baby
+								case 9: // baby
 									var baby = {};
 									baby.x = (x+0.5)*tileSize;
 									baby.y = (y+0.5)*tileSize;
@@ -167,9 +171,12 @@ function draw() {
 
 		// draw the world
 		Math.seedrandom(currentLevel);
+		var random = Math.random;
 		for (var x = camera.x; x < camera.x+viewWidth ; x++) {
 			for (var y = camera.y; y < camera.y+viewWidth ; y++) {
 				context.lineWidth = 2;
+//                var random = mapExtra[x][y].random;
+				var random = new FastRandom(x*mapWidth+y);
 				switch (map[x][y]) {
 					case SOLID_TILE: // solid tile
 						context.strokeStyle = "#483737";
@@ -194,38 +201,38 @@ function draw() {
 						var lineStart = {x:x, y:y};
 						var lineEnd = {x:x, y:y};
 
-						increment = Math.random()*cInroadHeightMult+cInroadHeightMinOne;
-						if (Math.random() > 0.5) {
+						increment = random.random()*cInroadHeightMult+cInroadHeightMinOne;
+						if (random.random() > 0.5) {
 							context.beginPath();
-							context.moveTo((x-camera.x+Math.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							context.lineTo((x-camera.x+Math.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+							context.moveTo((x-camera.x+random.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+random.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
 							context.closePath();
 							context.stroke();
 						}
 
-						increment += Math.random()*cInroadHeightMult+cInroadHeightMinTwo;
-						if (Math.random() > 0.5) {
+						increment += random.random()*cInroadHeightMult+cInroadHeightMinTwo;
+						if (random.random() > 0.5) {
 							context.beginPath();
-							context.moveTo((x-camera.x+Math.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
-							context.lineTo((x-camera.x+Math.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+							context.moveTo((x-camera.x+random.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x+random.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
 							context.closePath();
 							context.stroke();
 						}
 
-						increment = Math.random()*cInroadHeightMult+cInroadHeightMinOne;
-						if (Math.random() > 0.5) {
+						increment = random.random()*cInroadHeightMult+cInroadHeightMinOne;
+						if (random.random() > 0.5) {
 							context.beginPath();
-							context.moveTo((x-camera.x+1-Math.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							context.lineTo((x-camera.x+1-Math.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+							context.moveTo((x-camera.x+1-random.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+1-random.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
 							context.closePath();
 							context.stroke();
 						}
 
-						increment += Math.random()*cInroadHeightMult+cInroadHeightMinTwo;
-						if (Math.random() > 0.5) {
+						increment += random.random()*cInroadHeightMult+cInroadHeightMinTwo;
+						if (random.random() > 0.5) {
 							context.beginPath();
-							context.moveTo((x-camera.x+1-Math.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
-							context.lineTo((x-camera.x+1-Math.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+							context.moveTo((x-camera.x+1-random.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x+1-random.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
 							context.closePath();
 							context.stroke();
 						}
@@ -233,12 +240,31 @@ function draw() {
 						break;
 					case CRUMBLE_TILE:
 						var increment;
-						var cCrackWidthMult = 0.2;
-						var cCrackWidthMin = 0.05;
-						var cCrackOffsetMult = 0.3;
-						var cCrackOffsetMin = 0.1;
-						var cCrackDepthMult = 0.1;
-						var cCrackDepthMin = 0.05;
+						if (mapExtra[x][y].crumbled) {
+							var cCrumbleDuration = 1000;
+							var crumbleAmount = (cCrumbleDuration - (new Date() - mapExtra[x][y].crumbleTime))/cCrumbleDuration;
+							if (crumbleAmount < 0) {
+								for (var r = 0 ; r < 20 ; r++) {
+									random.random();
+								}
+								break;
+							}
+							var cCrackWidthMult = 0.2;
+							var cCrackWidthMin = 0.05;//+(1-crumbleAmount)*0.2;
+							var cCrackOffsetMult = 0.3;
+							var cCrackOffsetMin = 0.1-(1-crumbleAmount);
+							var cCrackDepthMult = 0.1;
+							var cCrackDepthMin = 0.05;//+(1-crumbleAmount)*0.2;
+							var actualBlockPadding = cBlockPadding;
+							cBlockPadding = (1-crumbleAmount)*tileSize/2;
+						} else {
+							var cCrackWidthMult = 0.2;
+							var cCrackWidthMin = 0.05;
+							var cCrackOffsetMult = 0.3;
+							var cCrackOffsetMin = 0.1;
+							var cCrackDepthMult = 0.1;
+							var cCrackDepthMin = 0.05;
+						}
 
 
 						context.strokeStyle = "#aa4400";
@@ -246,52 +272,55 @@ function draw() {
 						context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 
 						//top
-						if (Math.random()>0.5) {
-							increment = cCrackOffsetMult*Math.random()+cCrackOffsetMin;
+						if (random.random()>0.5) {
+							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
 							context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y+Math.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+							context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding);
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
 							context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 						}
 						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 
 						// right
-						if (Math.random()>0.5) {
-							increment = cCrackOffsetMult*Math.random()+cCrackOffsetMin;
+						if (random.random()>0.5) {
+							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
 							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1-Math.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+							context.lineTo((x-camera.x+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
 							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
 						}
 						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 
 						// bottom
-						if (Math.random()>0.5) {
-							increment = cCrackOffsetMult*Math.random()+cCrackOffsetMin;
+						if (random.random()>0.5) {
+							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
 							context.lineTo((x-camera.x+1-increment)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1-increment)*tileSize+cBlockPadding, (y-camera.y+1-Math.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+							context.lineTo((x-camera.x+1-increment)*tileSize+cBlockPadding, (y-camera.y+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding);
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
 							context.lineTo((x-camera.x+1-increment)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 						}
 						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 
 						//left
-						if (Math.random()>0.5) {
-							increment = cCrackOffsetMult*Math.random()+cCrackOffsetMin;
+						if (random.random()>0.5) {
+							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
 							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize+cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+Math.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize+cBlockPadding);
-							increment += Math.random()*cCrackWidthMult+cCrackWidthMin;
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+							context.lineTo((x-camera.x+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize+cBlockPadding);
+							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
 							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize+cBlockPadding);
 						}
 						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 
-
 						context.closePath();
 						context.stroke();
+
+						if (actualBlockPadding) {
+							cBlockPadding = actualBlockPadding;
+						}
 					break;
 					case ICE_TILE:// ice tile
 						var cCornerOffsetMult = 0.1;
@@ -302,24 +331,24 @@ function draw() {
 						context.beginPath();
 
 						//top
-						incrementX = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.moveTo((x-camera.x+incrementX)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-						incrementX = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.lineTo((x-camera.x+1-incrementX)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 						//right
-						incrementY = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+incrementY)*tileSize+cBlockPadding);
-						incrementY = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1-incrementY)*tileSize-cBlockPadding);
 						//bottom
-						incrementX = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.lineTo((x-camera.x+1-incrementX)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-						incrementX = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.lineTo((x-camera.x+incrementX)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 						//left
-						incrementY = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-incrementY)*tileSize-cBlockPadding);
-						incrementY = Math.random()*cCornerOffsetMult+cCornerOffsetMin;
+						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
 						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+incrementY)*tileSize+cBlockPadding);
 
 						context.closePath();
@@ -329,9 +358,9 @@ function draw() {
 						var cLightAngle = 3*Math.PI/4;
 
 						context.beginPath();
-						var startX = Math.random()*0.1+0.1;
-						var startY = Math.random()*0.1+0.4;
-						var length = Math.random()*0.2+0.2;
+						var startX = random.random()*0.1+0.1;
+						var startY = random.random()*0.1+0.4;
+						var length = random.random()*0.2+0.2;
 						var endY = Math.cos(cLightAngle)*length + startY;
 						var endX = Math.sin(cLightAngle)*length + startX;
 						context.moveTo((x-camera.x+startX)*tileSize+cBlockPadding, (y-camera.y+startY)*tileSize+cBlockPadding);
@@ -340,9 +369,9 @@ function draw() {
 						context.stroke();
 
 //                        context.beginPath();
-//                        var startX = Math.random()*0.1+0.3;
-//                        var startY = Math.random()*0.2+0.5;
-//                        var length = Math.random()*0.2+0.3;
+//                        var startX = random.random()*0.1+0.3;
+//                        var startY = random.random()*0.2+0.5;
+//                        var length = random.random()*0.2+0.3;
 //                        var endY = Math.cos(cLightAngle)*length + startY;
 //                        var endX = Math.sin(cLightAngle)*length + startX;
 //                        context.moveTo((x-camera.x+startX)*tileSize+cBlockPadding, (y-camera.y+startY)*tileSize+cBlockPadding);
@@ -361,36 +390,36 @@ function draw() {
 						var cCornerInsetMult = 0.05;
 
 						var doSide = function(motion, start) {
-								start.x += motion.x*(cSpikeWidthMult*Math.random()+cSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*Math.random()+cSpikeWidthMin);
-								start.x += motion.y*(cSpikeHeightMult*Math.random()+cSpikeHeightMin);
-								start.y -= motion.x*(cSpikeHeightMult*Math.random()+cSpikeHeightMin);
+								start.x += motion.x*(cSpikeWidthMult*random.random()+cSpikeWidthMin);
+								start.y += motion.y*(cSpikeWidthMult*random.random()+cSpikeWidthMin);
+								start.x += motion.y*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
+								start.y -= motion.x*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
 								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
 
-								start.x += motion.x*(cSpikeWidthMult*Math.random()+cInnerSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*Math.random()+cInnerSpikeWidthMin);
-								start.x -= motion.y*(cSpikeHeightMult*Math.random()+cSpikeHeightMin);
-								start.y += motion.x*(cSpikeHeightMult*Math.random()+cSpikeHeightMin);
+								start.x += motion.x*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
+								start.y += motion.y*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
+								start.x -= motion.y*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
+								start.y += motion.x*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
 								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
 								
-								start.x += motion.x*(cSpikeWidthMult*Math.random()+cInnerSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*Math.random()+cInnerSpikeWidthMin);
-								start.x += motion.y*(cSpikeHeightMult*Math.random()+cSpikeHeightMin);
-								start.y -= motion.x*(cSpikeHeightMult*Math.random()+cSpikeHeightMin);
+								start.x += motion.x*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
+								start.y += motion.y*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
+								start.x += motion.y*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
+								start.y -= motion.x*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
 								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
 						};
 						context.strokeStyle = "#800000";
 						context.beginPath();
-						var point = {x:x+cCornerInsetMin+Math.random()*cCornerInsetMult, y:y+cCornerInsetMin+Math.random()*cCornerInsetMult};
+						var point = {x:x+cCornerInsetMin+random.random()*cCornerInsetMult, y:y+cCornerInsetMin+random.random()*cCornerInsetMult};
 						context.moveTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:1, y:0}, point);
-						point = {x:x+(1-cCornerInsetMin+Math.random()*cCornerInsetMult), y:y+cCornerInsetMin+Math.random()*cCornerInsetMult};
+						point = {x:x+(1-cCornerInsetMin+random.random()*cCornerInsetMult), y:y+cCornerInsetMin+random.random()*cCornerInsetMult};
 						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:0, y:1}, point);
-						point = {x:x+(1-cCornerInsetMin+Math.random()*cCornerInsetMult), y:y+(1-cCornerInsetMin+Math.random()*cCornerInsetMult)};
+						point = {x:x+(1-cCornerInsetMin+random.random()*cCornerInsetMult), y:y+(1-cCornerInsetMin+random.random()*cCornerInsetMult)};
 						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:-1, y:0}, point);
-						point = {x:x+cCornerInsetMin+Math.random()*cCornerInsetMult, y:y+(1-cCornerInsetMin+Math.random()*cCornerInsetMult)};
+						point = {x:x+cCornerInsetMin+random.random()*cCornerInsetMult, y:y+(1-cCornerInsetMin+random.random()*cCornerInsetMult)};
 						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:0, y:-1}, point);
 						context.closePath();
@@ -502,7 +531,7 @@ function draw() {
 }
 
 function blockIsEmpty(x,y) {
-	return map[x][y] === 0 || map[x][y] === SPIKE_TILE;
+	return map[x][y] === 0 || map[x][y] === SPIKE_TILE || mapExtra[x][y].crumbled;
 }
 
 function update(delta) {
@@ -660,9 +689,28 @@ function update(delta) {
 						mother.moving = desiredMove;
 						mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
 						walkSound.play();
+
+						var crumbleTile = function(x,y) {
+							if (!mapExtra[x][y].crumbled) {
+								mapExtra[x][y].crumbled = true;
+								mapExtra[x][y].crumbleTime = new Date();
+							}
+						};
+						// check for leaving crumble tiles
+						if (map[x][y+1] === CRUMBLE_TILE) {
+							crumbleTile(x, y+1);
+						}
+						if (map[x+1][y] === CRUMBLE_TILE) {
+							crumbleTile(x+1, y);
+						}
+						if (map[x-1][y] === CRUMBLE_TILE) {
+							crumbleTile(x-1, y);
+						}
+						if (map[x][y-1] === CRUMBLE_TILE) {
+							crumbleTile(x, y-1);
+						}
 					}
 				}
-				
 			}
 		}
 
