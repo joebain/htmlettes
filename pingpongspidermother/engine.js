@@ -59,9 +59,11 @@ function setupSM() {
 	soundManager.url = '';
 	soundManager.flashVersion = 9;
 	soundManager.useFlashBlock = false;
+//    soundManager.useHTML5Audio = false;
 	
 	soundManager.onready(initSounds);
 	soundManager.ontimeout(soundError);
+//    soundManager.beginDelayedInit();
 
 	var soundToggleEl = document.getElementById("soundToggle");
 	soundToggleEl.onchange = function() {
@@ -78,9 +80,28 @@ function initSounds() {
 
 var soundIds = 1;
 function makeSFX(url) {
+
+//    var audioEl = $("<audio>");
+//    audioEl.attr("src", url);
+//    audioEl.attr("preload", "auto");
+//    audioEl.attr("controls", "controls");
+//    $("body").append(audioEl);
+//    return {
+//        play: function() {
+////            audioEl[0].pause();
+//            console.log("duration: " + audioEl[0].duration);
+//            console.log("startTime: " + audioEl[0].startTime);
+//            console.log("error: " + audioEl[0].error);
+//            console.log("current time: " + audioEl[0].currentTime);
+//            audioEl[0].currentTime = 0.0;
+//            console.log("current time: " + audioEl[0].currentTime);
+//            audioEl[0].play();
+//        }
+//    };
+
 	var dontReactToFinish = false;
 	var sound = soundManager.createSound({
-		id: soundIds++,
+		id: "sound"+(soundIds++),
 		url:url,
 		multishot:true,
 		volume:0,

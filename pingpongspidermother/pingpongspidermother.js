@@ -49,6 +49,11 @@ var themeMusic;
 
 var cBlockPadding = 2;
 
+var moveKeyedAt;
+var cWaitForMoveTime = 50;
+var desiredMove;
+
+
 var globalRandom = new FastRandom(10);//{random:Math.random};
 
 function init() {
@@ -58,14 +63,12 @@ function init() {
 function initSounds() {
 	themeMusic = soundManager.createSound({id:"theme", url:"adam adamant - brogues.mp3", loops:10000, autoLoad:true, onload: function(){themeMusic.play();}});
 
-	walkSound = makeSFX("walk.wav");
-	fallSound = makeSFX("fall.wav");
-	babySound = makeSFX("baby.wav");
-	nestSound = makeSFX("nest.wav");
-	deathSound = makeSFX("death.wav");
-	springSound = makeSFX("fall.wav");
-	
-	soundManager.mute();
+	walkSound = makeSFX("walk.mp3");
+	fallSound = makeSFX("fall.mp3");
+	babySound = makeSFX("baby.mp3");
+	nestSound = makeSFX("nest.mp3");
+	deathSound = makeSFX("death.mp3");
+	springSound = makeSFX("spring.mp3");
 }
 
 function loadLevel(levelNumber) {
@@ -754,9 +757,12 @@ function update(delta) {
 					mapExtra[x-1][y].springTime = new Date();
 				}
 			else {
-				var desiredMove = {x:0, y:0};
+				if (!moveKeyedAt) {
+					desiredMove = {x:0, y:0};
+				}
 				if (!mother.moving) {
 					if (keys[key_right]) {
+						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.x += 1;
 						if (map[x][y+1] === SOLID_TILE) {
 							mother.aimRotation = mother.rotation + Math.PI/2;
@@ -765,6 +771,7 @@ function update(delta) {
 						}
 					}
 					if (keys[key_left]) {
+						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.x -= 1;
 						if (map[x][y+1] === SOLID_TILE) {
 							mother.aimRotation = mother.rotation - Math.PI/2;
@@ -773,6 +780,7 @@ function update(delta) {
 						}
 					}
 					if (keys[key_down]) {
+						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.y += 1;
 						if (map[x+1][y] === SOLID_TILE) {
 							mother.aimRotation = mother.rotation - Math.PI/2;
@@ -781,6 +789,7 @@ function update(delta) {
 						}
 					}
 					if (keys[key_up]) {
+						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.y -= 1;
 						if (map[x+1][y] === SOLID_TILE) {
 							mother.aimRotation = mother.rotation + Math.PI/2;
@@ -788,31 +797,38 @@ function update(delta) {
 							mother.aimRotation = mother.rotation - Math.PI/2;
 						}
 					}
+					if (desiredMove.x > 1) desiredMove.x = 1;
+					if (desiredMove.x < -1) desiredMove.x = -1;
+					if (desiredMove.y > 1) desiredMove.y = 1;
+					if (desiredMove.y < -1) desiredMove.y = -1;
 				}
 				if (desiredMove.x !== 0 || desiredMove.y !== 0) {
-					if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
-						mother.moving = desiredMove;
-						mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
-						walkSound.play();
+					if (moveKeyedAt && new Date() - moveKeyedAt > cWaitForMoveTime) {
+						moveKeyedAt = undefined;
+						if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
+							mother.moving = desiredMove;
+							mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
+							walkSound.play();
 
-						var crumbleTile = function(x,y) {
-							if (!mapExtra[x][y].crumbled) {
-								mapExtra[x][y].crumbled = true;
-								mapExtra[x][y].crumbleTime = new Date();
+							var crumbleTile = function(x,y) {
+								if (!mapExtra[x][y].crumbled) {
+									mapExtra[x][y].crumbled = true;
+									mapExtra[x][y].crumbleTime = new Date();
+								}
+							};
+							// check for leaving crumble tiles
+							if (map[x][y+1] === CRUMBLE_TILE) {
+								crumbleTile(x, y+1);
 							}
-						};
-						// check for leaving crumble tiles
-						if (map[x][y+1] === CRUMBLE_TILE) {
-							crumbleTile(x, y+1);
-						}
-						if (map[x+1][y] === CRUMBLE_TILE) {
-							crumbleTile(x+1, y);
-						}
-						if (map[x-1][y] === CRUMBLE_TILE) {
-							crumbleTile(x-1, y);
-						}
-						if (map[x][y-1] === CRUMBLE_TILE) {
-							crumbleTile(x, y-1);
+							if (map[x+1][y] === CRUMBLE_TILE) {
+								crumbleTile(x+1, y);
+							}
+							if (map[x-1][y] === CRUMBLE_TILE) {
+								crumbleTile(x-1, y);
+							}
+							if (map[x][y-1] === CRUMBLE_TILE) {
+								crumbleTile(x, y-1);
+							}
 						}
 					}
 				}
