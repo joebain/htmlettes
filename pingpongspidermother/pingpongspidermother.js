@@ -36,7 +36,7 @@ var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
 var currentLevel = 6;
-var lastLevel = 8;
+var lastLevel = 9;
 
 var stateChangeTime = new Date();
 
@@ -145,6 +145,13 @@ function loadLevel(levelNumber) {
 
 function draw() {
 	clear("#000000");
+
+//    var grad = context.createRadialGradient(mother.x-camera.x*tileSize, mother.y-camera.y*tileSize, 500, screenSize.x/2, screenSize.y/2, 400);
+	var grad = context.createRadialGradient(screenSize.x/2, screenSize.y-200, 500, screenSize.x/2, screenSize.y-100, 0);
+	grad.addColorStop(0, "#000000");
+	grad.addColorStop(1, "#222222");
+	context.fillStyle = grad;
+	context.fillRect(0,0,screenSize.x, screenSize.y);
 
 
 	if (gameState === LOADING) return;
