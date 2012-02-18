@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" source="Scenery.tsx"/>
+ <tileset firstgid="6" source="entities.tsx"/>
+ <layer name="scenery" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt2MsKxCAMBdB2Hv//y8MsCkF01FQYF+dAVoUscrFpPQ4AyHsk6gxVe07e6vnJ4x557KU2v1eoX86iWv0YV87vm8E7VC+TXj/m1PLIcD7WiPO7zkbLc7If80bmF3fE9Q5r7Rd53OP7ai/y2Ev5bz2yI3r9WCdzf+K+BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/usDCeYAxw==
+  </data>
+ </layer>
+ <layer name="entities" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt0ckNACAQA7F9gei/YYpAKBx2BaOkCgB4UUsHAGwy0gGfsfd9fAbAqp4OAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOMAEuuYAKQ==
+  </data>
+ </layer>
+</map>

@@ -35,8 +35,8 @@ var SPIKE_TILE = 4;
 var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
-var currentLevel = 7;
-var lastLevel = 7;
+var currentLevel = 6;
+var lastLevel = 8;
 
 var stateChangeTime = new Date();
 
@@ -69,6 +69,8 @@ function initSounds() {
 	nestSound = makeSFX("nest.mp3");
 	deathSound = makeSFX("death.mp3");
 	springSound = makeSFX("spring.mp3");
+	
+	soundManager.mute();
 }
 
 function loadLevel(levelNumber) {
@@ -249,21 +251,18 @@ function draw() {
 						var increment;
 						if (mapExtra[x][y].crumbled) {
 							var cCrumbleDuration = 1000;
-							var crumbleAmount = (cCrumbleDuration - (new Date() - mapExtra[x][y].crumbleTime))/cCrumbleDuration;
-							if (crumbleAmount < 0) {
-								for (var r = 0 ; r < 20 ; r++) {
-									random.random();
-								}
+							var crumbleAmount = (new Date() - mapExtra[x][y].crumbleTime)/cCrumbleDuration;
+							if (crumbleAmount > 1) {
 								break;
 							}
-							var cCrackWidthMult = 0.2;
-							var cCrackWidthMin = 0.05;//+(1-crumbleAmount)*0.2;
-							var cCrackOffsetMult = 0.3;
-							var cCrackOffsetMin = 0.1-(1-crumbleAmount);
+							var cCrackWidthMult = 0.2-crumbleAmount*0.2;
+							var cCrackWidthMin = 0.05-crumbleAmount*0.05;
+							var cCrackOffsetMult = 0.3-crumbleAmount*0.3;
+							var cCrackOffsetMin = 0.1-crumbleAmount*0.1;
 							var cCrackDepthMult = 0.1;
-							var cCrackDepthMin = 0.05;//+(1-crumbleAmount)*0.2;
+							var cCrackDepthMin = 0.05;
 							var actualBlockPadding = cBlockPadding;
-							cBlockPadding = (1-crumbleAmount)*tileSize/2;
+							cBlockPadding = crumbleAmount*tileSize/2;
 						} else {
 							var cCrackWidthMult = 0.2;
 							var cCrackWidthMin = 0.05;
@@ -303,22 +302,22 @@ function draw() {
 						// bottom
 						if (random.random()>0.5) {
 							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
-							context.lineTo((x-camera.x+1-increment)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1-increment)*tileSize+cBlockPadding, (y-camera.y+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding);
 							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1-increment)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 						}
 						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 
 						//left
 						if (random.random()>0.5) {
 							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
-							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
 							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
 							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
 						}
 						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 
@@ -581,6 +580,10 @@ function blockIsEmpty(x,y) {
 	return map[x][y] === 0 || map[x][y] === SPIKE_TILE || mapExtra[x][y].crumbled;
 }
 
+function blockIsNotSlippery(x,y) {
+	return map[x][y] === SOLID_TILE || map[x][y] === CRUMBLE_TILE;
+}
+
 function update(delta) {
 	Math.seedrandom(new Date().getMilliseconds());
 	if (gameState === LOADING) return;
@@ -764,36 +767,36 @@ function update(delta) {
 					if (keys[key_right]) {
 						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.x += 1;
-						if (map[x][y+1] === SOLID_TILE) {
+						if (blockIsNotSlippery(x,y+1)) {
 							mother.aimRotation = mother.rotation + Math.PI/2;
-						} else if (map[x][y-1] === SOLID_TILE) {
+						} else if (blockIsNotSlippery(x,y-1)) {
 							mother.aimRotation = mother.rotation - Math.PI/2;
 						}
 					}
 					if (keys[key_left]) {
 						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.x -= 1;
-						if (map[x][y+1] === SOLID_TILE) {
+						if (blockIsNotSlippery(x,y+1)) {
 							mother.aimRotation = mother.rotation - Math.PI/2;
-						} else if (map[x][y-1] === SOLID_TILE) {
+						} else if (blockIsNotSlippery(x,y-1)) {
 							mother.aimRotation = mother.rotation + Math.PI/2;
 						}
 					}
 					if (keys[key_down]) {
 						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.y += 1;
-						if (map[x+1][y] === SOLID_TILE) {
+						if (blockIsNotSlippery(x+1,y)) {
 							mother.aimRotation = mother.rotation - Math.PI/2;
-						} else if (map[x-1][y] === SOLID_TILE) {
+						} else if (blockIsNotSlippery(x-1,y)) {
 							mother.aimRotation = mother.rotation + Math.PI/2;
 						}
 					}
 					if (keys[key_up]) {
 						if (!moveKeyedAt) moveKeyedAt = new Date();
 						desiredMove.y -= 1;
-						if (map[x+1][y] === SOLID_TILE) {
+						if (blockIsNotSlippery(x+1,y)) {
 							mother.aimRotation = mother.rotation + Math.PI/2;
-						} else if (map[x-1][y] === SOLID_TILE) {
+						} else if (blockIsNotSlippery(x-1,y)) {
 							mother.aimRotation = mother.rotation - Math.PI/2;
 						}
 					}
@@ -850,13 +853,13 @@ function update(delta) {
 				var mapX1 = Math.floor(aimX/tileSize);
 				var mapX2 = mapX1-1;
 				var mapY = Math.floor(aimY/tileSize);
-				canSnap = map[mapX1][mapY] === SOLID_TILE || map[mapX2][mapY] === SOLID_TILE;
+				canSnap = blockIsNotSlippery(mapX1,mapY) || blockIsNotSlippery(mapX2,mapY);
 
 			} else {
 				var mapX = Math.floor(aimX/tileSize);
 				var mapY1 = Math.floor(aimY/tileSize);
 				var mapY2 = mapY1-1;
-				canSnap = map[mapX][mapY1] === SOLID_TILE || map[mapX][mapY2] === SOLID_TILE;
+				canSnap = blockIsNotSlippery(mapX,mapY1) || blockIsNotSlippery(mapX,mapY2);
 
 			}
 			if (canSnap && (tentacle.x - aimX)*(tentacle.x - aimX) + (tentacle.y-aimY)*(tentacle.y-aimY) < tentacleSnap) {
