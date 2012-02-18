@@ -136,7 +136,9 @@ function FastRandom(x) {
 		this.x += 021398;
 		this.x *= 1343;
 		this.x /= 298;
-		return (this.x % 10000)/10000;
+		this.x = Math.floor(this.x);
+		this.x %= 10000;
+		return this.x/10000;
 	}
 }
 

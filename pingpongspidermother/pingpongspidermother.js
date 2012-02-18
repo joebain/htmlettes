@@ -30,12 +30,13 @@ var gameState = LOADING;
 var NO_TILE = 0;
 var SOLID_TILE = 2;
 var ICE_TILE = 1;
+var SPRING_TILE = 3;
 var SPIKE_TILE = 4;
 var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
-var currentLevel = 6;
-var lastLevel = 6;
+var currentLevel = 7;
+var lastLevel = 7;
 
 var stateChangeTime = new Date();
 
@@ -47,6 +48,8 @@ var deathSound;
 var themeMusic;
 
 var cBlockPadding = 2;
+
+var globalRandom = new FastRandom(10);//{random:Math.random};
 
 function init() {
 	loadLevel(currentLevel);
@@ -60,6 +63,7 @@ function initSounds() {
 	babySound = makeSFX("baby.wav");
 	nestSound = makeSFX("nest.wav");
 	deathSound = makeSFX("death.wav");
+	springSound = makeSFX("fall.wav");
 	
 	soundManager.mute();
 }
@@ -390,53 +394,93 @@ function draw() {
 						var cCornerInsetMult = 0.05;
 
 						var doSide = function(motion, start) {
-								start.x += motion.x*(cSpikeWidthMult*random.random()+cSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*random.random()+cSpikeWidthMin);
-								start.x += motion.y*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
-								start.y -= motion.x*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
+								start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cSpikeWidthMin);
+								start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cSpikeWidthMin);
+								start.x += motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+								start.y -= motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
 								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
 
-								start.x += motion.x*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
-								start.x -= motion.y*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
-								start.y += motion.x*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
+								start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+								start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+								start.x -= motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+								start.y += motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
 								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
 								
-								start.x += motion.x*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*random.random()+cInnerSpikeWidthMin);
-								start.x += motion.y*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
-								start.y -= motion.x*(cSpikeHeightMult*random.random()+cSpikeHeightMin);
+								start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+								start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+								start.x += motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+								start.y -= motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
 								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
 						};
 						context.strokeStyle = "#800000";
 						context.beginPath();
-						var point = {x:x+cCornerInsetMin+random.random()*cCornerInsetMult, y:y+cCornerInsetMin+random.random()*cCornerInsetMult};
+						var point = {x:x+cCornerInsetMin+globalRandom.random()*cCornerInsetMult, y:y+cCornerInsetMin+globalRandom.random()*cCornerInsetMult};
 						context.moveTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:1, y:0}, point);
-						point = {x:x+(1-cCornerInsetMin+random.random()*cCornerInsetMult), y:y+cCornerInsetMin+random.random()*cCornerInsetMult};
+						point = {x:x+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult), y:y+cCornerInsetMin+globalRandom.random()*cCornerInsetMult};
 						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:0, y:1}, point);
-						point = {x:x+(1-cCornerInsetMin+random.random()*cCornerInsetMult), y:y+(1-cCornerInsetMin+random.random()*cCornerInsetMult)};
+						point = {x:x+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult), y:y+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult)};
 						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:-1, y:0}, point);
-						point = {x:x+cCornerInsetMin+random.random()*cCornerInsetMult, y:y+(1-cCornerInsetMin+random.random()*cCornerInsetMult)};
+						point = {x:x+cCornerInsetMin+globalRandom.random()*cCornerInsetMult, y:y+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult)};
 						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
 						doSide({x:0, y:-1}, point);
 						context.closePath();
 						context.stroke();
+					break;
+					case SPRING_TILE:
 
-//                        context.beginPath();
-//                        context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-//                        context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-//                        context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-//                        context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-//                        context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-//                        context.closePath();
-//                        context.stroke();
+						var cInsetMult = 0.15;
+						var cInsetMin = 0.15;
+						var cExtendMult = 1;
+						var cExtendDuration = 70;
+						var cExtendRetractMult = 10;
+						var cExtendWaitMult = 5;
+
+						var extendX = 0, extendY = 0;
+						if (mapExtra[x][y].springTime) {
+							var extend = (new Date() - mapExtra[x][y].springTime); 
+							if (extend > cExtendDuration*(cExtendRetractMult+1+cExtendWaitMult)) {
+								mapExtra[x][y].springTime = undefined;
+								mapExtra[x][y].springX = undefined;
+								mapExtra[x][y].springY = undefined;
+								extend = 0;
+							} else if (extend > cExtendDuration*cExtendWaitMult){
+								extend -= cExtendDuration*cExtendWaitMult;
+								extend = (cExtendDuration*cExtendRetractMult) - extend;
+								extend /= cExtendDuration*cExtendRetractMult;
+								extendX = mapExtra[x][y].springX * extend * cExtendMult;
+								extendY = mapExtra[x][y].springY * extend * cExtendMult;
+							} else if (extend > cExtendDuration){
+								extend = 1;
+								extendX = mapExtra[x][y].springX * extend * cExtendMult;
+								extendY = mapExtra[x][y].springY * extend * cExtendMult;
+							} else {
+								extend /= cExtendDuration;
+								extendX = mapExtra[x][y].springX * extend * cExtendMult;
+								extendY = mapExtra[x][y].springY * extend * cExtendMult;
+							}
+						}
+						context.strokeStyle = "#66ff00";
+						context.beginPath();
+						context.moveTo((x-camera.x+extendX)*tileSize+cBlockPadding, (y-camera.y+extendY)*tileSize+cBlockPadding);
+						context.lineTo((x-camera.x+1+extendX)*tileSize-cBlockPadding, (y-camera.y+extendY)*tileSize+cBlockPadding);
+						context.lineTo((x-camera.x+1+extendX)*tileSize-cBlockPadding, (y-camera.y+1+extendY)*tileSize-cBlockPadding);
+						context.lineTo((x-camera.x+extendX)*tileSize+cBlockPadding, (y-camera.y+1+extendY)*tileSize-cBlockPadding);
+						context.closePath();
+						context.stroke();
+
+						context.beginPath();
+						context.moveTo((x-camera.x+Math.random()*random.random()*cInsetMult+cInsetMin)*tileSize+cBlockPadding, (y-camera.y+Math.random()*random.random()*cInsetMult+cInsetMin)*tileSize+cBlockPadding);
+						context.lineTo((x-camera.x+1-Math.random()*random.random()*cInsetMult-cInsetMin)*tileSize-cBlockPadding, (y-camera.y+Math.random()*random.random()*cInsetMult+cInsetMin)*tileSize+cBlockPadding);
+						context.lineTo((x-camera.x+1-Math.random()*random.random()*cInsetMult-cInsetMin)*tileSize-cBlockPadding, (y-camera.y+1-Math.random()*random.random()*cInsetMult-cInsetMin)*tileSize-cBlockPadding);
+						context.lineTo((x-camera.x+Math.random()*random.random()*cInsetMult+cInsetMin)*tileSize+cBlockPadding, (y-camera.y+1-Math.random()*random.random()*cInsetMult-cInsetMin)*tileSize-cBlockPadding);
+						context.closePath();
+						context.stroke();
 					break;
 					case PLAIN_TILE:
 						context.strokeStyle = "#ffffff";
-						context.strokeWidth = "5px";
 						context.beginPath();
 						context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
@@ -590,8 +634,12 @@ function update(delta) {
 		}
 
 		if (mother.moving) {
-			mother.x += delta*mother.moving.x*tileSize*mother.speed;
-			mother.y += delta*mother.moving.y*tileSize*mother.speed;
+			var doubleSpeed = 1;
+			if (mother.hasMomentum) {
+				doubleSpeed = 2;
+			}
+			mother.x += delta*mother.moving.x*tileSize*mother.speed*doubleSpeed;
+			mother.y += delta*mother.moving.y*tileSize*mother.speed*doubleSpeed;
 
 			var rotationDirection = mother.aimRotation-mother.rotation < 0 ? -1 : 1;
 			mother.rotation += delta*Math.PI*0.5*mother.speed*rotationDirection;
@@ -611,32 +659,49 @@ function update(delta) {
 			if (mother.moving.y === 0 && mother.moving.x === 0) {
 				var x = Math.floor(mother.x/tileSize);
 				var y = Math.floor(mother.y/tileSize);
-				// ice tiles slide
-				var emptyBlocks = 0;
-				var iceBlocks = 0;
-				if (blockIsEmpty(x,y+1)) emptyBlocks++;
-				if (blockIsEmpty(x,y-1)) emptyBlocks++;
-				if (blockIsEmpty(x+1,y)) emptyBlocks++;
-				if (blockIsEmpty(x-1,y)) emptyBlocks++;
-				if (mother.wasMoving.y === 0) {
-					if (map[x][y+1] === ICE_TILE) iceBlocks++;
-					if (map[x][y-1] === ICE_TILE) iceBlocks++;
+				//spring tiles spring
+				var sprung = false;
+				if (map[x][y+1] === SPRING_TILE || map[x][y-1] === SPRING_TILE || map[x+1][y] === SPRING_TILE || map[x-1][y] === SPRING_TILE) {
+					sprung = true;
 				}
-				if (mother.wasMoving.x === 0) {
-					if (map[x+1][y] === ICE_TILE) iceBlocks++;
-					if (map[x-1][y] === ICE_TILE) iceBlocks++;
-				}
-				if (emptyBlocks+iceBlocks === 4 && iceBlocks >= 1) {
-					mother.aim.x += mother.wasMoving.x*tileSize;
-					mother.aim.y += mother.wasMoving.y*tileSize;
-					mother.moving.x = mother.wasMoving.x;
-					mother.moving.y = mother.wasMoving.y;
-					fallSound.play();
+				if (!sprung) {
+					// ice tiles slide
+					var emptyBlocks = 0;
+					var iceBlocks = 0;
+					var springBlocks = 0;
+					if (blockIsEmpty(x,y+1)) emptyBlocks++;
+					if (blockIsEmpty(x,y-1)) emptyBlocks++;
+					if (blockIsEmpty(x+1,y)) emptyBlocks++;
+					if (blockIsEmpty(x-1,y)) emptyBlocks++;
+					if (mother.wasMoving.y === 0) {
+						if (map[x][y+1] === ICE_TILE) iceBlocks++;
+						if (map[x][y-1] === ICE_TILE) iceBlocks++;
+					}
+					if (mother.wasMoving.x === 0) {
+						if (map[x+1][y] === ICE_TILE) iceBlocks++;
+						if (map[x-1][y] === ICE_TILE) iceBlocks++;
+					}
+					if (emptyBlocks === 4 && mother.hasMomentum) {
+						mother.aim.x += mother.wasMoving.x*tileSize;
+						mother.aim.y += mother.wasMoving.y*tileSize;
+						mother.moving.x = mother.wasMoving.x;
+						mother.moving.y = mother.wasMoving.y;
+						fallSound.play();
+					} else if (emptyBlocks+iceBlocks === 4 && iceBlocks >= 1) {
+						mother.aim.x += mother.wasMoving.x*tileSize;
+						mother.aim.y += mother.wasMoving.y*tileSize;
+						mother.moving.x = mother.wasMoving.x;
+						mother.moving.y = mother.wasMoving.y;
+						fallSound.play();
+					} else {
+						mother.moving = undefined;
+						mother.wasMoving = {x:0, y:0};
+					}
+					mother.rotation = mother.aimRotation;
 				} else {
 					mother.moving = undefined;
 					mother.wasMoving = {x:0, y:0};
 				}
-				mother.rotation = mother.aimRotation;
 			}
 		} else {
 			var x = Math.floor(mother.x/tileSize);
@@ -645,10 +710,50 @@ function update(delta) {
 				blockIsEmpty(x, y-1) &&
 				blockIsEmpty(x-1, y) &&
 				blockIsEmpty(x+1, y)) {
+
+				mother.moving = {x:0, y:+1};
+				mother.aim = {x:mother.x, y:mother.y+tileSize};
+				mother.hasMomentum = true;
+				fallSound.play();
+			} else 
+				mother.hasMomentum = false;
+				if (map[x][y+1] === SPRING_TILE) {
+					mother.moving = {x:0, y:-1};
+					mother.aim = {x:mother.x, y:mother.y-tileSize};
+					mother.hasMomentum = true;
+					springSound.play();
+					mapExtra[x][y+1].springX = 0;
+					mapExtra[x][y+1].springY = -1;
+					mapExtra[x][y+1].springTime = new Date();
+				}
+				else if (map[x][y-1] === SPRING_TILE) {
 					mother.moving = {x:0, y:+1};
 					mother.aim = {x:mother.x, y:mother.y+tileSize};
-					fallSound.play();
-			} else {
+					mother.hasMomentum = true;
+					springSound.play();
+					mapExtra[x][y-1].springX = 0;
+					mapExtra[x][y-1].springY = 1;
+					mapExtra[x][y-1].springTime = new Date();
+				}
+				else if (map[x+1][y] === SPRING_TILE) {
+					mother.moving = {x:-1, y:0};
+					mother.aim = {x:mother.x-tileSize, y:mother.y};
+					mother.hasMomentum = true;
+					springSound.play();
+					mapExtra[x+1][y].springX = -1;
+					mapExtra[x+1][y].springY = 0;
+					mapExtra[x+1][y].springTime = new Date();
+				}
+				else if (map[x-1][y] === SPRING_TILE) {
+					mother.moving = {x:1, y:0};
+					mother.aim = {x:mother.x+tileSize, y:mother.y};
+					mother.hasMomentum = true;
+					springSound.play();
+					mapExtra[x-1][y].springX = 1;
+					mapExtra[x-1][y].springY = 0;
+					mapExtra[x-1][y].springTime = new Date();
+				}
+			else {
 				var desiredMove = {x:0, y:0};
 				if (!mother.moving) {
 					if (keys[key_right]) {
