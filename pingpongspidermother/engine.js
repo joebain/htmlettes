@@ -219,6 +219,8 @@ function loadSettings() {
 		} else {
 			settings.sound = true;
 		}
+	} else {
+		settings.sound = true;
 	}
 }
 
