@@ -25,7 +25,8 @@ var PAUSED = 3;
 var LEVEL_WON = 4;
 var LEVEL_LOST = 5;
 var GAME_WON = 6;
-var gameState = LOADING;
+var TITLE_SCREEN = 7;
+var gameState = TITLE_SCREEN;
 
 var NO_TILE = 0;
 var SOLID_TILE = 2;
@@ -35,7 +36,7 @@ var SPIKE_TILE = 4;
 var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
-var currentLevel = 6;
+var currentLevel = 1;
 var lastLevel = 9;
 
 var stateChangeTime = new Date();
@@ -53,11 +54,19 @@ var moveKeyedAt;
 var cWaitForMoveTime = 50;
 var desiredMove;
 
+var spotlightPos = {x:0, y:0, vY:0, vX:0, aY:0, aX:0};
+
 
 var globalRandom = new FastRandom(10);//{random:Math.random};
 
 function init() {
-	loadLevel(currentLevel);
+	if (settings.level) {
+		settings.level = Number(settings.level);
+		currentLevel = settings.level;
+	}
+
+	spotlightPos.x = screenSize.x/2;
+	spotlightPos.y = screenSize.y/2;
 }
 
 function initSounds() {
@@ -69,11 +78,11 @@ function initSounds() {
 	nestSound = makeSFX("nest.mp3");
 	deathSound = makeSFX("death.mp3");
 	springSound = makeSFX("spring.mp3");
-	
-	soundManager.mute();
 }
 
 function loadLevel(levelNumber) {
+	settings.level = levelNumber;
+	saveSettings();
 	if (levelNumber === lastLevel+1) {
 		gameState = GAME_WON;
 		return;
@@ -146,8 +155,15 @@ function loadLevel(levelNumber) {
 function draw() {
 	clear("#000000");
 
-//    var grad = context.createRadialGradient(mother.x-camera.x*tileSize, mother.y-camera.y*tileSize, 500, screenSize.x/2, screenSize.y/2, 400);
-	var grad = context.createRadialGradient(screenSize.x/2, screenSize.y-200, 500, screenSize.x/2, screenSize.y-100, 0);
+	spotlightPos.aX = (Math.random()-0.5)*1;
+	spotlightPos.aY = (Math.random()-0.5)*1;
+	spotlightPos.vX += spotlightPos.aX/10;
+	spotlightPos.vY += spotlightPos.aY/10;
+	if (spotlightPos.x < 0 || spotlightPos.x > screenSize.x) spotlightPos.vX *= -1;
+	if (spotlightPos.y < 0 || spotlightPos.y > screenSize.y) spotlightPos.vY *= -1;
+	spotlightPos.x += spotlightPos.vX/10;
+	spotlightPos.y += spotlightPos.vY/10;
+	var grad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
 	grad.addColorStop(0, "#000000");
 	grad.addColorStop(1, "#222222");
 	context.fillStyle = grad;
@@ -158,31 +174,32 @@ function draw() {
 
 	if (gameState === LOADED) {
 		context.textAlign = "center";
-		context.font = "40pt monospace";
-		context.strokeStyle = "#ffffff";
-		context.lineWidth = 2;
-		context.fillStyle = "#000000";
+		context.font = "80pt cuteline";
+		context.fillStyle = "#ffffff";
 		var text = "Level " + currentLevel;
-		context.strokeText(text, screenSize.x/2, screenSize.y/2);
 		context.fillText(text, screenSize.x/2, screenSize.y/2);
 
 		context.textAlign = "center";
-		context.font = "20pt monospace";
-		context.strokeStyle = "#ffffff";
-		context.lineWidth = 2;
-		context.fillStyle = "#000000";
+		context.font = "40pt cuteline";
+		context.fillStyle = "#ffffff";
 		text = "press space";
-		context.strokeText(text, screenSize.x/2, screenSize.y/2+40);
-		context.fillText(text, screenSize.x/2, screenSize.y/2+40);
+		context.fillText(text, screenSize.x/2, screenSize.y/2+200);
 	} else if (gameState === GAME_WON) {
 		context.textAlign = "center";
-		context.font = "40pt monospace";
-		context.strokeStyle = "#ffffff";
-		context.lineWidth = 2;
-		context.fillStyle = "#000000";
+		context.font = "80pt cuteline";
+		context.fillStyle = "#ffffff";
 		var text = "The End";
-		context.strokeText(text, screenSize.x/2, screenSize.y/2);
 		context.fillText(text, screenSize.x/2, screenSize.y/2);
+	} else if (gameState === TITLE_SCREEN) {
+		var textToDisplay = "PingSpider Mother";
+		context.font = "80pt cuteline";
+		context.textAlign = "center";
+		context.fillStyle = "#ffffff";
+		context.fillText("Ping-Pong", screenSize.x/2, screenSize.y/2 - 200);
+		context.fillText("Spider Mother", screenSize.x/2, screenSize.y/2 -70);
+
+		context.font = "40pt cuteline";
+		context.fillText("press space", screenSize.x/2, screenSize.y/2+200);
 	} else if (gameState === PLAYING || gameState === LEVEL_LOST || gameState === LEVEL_WON) {
 
 		// draw the world
@@ -562,22 +579,16 @@ function draw() {
 		// draw the lose
 		if (gameState === LEVEL_LOST) {
 			context.textAlign = "center";
-			context.font = "40pt monospace";
-			context.strokeStyle = "#ffffff";
-			context.lineWidth = 2;
-			context.fillStyle = "#000000";
+			context.font = "80pt cuteline";
+			context.fillStyle = "#ffffff";
 			var text = "Dead!";
-			context.strokeText(text, screenSize.x/2, screenSize.y/2);
 			context.fillText(text, screenSize.x/2, screenSize.y/2);
 		}
 		else if (gameState === LEVEL_WON) {
 			context.textAlign = "center";
-			context.font = "40pt monospace";
-			context.strokeStyle = "#ffffff";
-			context.lineWidth = 2;
-			context.fillStyle = "#000000";
+			context.font = "80pt cuteline";
+			context.fillStyle = "#ffffff";
 			var text = "Win!";
-			context.strokeText(text, screenSize.x/2, screenSize.y/2);
 			context.fillText(text, screenSize.x/2, screenSize.y/2);
 		}
 	}
@@ -602,6 +613,10 @@ function update(delta) {
 		}
 	} else if (gameState === LEVEL_LOST) {
 		if (new Date() - stateChangeTime > 2000) {
+			loadLevel(currentLevel);
+		}
+	} else if (gameState === TITLE_SCREEN) {
+		if (keys[key_space] && new Date() - stateChangeTime > 500) {
 			loadLevel(currentLevel);
 		}
 	} else if (gameState === PLAYING) {

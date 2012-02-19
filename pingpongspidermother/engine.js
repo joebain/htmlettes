@@ -10,6 +10,8 @@ var keys = [];
 var screenSize = {};
 var paused;
 
+var settings = {};
+
 function _draw() {
   if (draw) draw();
 }
@@ -48,6 +50,8 @@ function _init() {
   lastTime = new Date().getTime();
   gameDuration = 0;
   paused = false;
+
+  loadSettings();
   
   setupSM();
 
@@ -59,20 +63,28 @@ function setupSM() {
 	soundManager.url = '';
 	soundManager.flashVersion = 9;
 	soundManager.useFlashBlock = false;
-//    soundManager.useHTML5Audio = false;
 	
-	soundManager.onready(initSounds);
-	soundManager.ontimeout(soundError);
-//    soundManager.beginDelayedInit();
-
-	var soundToggleEl = document.getElementById("soundToggle");
-	soundToggleEl.onchange = function() {
-		if (soundToggleEl.checked) {
-			soundManager.unmute();
-		} else {
+	soundManager.onready(function() {
+		initSounds();
+		if (settings.sound === false) {
 			soundManager.mute();
 		}
-	};
+	});
+	soundManager.ontimeout(soundError);
+
+	var soundToggleEl = $("#soundToggle");
+	soundToggleEl[0].checked = settings.sound;
+	soundToggleEl.change(function() {
+		if (soundToggleEl[0].checked) {
+			soundManager.unmute();
+			settings.sound = true;
+			saveSettings();
+		} else {
+			soundManager.mute();
+			settings.sound = false;
+			saveSettings();
+		}
+	});
 }
 
 function initSounds() {
@@ -160,6 +172,44 @@ function FastRandom(x) {
 		this.x = Math.floor(this.x);
 		this.x %= 10000;
 		return this.x/10000;
+	}
+}
+
+function loadSettings() {
+	console.log("load settings");
+	console.log(document.cookie);
+	var cookieString = document.cookie;
+	cookieString = cookieString.trim();
+	var cookieBits = document.cookie.split(";");
+	for (var s = 0 ; s < cookieBits.length ; s++) {
+		var cookieBit = cookieBits[s];
+		var splitIndex = cookieBit.indexOf("=");
+		if (splitIndex === -1) continue;
+		var key = cookieBit.substr(0, splitIndex);
+		key = key.trim();
+		var value = cookieBit.substr(splitIndex+1);
+		value = value.trim();
+		settings[key] = value;
+		console.log("k: " + key + " = v: " + value);
+	}
+
+
+	if (settings.sound !== undefined) {
+		if (settings.sound === "false") {
+			settings.sound = false;
+		} else {
+			settings.sound = true;
+		}
+	}
+}
+
+function saveSettings() {
+	var cookieString = "";
+	for (var key in settings) {
+		if (key !== undefined && settings[key] !== undefined) {
+			cookieString = key + "=" + settings[key] + ";";
+			document.cookie = cookieString;
+		}
 	}
 }
 

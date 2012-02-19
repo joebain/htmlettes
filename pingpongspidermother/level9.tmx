@@ -4,7 +4,7 @@
  <tileset firstgid="6" source="entities.tsx"/>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt2DEKwzAQRUFHSe5/5aQJiMUWwvzAFjOwna3CD0ng46Cz8Z1HYMgYgTX0yNGjl9pjTFM9L9bQI2d3f7zLzPTIcV71crfH/J4eOXr0snuf17tcj//Y3R+r5/TIcZ/3ctVjdT5VeuTYH72sevzu9dc042T0yDn7vqt/JgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQB8f3oAAmA==
+   eJzt1rsKwzAQRUFHdv7/l5N0YomFCDewxQxs5UfhgyQfB52N9zwCQ8YIvEOPHD16qT3GNNV58w49cnbXx7PMTI8c+1Uvv/aYn9MjR49eds/zepbr8R+762N1nx45evRy951X+1OlR47/3V5WPT7Xri8zyuiRU79tHQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoK8XDQwAng==
   </data>
  </layer>
  <layer name="entities" width="100" height="100">
