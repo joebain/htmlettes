@@ -33,13 +33,17 @@ var SOLID_TILE = 2;
 var ICE_TILE = 1;
 var SPRING_TILE = 3;
 var SPIKE_TILE = 4;
+var FAKE_TILE = 6;
+var INVISIBLE_TILE = 7;
 var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
 var currentLevel = 1;
-var lastLevel = 9;
+var lastLevel = 11;
+var highestLevelUnlocked = 1;
 
 var stateChangeTime = new Date();
+var lastKeyPressTime = new Date();
 
 var walkSound;
 var fallSound;
@@ -63,6 +67,7 @@ function init() {
 	if (settings.level) {
 		settings.level = Number(settings.level);
 		currentLevel = settings.level;
+		highestLevelUnlocked = settings.level;
 	}
 
 	spotlightPos.x = screenSize.x/2;
@@ -81,8 +86,11 @@ function initSounds() {
 }
 
 function loadLevel(levelNumber) {
-	settings.level = levelNumber;
-	saveSettings();
+	if (levelNumber > highestLevelUnlocked) {
+		settings.level = levelNumber;
+		highestLevelUnlocked = levelNumber;
+		saveSettings();
+	}
 	if (levelNumber === lastLevel+1) {
 		gameState = GAME_WON;
 		return;
@@ -127,17 +135,24 @@ function loadLevel(levelNumber) {
 						for (var y = 0 ; y < mapHeight ; y++) {
 							var item = layer.data[y*mapWidth+x];
 							switch (item) {
-								case 6: // start point
+								case 8: // start point
 									mother.x = (x+0.5)*tileSize;
 									mother.y = (y+0.5)*tileSize;
 									break;
-								case 7: // end point
+								case 9: // end point
 									endPoint = {x:x, y:y};
 									break;
-								case 9: // baby
+								case 11: // baby
 									var baby = {};
 									baby.x = (x+0.5)*tileSize;
 									baby.y = (y+0.5)*tileSize;
+									babies.push(baby);
+									break;
+								case 12: // golden baby
+									var baby = {};
+									baby.x = (x+0.5)*tileSize;
+									baby.y = (y+0.5)*tileSize;
+									baby.golden = true;
 									babies.push(baby);
 									break;
 							}
@@ -198,6 +213,43 @@ function draw() {
 		context.fillText("Ping-Pong", screenSize.x/2, screenSize.y/2 - 200);
 		context.fillText("Spider Mother", screenSize.x/2, screenSize.y/2 -70);
 
+		context.font = "60pt cuteline";
+		if (levelIsGold(currentLevel)) {
+			context.fillStyle = "#efe327";
+		} else {
+			context.fillStyle = "#ffffff";
+		}
+		context.fillText("Level " + currentLevel, screenSize.x/2, screenSize.y/2+100);
+
+		context.strokeStyle = "#ffffff";
+		context.fillStyle = "#ffffff";
+		context.lineWidth = 1.5;
+		context.beginPath();
+		context.moveTo(screenSize.x/2-250, screenSize.y/2+75);
+		context.lineTo(screenSize.x/2-200, screenSize.y/2+95);
+		context.lineTo(screenSize.x/2-200, screenSize.y/2+55);
+		context.closePath();
+		context.stroke();
+		context.beginPath();
+		context.moveTo(screenSize.x/2-240, screenSize.y/2+75);
+		context.lineTo(screenSize.x/2-204, screenSize.y/2+89);
+		context.lineTo(screenSize.x/2-204, screenSize.y/2+61);
+		context.closePath();
+		context.fill();
+
+		context.beginPath();
+		context.moveTo(screenSize.x/2+250, screenSize.y/2+75);
+		context.lineTo(screenSize.x/2+200, screenSize.y/2+95);
+		context.lineTo(screenSize.x/2+200, screenSize.y/2+55);
+		context.closePath();
+		context.stroke();
+		context.beginPath();
+		context.moveTo(screenSize.x/2+240, screenSize.y/2+75);
+		context.lineTo(screenSize.x/2+204, screenSize.y/2+89);
+		context.lineTo(screenSize.x/2+204, screenSize.y/2+61);
+		context.closePath();
+		context.fill();
+
 		context.font = "40pt cuteline";
 		context.fillText("press space", screenSize.x/2, screenSize.y/2+200);
 	} else if (gameState === PLAYING || gameState === LEVEL_LOST || gameState === LEVEL_WON) {
@@ -211,8 +263,15 @@ function draw() {
 //                var random = mapExtra[x][y].random;
 				var random = new FastRandom(x*mapWidth+y);
 				switch (map[x][y]) {
+					case FAKE_TILE:
+						var dontSetStroke = true;
+						context.strokeStyle = "#424837";
 					case SOLID_TILE: // solid tile
-						context.strokeStyle = "#483737";
+						if (!dontSetStroke) {
+							context.strokeStyle = "#483737";
+						} else {
+							dontSetStroke = false;
+						}
 						context.beginPath();
 
 						context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
@@ -544,7 +603,11 @@ function draw() {
 			var baby = babies[b];
 
 			context.beginPath();
-			context.strokeStyle = "#ffffff";
+			if (baby.golden) {
+				context.strokeStyle = "#efe327";
+			} else {
+				context.strokeStyle = "#ffffff";
+			}
 			context.strokeWidth = 0.5;
 			for (var t = 0; t < 4 ; t++) {
 				context.moveTo(baby.x-camera.x*tileSize, baby.y-camera.y*tileSize);
@@ -554,7 +617,11 @@ function draw() {
 			context.stroke();
 
 
-			context.fillStyle = "#ffffff";
+			if (baby.golden) {
+				context.fillStyle = "#efe327";
+			} else {
+				context.fillStyle = "#ffffff";
+			}
 			context.beginPath();
 			context.arc(baby.x-camera.x*tileSize, baby.y-camera.y*tileSize, 3,0,Math.PI*2, true);
 			context.closePath();
@@ -585,21 +652,59 @@ function draw() {
 			context.fillText(text, screenSize.x/2, screenSize.y/2);
 		}
 		else if (gameState === LEVEL_WON) {
+			if (currentLevel+1 > highestLevelUnlocked && currentLevel < lastLevel) {
+				settings.level = currentLevel+1;
+				highestLevelUnlocked = currentLevel+1;
+				saveSettings();
+			}
 			context.textAlign = "center";
 			context.font = "80pt cuteline";
-			context.fillStyle = "#ffffff";
+			if (levelIsGold(currentLevel)) {
+				// golden
+				context.fillStyle = "#efe327";
+			} else {
+				context.fillStyle = "#ffffff";
+			}
 			var text = "Win!";
 			context.fillText(text, screenSize.x/2, screenSize.y/2);
 		}
 	}
 }
 
+function levelIsGold(levelNumber) {
+	var isGold = false;
+	if (settings.goldLevels) {
+		var goldLevels = settings.goldLevels.split(",");
+		for (var g in goldLevels) {
+			if (Number(goldLevels[g]) === levelNumber) {
+				isGold = true;
+			}
+		}
+	}
+	return isGold;
+}
+
+function levelSetGold(levelNumber) {
+	var goldLevels = [];
+	if (settings.goldLevels) {
+		goldLevels = settings.goldLevels.split(",");
+		for (var g in goldLevels) {
+			if (Number(goldLevels[g]) === levelNumber) {
+				return;
+			}
+		}
+	}
+	goldLevels.push(levelNumber);
+	settings.goldLevels = goldLevels.join(",");
+	saveSettings();
+}
+
 function blockIsEmpty(x,y) {
-	return map[x][y] === 0 || map[x][y] === SPIKE_TILE || mapExtra[x][y].crumbled;
+	return map[x][y] === 0 || map[x][y] === SPIKE_TILE || map[x][y] === FAKE_TILE || mapExtra[x][y].crumbled;
 }
 
 function blockIsNotSlippery(x,y) {
-	return map[x][y] === SOLID_TILE || map[x][y] === CRUMBLE_TILE;
+	return map[x][y] === SOLID_TILE || map[x][y] === CRUMBLE_TILE || map[x][y] === INVISIBLE_TILE;
 }
 
 function update(delta) {
@@ -607,7 +712,7 @@ function update(delta) {
 	if (gameState === LOADING) return;
 
 	if (gameState === LOADED) {
-		if (keys[key_space] && new Date() - stateChangeTime > 500) {
+		if (keys[key_space] && new Date() - stateChangeTime > 200) {
 			gameState = PLAYING;
 			stateChangeTime = new Date();
 		}
@@ -616,8 +721,23 @@ function update(delta) {
 			loadLevel(currentLevel);
 		}
 	} else if (gameState === TITLE_SCREEN) {
-		if (keys[key_space] && new Date() - stateChangeTime > 500) {
+		if (keys[key_space] && new Date() - stateChangeTime > 200) {
 			loadLevel(currentLevel);
+		} else if (new Date() - lastKeyPressTime > 200) {
+			if (keys[key_right]) {
+				currentLevel ++;
+				currentLevel -= 1;
+				currentLevel %= highestLevelUnlocked;
+				currentLevel += 1;
+				lastKeyPressTime = new Date();
+			} else if (keys[key_left]) {
+				currentLevel --;
+				currentLevel += highestLevelUnlocked;
+				currentLevel -= 1;
+				currentLevel %= highestLevelUnlocked;
+				currentLevel += 1;
+				lastKeyPressTime = new Date();
+			}
 		}
 	} else if (gameState === PLAYING) {
 		var lastBabyRescued;
@@ -644,10 +764,20 @@ function update(delta) {
 
 		// win state
 		if (Math.floor(mother.x/tileSize) === endPoint.x && Math.floor(mother.y/tileSize) === endPoint.y) {
-			if (babiesRescued === babies.length) {
-				gameState = LEVEL_WON;
-				stateChangeTime = new Date();
-				nestSound.play();
+			if (babiesRescued >= babies.length-1) {
+				var gotGolden = false;
+				for (var b in babies) {
+					if (babies[b].rescued && babies[b].golden) {
+						levelSetGold(currentLevel);
+						gotGolden = true;
+						break;
+					}
+				}
+				if ((gotGolden && babiesRescued === babies.length) || (!gotGolden && babiesRescued === babies.length-1)) {
+					gameState = LEVEL_WON;
+					stateChangeTime = new Date();
+					nestSound.play();
+				}
 			}
 		}
 

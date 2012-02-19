@@ -193,6 +193,25 @@ function loadSettings() {
 		console.log("k: " + key + " = v: " + value);
 	}
 
+	var queryString = document.location.search;
+	if (queryString.charAt(0) === "?") {
+		queryString = queryString.substr(1);
+	}
+	if (queryString.charAt(queryString.length-1) === "/") {
+		queryString = queryString.substr(0, queryString.length-1);
+	}
+	var queries = queryString.split("&");
+	for (var q = 0 ; q < queries.length ; q++) {
+		var query = queries[q];
+		var splitIndex = query.indexOf("=");
+		if (splitIndex === -1) continue;
+		var key = query.substr(0, splitIndex);
+		key = key.trim();
+		var value = query.substr(splitIndex+1);
+		value = value.trim();
+		settings[key] = value;
+	}
+
 
 	if (settings.sound !== undefined) {
 		if (settings.sound === "false") {

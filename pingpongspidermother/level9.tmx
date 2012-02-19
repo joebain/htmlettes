@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
  <tileset firstgid="1" source="Scenery.tsx"/>
- <tileset firstgid="6" source="entities.tsx"/>
+ <tileset firstgid="8" source="entities.tsx"/>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt1rsKwzAQRUFHdv7/l5N0YomFCDewxQxs5UfhgyQfB52N9zwCQ8YIvEOPHD16qT3GNNV58w49cnbXx7PMTI8c+1Uvv/aYn9MjR49eds/zepbr8R+762N1nx45evRy951X+1OlR47/3V5WPT7Xri8zyuiRU79tHQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoK8XDQwAng==
+   eJzt2oEKgjAUBVBbWf//xyERzrEts2lm58AjYo7BuzkH1nUAAAAAAAAAHMVlRrGd24fjtCWPfZHH9k6VCi/mhhfz5xajWj/m5LHm+v/o2Y/cuUke2xv60RfG3s0jRJU6V9Zn9OxHLpNW90efVG59HuJ+xL0q/c675JqW65PvR0g+S5bmEc+Tx9Q3zlfyKFuaR24/Kz3P02e5PMqW9uP6xrW1XOUxFfejdCbNkcc61rg/avtTq/WPaov9ao31j+qT53nNMJ57fxWSksfU0I9hf4l7FH8vSfuaK9ry/mNf5LEv/s8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPyiO2inAZ8=
   </data>
  </layer>
  <layer name="entities" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt1bEJACAUQ8FfKe6/sAuIYGNA7yZ4RSBVwImWDmBrpAMAgGv8Pj+ye+BFPR0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACxM3fQAp
+   eJzt1bENACAMA8GUINh/XjagQwlwN8EXlhwBAAAAAAAAAADATVp2AFsjOwAOmdkBAAX5fX5k98CLenYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUNICaxEAPw==
   </data>
  </layer>
 </map>
