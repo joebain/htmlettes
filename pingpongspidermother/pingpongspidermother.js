@@ -863,11 +863,11 @@ function update(delta) {
 					if (blockIsEmpty(x,y-1)) emptyBlocks++;
 					if (blockIsEmpty(x+1,y)) emptyBlocks++;
 					if (blockIsEmpty(x-1,y)) emptyBlocks++;
-					if (mother.wasMoving.y === 0) {
+					if (mother.wasMoving.x !== 0) {
 						if (map[x][y+1] === ICE_TILE) iceBlocks++;
 						if (map[x][y-1] === ICE_TILE) iceBlocks++;
 					}
-					if (mother.wasMoving.x === 0) {
+					if (mother.wasMoving.y !== 0) {
 						if (map[x+1][y] === ICE_TILE) iceBlocks++;
 						if (map[x-1][y] === ICE_TILE) iceBlocks++;
 					}
@@ -878,10 +878,17 @@ function update(delta) {
 						mother.moving.y = mother.wasMoving.y;
 						fallSound.play();
 					} else if (emptyBlocks+iceBlocks === 4 && iceBlocks >= 1) {
-						mother.aim.x += mother.wasMoving.x*tileSize;
-						mother.aim.y += mother.wasMoving.y*tileSize;
-						mother.moving.x = mother.wasMoving.x;
-						mother.moving.y = mother.wasMoving.y;
+						if (mother.wasMoving.x !== 0 && mother.wasMoving.y !== 0) {
+							mother.aim.y += tileSize;
+							mother.wasMoving.x = 0;
+							mother.moving.x = 0;
+							mother.moving.y = 1;
+						} else {
+							mother.aim.x += mother.wasMoving.x*tileSize;
+							mother.aim.y += mother.wasMoving.y*tileSize;
+							mother.moving.x = mother.wasMoving.x;
+							mother.moving.y = mother.wasMoving.y;
+						}
 						fallSound.play();
 					} else {
 						mother.moving = undefined;
@@ -1004,17 +1011,29 @@ function update(delta) {
 								}
 							};
 							// check for leaving crumble tiles
-							if (map[x][y+1] === CRUMBLE_TILE) {
-								crumbleTile(x, y+1);
+							if (mother.moving.y !== 0) {
+								if (map[x][y-mother.moving.y] === CRUMBLE_TILE) {
+									crumbleTile(x, y-mother.moving.y);
+								}
+							} else {
+								if (map[x][y+1] === CRUMBLE_TILE) {
+									crumbleTile(x, y+1);
+								}
+								if (map[x][y-1] === CRUMBLE_TILE) {
+									crumbleTile(x, y-1);
+								}
 							}
-							if (map[x+1][y] === CRUMBLE_TILE) {
-								crumbleTile(x+1, y);
-							}
-							if (map[x-1][y] === CRUMBLE_TILE) {
-								crumbleTile(x-1, y);
-							}
-							if (map[x][y-1] === CRUMBLE_TILE) {
-								crumbleTile(x, y-1);
+							if (mother.moving.x !== 0) {
+								if (map[x-mother.moving.x][y] === CRUMBLE_TILE) {
+									crumbleTile(x-mother.moving.x, y);
+								}
+							} else {
+								if (map[x+1][y] === CRUMBLE_TILE) {
+									crumbleTile(x+1, y);
+								}
+								if (map[x-1][y] === CRUMBLE_TILE) {
+									crumbleTile(x-1, y);
+								}
 							}
 						}
 					}
