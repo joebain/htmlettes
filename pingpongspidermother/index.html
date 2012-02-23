@@ -6,30 +6,66 @@
   <script type="text/javascript" src="jquery.js"></script>
   <title>Ping Pong Spider Mother</title>
   <style>
-    @font-face {
-      font-family: "cuteline";
-      src: url("CUTELINE.TTF");
-    }
-    body {
-      background-color:#ffffff;
-    }
-    #content {
-      margin:auto;
-	  top:0;
-	  bottom:0;
-	  left:0;
-	  right:0;
-      width:800px;
-	  height:640px;
-	  position: absolute;
-    }
+	  @font-face {
+		  font-family: "cuteline";
+		  src: url("CUTELINE.TTF");
+	  }
+	  @font-face {
+		  font-family: "ostrich-regular";
+		  src: url("ostrich-regular.ttf");
+	  }
+	  body {
+		  background-color:#ffffff;
+		  font-family:"ostrich-regular", "Helvetica", Arial, sans;
+		  font-size:24px;
+		  background-color:black;
+		  color:white;
+	  }
+	  a {
+		  color:#efe327;
+		  text-decoration:none;
+	  }
+	  a:hover {
+		  text-decoration:underline;
+	  }
+	  #content {
+		  margin:auto;
+		  top:0;
+		  bottom:0;
+		  left:0;
+		  right:0;
+		  width:800px;
+		  height:700px;
+		  position: absolute;
+	  }
+	  #info {
+		  float:right;
+	  }
+	  #instructions {
+		  float:right;
+	  }
+	  #controls {
+		  float:left;
+	  }
+	  #controls:hover {
+		  color:#efe327;
+	  }
+	  #canvas {
+		  border:double 3px white;
+	  }
   </style>
 </head>
 <body>
 	<div id="content">
+		<div id="info">
+			A game by <a href="http://ohgames.co.uk">Oh, Games</a>.&nbsp;&nbsp;&nbsp;Written in HTML5, <a href="https://github.com/adam-a/htmlettes/tree/master/pingpongspidermother">fork me</a>.
+		</div>
 		<canvas id="canvas" width="800" height="640"></canvas>
 		<div id="controls">
-			<input type="checkbox" id="soundToggle" checked/>Sound
+			<input type="checkbox" id="soundToggle" checked><label for="soundToggle">Sound</label>
+		</div>
+		<div id="instructions">
+			Arrow keys to move, space to start, 'r' to restart a level and escape to quit.
 		</div>
 	</div>
 </body>
