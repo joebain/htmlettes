@@ -166,10 +166,18 @@ function loadLevel(levelNumber) {
 function draw() {
 	clear("#000000");
 
-	spotlightPos.aX = (Math.random()-0.5)*1;
-	spotlightPos.aY = (Math.random()-0.5)*1;
+	spotlightPos.aX = (Math.random()-0.5)*10;
+	spotlightPos.aY = (Math.random()-0.5)*10;
 	spotlightPos.vX += spotlightPos.aX/10;
 	spotlightPos.vY += spotlightPos.aY/10;
+	var maxSpeed = 3;
+	if (gameState === TITLE_SCREEN) {
+		maxSpeed = 20;
+	}
+	if (spotlightPos.vX > maxSpeed) spotlightPos.vX = maxSpeed;
+	if (spotlightPos.vX < -maxSpeed) spotlightPos.vX = -maxSpeed;
+	if (spotlightPos.vY > maxSpeed) spotlightPos.vY = maxSpeed;
+	if (spotlightPos.vY < -maxSpeed) spotlightPos.vY = -maxSpeed;
 	if (spotlightPos.x < 0 || spotlightPos.x > screenSize.x) spotlightPos.vX *= -1;
 	if (spotlightPos.y < 0 || spotlightPos.y > screenSize.y) spotlightPos.vY *= -1;
 	spotlightPos.x += spotlightPos.vX/10;
@@ -206,6 +214,10 @@ function draw() {
 		context.font = "80pt cuteline";
 		context.textAlign = "center";
 		context.fillStyle = "#ffffff";
+		var grad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
+		grad.addColorStop(0.6, "#ffffff");
+		grad.addColorStop(1, "#efe327");
+		context.fillStyle = grad;
 		context.fillText("Ping-Pong", screenSize.x/2, screenSize.y/2 - 200);
 		context.fillText("Spider Mother", screenSize.x/2, screenSize.y/2 -70);
 
@@ -213,12 +225,15 @@ function draw() {
 		if (levelIsGold(currentLevel)) {
 			context.fillStyle = "#efe327";
 		} else {
-			context.fillStyle = "#ffffff";
+//            context.fillStyle = "#ffffff";
+//            context.fillStyle = grad;
 		}
 		context.fillText("Level " + currentLevel, screenSize.x/2, screenSize.y/2+100);
 
-		context.strokeStyle = "#ffffff";
-		context.fillStyle = "#ffffff";
+//        context.strokeStyle = "#ffffff";
+//        context.fillStyle = "#ffffff";
+		context.strokeStyle = grad;
+		context.fillStyle = grad;
 		context.lineWidth = 1.5;
 		context.beginPath();
 		context.moveTo(screenSize.x/2-250, screenSize.y/2+75);
@@ -887,10 +902,15 @@ function update(delta) {
 						fallSound.play();
 					} else if (emptyBlocks+iceBlocks === 4 && iceBlocks >= 1) {
 						if (mother.wasMoving.x !== 0 && mother.wasMoving.y !== 0) {
-							mother.aim.y += tileSize;
 							mother.wasMoving.x = 0;
 							mother.moving.x = 0;
-							mother.moving.y = 1;
+							if (blockIsEmpty(x,y+1)) {
+								mother.aim.y += tileSize;
+								mother.moving.y = 1;
+							} else {
+								mother.wasMoving.y = 0;
+								mother.moving.y = 0;
+							}
 						} else {
 							mother.aim.x += mother.wasMoving.x*tileSize;
 							mother.aim.y += mother.wasMoving.y*tileSize;
