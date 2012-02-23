@@ -91,10 +91,6 @@ function loadLevel(levelNumber) {
 		highestLevelUnlocked = levelNumber;
 		saveSettings();
 	}
-	if (levelNumber === lastLevel+1) {
-		gameState = GAME_WON;
-		return;
-	}
 	mother = {x:0, y:0, speed:0.004, rotation:0, aimRotation:0,
 		tentacles:[{x:0,y:0}, {x:0,y:0}, {x:0,y:0}, {x:0,y:0}],
 		moving:{x:0, y:0}, wasMoving:{x:0, y:0}
@@ -162,7 +158,7 @@ function loadLevel(levelNumber) {
 			}
 		}
 
-		gameState = LOADED;
+		gameState = PLAYING;
 		stateChangeTime = new Date();
 	});
 }
@@ -752,6 +748,10 @@ function update(delta) {
 		if (new Date() - stateChangeTime > 2000) {
 			loadLevel(currentLevel);
 		}
+	} else if (gameState === GAME_WON) {
+		if (keys[key_space] && new Date() - stateChangeTime > 200) {
+			gameState = TITLE_SCREEN;
+		}
 	} else if (gameState === TITLE_SCREEN) {
 		if (keys[key_space] && new Date() - stateChangeTime > 200) {
 			loadLevel(currentLevel);
@@ -772,6 +772,14 @@ function update(delta) {
 			}
 		}
 	} else if (gameState === PLAYING) {
+		if (keys[key_escape]) {
+			gameState = TITLE_SCREEN;
+			return;
+		}
+		if (keys[key_r]) {
+			loadLevel(currentLevel);
+			return;
+		}
 		var lastBabyRescued;
 		var babiesRescued = 0;
 		for (var b = 0 ; b < babies.length ; b++) {
@@ -1076,7 +1084,12 @@ function update(delta) {
 
 	if (gameState === LEVEL_WON) {
 		if (new Date() - stateChangeTime > 2000) {
-			loadLevel(currentLevel+1);
+			if (currentLevel < lastLevel) {
+				currentLevel = currentLevel+1;
+				gameState = TITLE_SCREEN;
+			} else {
+				gameState = GAME_WON;
+			}
 		}
 	}
 }

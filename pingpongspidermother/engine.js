@@ -13,7 +13,7 @@ var paused;
 
 var settings = {};
 
-var calculateFrameRate = true;
+var calculateFrameRate = false;
 var frameTimes = [];
 var frameTimesPointer = 0;
 var frameTimesSize = 10;
@@ -104,6 +104,7 @@ function _init() {
 	loop();
 }
 
+var soundToggleEl;
 function setupSM() {
 	soundManager.url = '';
 	soundManager.flashVersion = 9;
@@ -117,19 +118,25 @@ function setupSM() {
 	});
 	soundManager.ontimeout(soundError);
 
-	var soundToggleEl = $("#soundToggle");
+	soundToggleEl = $("#soundToggle");
 	soundToggleEl[0].checked = settings.sound;
 	soundToggleEl.change(function() {
-		if (soundToggleEl[0].checked) {
-			soundManager.unmute();
-			settings.sound = true;
-			saveSettings();
-		} else {
-			soundManager.mute();
-			settings.sound = false;
-			saveSettings();
-		}
+		toggleSound();
 	});
+}
+
+function toggleSound() {
+	if (!settings.sound) {
+		soundManager.unmute();
+		settings.sound = true;
+		saveSettings();
+		soundToggleEl[0].checked = true;
+	} else {
+		soundManager.mute();
+		settings.sound = false;
+		saveSettings();
+		soundToggleEl[0].checked = false;
+	}
 }
 
 function initSounds() {
@@ -137,24 +144,6 @@ function initSounds() {
 
 var soundIds = 1;
 function makeSFX(url) {
-
-//    var audioEl = $("<audio>");
-//    audioEl.attr("src", url);
-//    audioEl.attr("preload", "auto");
-//    audioEl.attr("controls", "controls");
-//    $("body").append(audioEl);
-//    return {
-//        play: function() {
-////            audioEl[0].pause();
-//            console.log("duration: " + audioEl[0].duration);
-//            console.log("startTime: " + audioEl[0].startTime);
-//            console.log("error: " + audioEl[0].error);
-//            console.log("current time: " + audioEl[0].currentTime);
-//            audioEl[0].currentTime = 0.0;
-//            console.log("current time: " + audioEl[0].currentTime);
-//            audioEl[0].play();
-//        }
-//    };
 
 	var dontReactToFinish = false;
 	var sound = soundManager.createSound({
@@ -181,6 +170,13 @@ function soundError() {
 
 function keysup(e) {
   keys[e.keyCode] = false;
+
+  if (e.keyCode === key_f && keys[key_shift]) {
+	  calculateFrameRate = !calculateFrameRate;
+  }
+  if (e.keyCode === key_s && keys[key_shift]) {
+	  toggleSound();
+  }
 }
 
 function keysdown(e) {
