@@ -264,13 +264,10 @@ function draw() {
 				var random = new FastRandom(x*mapWidth+y);
 				switch (map[x][y]) {
 					case FAKE_TILE:
-						var dontSetStroke = true;
-						context.strokeStyle = "#424837";
 					case SOLID_TILE: // solid tile
-						if (!dontSetStroke) {
-							context.strokeStyle = "#483737";
-						} else {
-							dontSetStroke = false;
+						context.strokeStyle = "#483737";
+						if (!highQualityGfx && map[x][y] === FAKE_TILE) {
+							context.strokeStyle = "#483741";
 						}
 						context.beginPath();
 
@@ -278,170 +275,206 @@ function draw() {
 						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
 						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
 						context.closePath();
 						context.stroke();
 
-						var cInroadOffsetMult = 0.2;
-						var cInroadMult = 0.4;
-						var cInroadMin = 0.1;
-						var cInroadHeightMult = 0.25;
-						var cInroadHeightMinOne = 0.1;
-						var cInroadHeightMinTwo = 0.3;
+						if (highQualityGfx && map[x][y] !== FAKE_TILE) {
 
-						var increment;
-						var lineStart = {x:x, y:y};
-						var lineEnd = {x:x, y:y};
+							var cInroadOffsetMult = 0.2;
+							var cInroadMult = 0.3;
+							var cInroadMin = 0.2;
+							var cInroadHeightMult = 0.25;
+							var cInroadHeightMinOne = 0.1;
+							var cInroadHeightMinTwo = 0.3;
 
-						increment = random.random()*cInroadHeightMult+cInroadHeightMinOne;
-						if (random.random() > 0.5) {
-							context.beginPath();
-							context.moveTo((x-camera.x+random.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							context.lineTo((x-camera.x+random.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							context.closePath();
-							context.stroke();
-						}
+							var increment;
+							var lineStart = {x:x, y:y};
+							var lineEnd = {x:x, y:y};
 
-						increment += random.random()*cInroadHeightMult+cInroadHeightMinTwo;
-						if (random.random() > 0.5) {
-							context.beginPath();
-							context.moveTo((x-camera.x+random.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
-							context.lineTo((x-camera.x+random.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
-							context.closePath();
-							context.stroke();
-						}
+							var numInroadsToDraw = Math.ceil(random.random() *3)+1;
+							if (numInroadsToDraw === 0) {
+								debugger;
+							}
+							var inroadsToDraw = [1,2,3,4];
+							for (var i = 0 ; i < 4-numInroadsToDraw ; i++) {
+								inroadsToDraw.splice(Math.floor(random.random() *inroadsToDraw.length),1);
+							}
 
-						increment = random.random()*cInroadHeightMult+cInroadHeightMinOne;
-						if (random.random() > 0.5) {
-							context.beginPath();
-							context.moveTo((x-camera.x+1-random.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							context.lineTo((x-camera.x+1-random.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							context.closePath();
-							context.stroke();
-						}
+							increment = random.random()*cInroadHeightMult+cInroadHeightMinOne;
+							if (inroadsToDraw.indexOf(1) !== -1) {
+								context.beginPath();
+								context.moveTo((x-camera.x+random.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+								context.lineTo((x-camera.x+random.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+								context.closePath();
+								context.stroke();
+							}
 
-						increment += random.random()*cInroadHeightMult+cInroadHeightMinTwo;
-						if (random.random() > 0.5) {
-							context.beginPath();
-							context.moveTo((x-camera.x+1-random.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
-							context.lineTo((x-camera.x+1-random.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
-							context.closePath();
-							context.stroke();
+							increment += random.random()*cInroadHeightMult+cInroadHeightMinTwo;
+							if (inroadsToDraw.indexOf(2) !== -1) {
+								context.beginPath();
+								context.moveTo((x-camera.x+random.random()*cInroadOffsetMult)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+								context.lineTo((x-camera.x+random.random()*cInroadMult+cInroadMin)*tileSize+cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+								context.closePath();
+								context.stroke();
+							}
+
+							increment = random.random()*cInroadHeightMult+cInroadHeightMinOne;
+							if (inroadsToDraw.indexOf(3) !== -1) {
+								context.beginPath();
+								context.moveTo((x-camera.x+1-random.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+								context.lineTo((x-camera.x+1-random.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+								context.closePath();
+								context.stroke();
+							}
+
+							increment += random.random()*cInroadHeightMult+cInroadHeightMinTwo;
+							if (inroadsToDraw.indexOf(4) !== -1) {
+								context.beginPath();
+								context.moveTo((x-camera.x+1-random.random()*cInroadOffsetMult)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+								context.lineTo((x-camera.x+1-random.random()*cInroadMult-cInroadMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize-cBlockPadding);
+								context.closePath();
+								context.stroke();
+							}
 						}
 
 						break;
 					case CRUMBLE_TILE:
-						var increment;
+						context.strokeStyle = "#aa4400";
+						
 						if (mapExtra[x][y].crumbled) {
 							var cCrumbleDuration = 1000;
 							var crumbleAmount = (new Date() - mapExtra[x][y].crumbleTime)/cCrumbleDuration;
 							if (crumbleAmount > 1) {
 								break;
 							}
-							var cCrackWidthMult = 0.2-crumbleAmount*0.2;
-							var cCrackWidthMin = 0.05-crumbleAmount*0.05;
-							var cCrackOffsetMult = 0.3-crumbleAmount*0.3;
-							var cCrackOffsetMin = 0.1-crumbleAmount*0.1;
-							var cCrackDepthMult = 0.1;
-							var cCrackDepthMin = 0.05;
 							var actualBlockPadding = cBlockPadding;
 							cBlockPadding = crumbleAmount*tileSize/2;
+						}
+						if (highQualityGfx) {
+							var increment;
+							if (mapExtra[x][y].crumbled) {
+								var cCrackWidthMult = 0.2-crumbleAmount*0.2;
+								var cCrackWidthMin = 0.05-crumbleAmount*0.05;
+								var cCrackOffsetMult = 0.3-crumbleAmount*0.3;
+								var cCrackOffsetMin = 0.1-crumbleAmount*0.1;
+								var cCrackDepthMult = 0.1;
+								var cCrackDepthMin = 0.05;
+							} else {
+								var cCrackWidthMult = 0.2;
+								var cCrackWidthMin = 0.05;
+								var cCrackOffsetMult = 0.3;
+								var cCrackOffsetMin = 0.1;
+								var cCrackDepthMult = 0.1;
+								var cCrackDepthMin = 0.05;
+							}
+
+
+							context.beginPath();
+							context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+
+							//top
+							if (random.random()>0.5) {
+								increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
+								context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+							}
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+
+							// right
+							if (random.random()>0.5) {
+								increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
+								context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
+							}
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+
+							// bottom
+							if (random.random()>0.5) {
+								increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
+								context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							}
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+
+							//left
+							if (random.random()>0.5) {
+								increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
+								context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
+								increment += random.random()*cCrackWidthMult+cCrackWidthMin;
+								context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
+							}
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+
+							context.closePath();
+							context.stroke();
+
 						} else {
-							var cCrackWidthMult = 0.2;
-							var cCrackWidthMin = 0.05;
-							var cCrackOffsetMult = 0.3;
-							var cCrackOffsetMin = 0.1;
-							var cCrackDepthMult = 0.1;
-							var cCrackDepthMin = 0.05;
+							context.beginPath();
+
+							context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							context.closePath();
+							context.stroke();
 						}
-
-
-						context.strokeStyle = "#aa4400";
-						context.beginPath();
-						context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-
-						//top
-						if (random.random()>0.5) {
-							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
-							context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+increment)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-						}
-						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-
-						// right
-						if (random.random()>0.5) {
-							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
-							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+increment)*tileSize+cBlockPadding);
-						}
-						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-
-						// bottom
-						if (random.random()>0.5) {
-							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
-							context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1-random.random()*cCrackDepthMult-cCrackDepthMin)*tileSize-cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+1-increment)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-						}
-						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-
-						//left
-						if (random.random()>0.5) {
-							increment = cCrackOffsetMult*random.random()+cCrackOffsetMin;
-							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x+random.random()*cCrackDepthMult+cCrackDepthMin)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
-							increment += random.random()*cCrackWidthMult+cCrackWidthMin;
-							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-increment)*tileSize-cBlockPadding);
-						}
-						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-
-						context.closePath();
-						context.stroke();
-
 						if (actualBlockPadding) {
 							cBlockPadding = actualBlockPadding;
 						}
 					break;
 					case ICE_TILE:// ice tile
-						var cCornerOffsetMult = 0.1;
-						var cCornerOffsetMin = 0.1;
 
-						var incrementX, incrementY;
 						context.strokeStyle = "#00ffff";
-						context.beginPath();
+						if (highQualityGfx) {
+							var cCornerOffsetMult = 0.1;
+							var cCornerOffsetMin = 0.1;
 
-						//top
-						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.moveTo((x-camera.x+incrementX)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.lineTo((x-camera.x+1-incrementX)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
-						//right
-						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+incrementY)*tileSize+cBlockPadding);
-						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1-incrementY)*tileSize-cBlockPadding);
-						//bottom
-						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.lineTo((x-camera.x+1-incrementX)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-						incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.lineTo((x-camera.x+incrementX)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
-						//left
-						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-incrementY)*tileSize-cBlockPadding);
-						incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
-						context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+incrementY)*tileSize+cBlockPadding);
+							var incrementX, incrementY;
+							context.beginPath();
 
-						context.closePath();
-						context.stroke();
+							//top
+							incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.moveTo((x-camera.x+incrementX)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+							incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.lineTo((x-camera.x+1-incrementX)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+							//right
+							incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+incrementY)*tileSize+cBlockPadding);
+							incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1-incrementY)*tileSize-cBlockPadding);
+							//bottom
+							incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.lineTo((x-camera.x+1-incrementX)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							incrementX = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.lineTo((x-camera.x+incrementX)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							//left
+							incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1-incrementY)*tileSize-cBlockPadding);
+							incrementY = random.random()*cCornerOffsetMult+cCornerOffsetMin;
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+incrementY)*tileSize+cBlockPadding);
+
+							context.closePath();
+							context.stroke();
+						} else {
+							context.beginPath();
+							context.moveTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+1)*tileSize-cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x)*tileSize+cBlockPadding, (y-camera.y+1)*tileSize-cBlockPadding);
+							context.closePath();
+							context.stroke();
+						}
 
 						// gleam
 						var cLightAngle = 3*Math.PI/4;
@@ -457,62 +490,61 @@ function draw() {
 						context.closePath();
 						context.stroke();
 
-//                        context.beginPath();
-//                        var startX = random.random()*0.1+0.3;
-//                        var startY = random.random()*0.2+0.5;
-//                        var length = random.random()*0.2+0.3;
-//                        var endY = Math.cos(cLightAngle)*length + startY;
-//                        var endX = Math.sin(cLightAngle)*length + startX;
-//                        context.moveTo((x-camera.x+startX)*tileSize+cBlockPadding, (y-camera.y+startY)*tileSize+cBlockPadding);
-//                        context.lineTo((x-camera.x+endX)*tileSize+cBlockPadding, (y-camera.y+endY)*tileSize+cBlockPadding);
-//                        context.closePath();
-//                        context.stroke();
-
 					break;
 					case SPIKE_TILE:// spike tile
-						var cSpikeWidthMult = 0.05;
-						var cSpikeWidthMin = 0.08;
-						var cInnerSpikeWidthMin = 0.15;
-						var cSpikeHeightMult = 0.05;
-						var cSpikeHeightMin = 0.12;
+						context.strokeStyle = "#800000";
 						var cCornerInsetMin = 0.25;
 						var cCornerInsetMult = 0.05;
+						if (highQualityGfx) {
+							var cSpikeWidthMult = 0.05;
+							var cSpikeWidthMin = 0.08;
+							var cInnerSpikeWidthMin = 0.15;
+							var cSpikeHeightMult = 0.05;
+							var cSpikeHeightMin = 0.12;
 
-						var doSide = function(motion, start) {
-								start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cSpikeWidthMin);
-								start.x += motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
-								start.y -= motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
-								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
+							var doSide = function(motion, start) {
+									start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cSpikeWidthMin);
+									start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cSpikeWidthMin);
+									start.x += motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+									start.y -= motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+									context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
 
-								start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
-								start.x -= motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
-								start.y += motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
-								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
-								
-								start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
-								start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
-								start.x += motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
-								start.y -= motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
-								context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
-						};
-						context.strokeStyle = "#800000";
-						context.beginPath();
-						var point = {x:x+cCornerInsetMin+globalRandom.random()*cCornerInsetMult, y:y+cCornerInsetMin+globalRandom.random()*cCornerInsetMult};
-						context.moveTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
-						doSide({x:1, y:0}, point);
-						point = {x:x+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult), y:y+cCornerInsetMin+globalRandom.random()*cCornerInsetMult};
-						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
-						doSide({x:0, y:1}, point);
-						point = {x:x+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult), y:y+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult)};
-						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
-						doSide({x:-1, y:0}, point);
-						point = {x:x+cCornerInsetMin+globalRandom.random()*cCornerInsetMult, y:y+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult)};
-						context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
-						doSide({x:0, y:-1}, point);
-						context.closePath();
-						context.stroke();
+									start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+									start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+									start.x -= motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+									start.y += motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+									context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
+									
+									start.x += motion.x*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+									start.y += motion.y*(cSpikeWidthMult*globalRandom.random()+cInnerSpikeWidthMin);
+									start.x += motion.y*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+									start.y -= motion.x*(cSpikeHeightMult*globalRandom.random()+cSpikeHeightMin);
+									context.lineTo((start.x-camera.x)*tileSize, (start.y-camera.y)*tileSize);
+							};
+							context.beginPath();
+							var point = {x:x+cCornerInsetMin+globalRandom.random()*cCornerInsetMult, y:y+cCornerInsetMin+globalRandom.random()*cCornerInsetMult};
+							context.moveTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
+							doSide({x:1, y:0}, point);
+							point = {x:x+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult), y:y+cCornerInsetMin+globalRandom.random()*cCornerInsetMult};
+							context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
+							doSide({x:0, y:1}, point);
+							point = {x:x+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult), y:y+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult)};
+							context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
+							doSide({x:-1, y:0}, point);
+							point = {x:x+cCornerInsetMin+globalRandom.random()*cCornerInsetMult, y:y+(1-cCornerInsetMin+globalRandom.random()*cCornerInsetMult)};
+							context.lineTo((point.x-camera.x)*tileSize, (point.y-camera.y)*tileSize);
+							doSide({x:0, y:-1}, point);
+							context.closePath();
+							context.stroke();
+						} else {
+							context.beginPath();
+							context.moveTo((x-camera.x+globalRandom.random()*cCornerInsetMult)*tileSize+cBlockPadding, (y-camera.y+globalRandom.random()*cCornerInsetMult)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+1-globalRandom.random()*cCornerInsetMult)*tileSize-cBlockPadding, (y-camera.y+globalRandom.random()*cCornerInsetMult)*tileSize+cBlockPadding);
+							context.lineTo((x-camera.x+1-globalRandom.random()*cCornerInsetMult)*tileSize-cBlockPadding, (y-camera.y+1-globalRandom.random()*cCornerInsetMult)*tileSize-cBlockPadding);
+							context.lineTo((x-camera.x+globalRandom.random()*cCornerInsetMult)*tileSize+cBlockPadding, (y-camera.y+1-globalRandom.random()*cCornerInsetMult)*tileSize-cBlockPadding);
+							context.closePath();
+							context.stroke();
+						}
 					break;
 					case SPRING_TILE:
 

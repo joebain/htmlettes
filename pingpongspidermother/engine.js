@@ -2,7 +2,8 @@ var thisTime;
 var delta;
 var lastTime;
 var interval;
-var targetInterval = 33;
+var targetInterval = 16;
+var maxInterval = 33;
 var gameDuration;
 var canvas;
 var context;
@@ -12,51 +13,95 @@ var paused;
 
 var settings = {};
 
+var calculateFrameRate = true;
+var frameTimes = [];
+var frameTimesPointer = 0;
+var frameTimesSize = 10;
+var frameTimesTotal = 0;
+var frameRate = 0;
+
+var highQualityGfx = true;
+var frameStutterCount = 0;
+
 function _draw() {
-  if (draw) draw();
+	if (draw) draw();
+
+	if (calculateFrameRate) {
+		context.textAlign = "left";
+		context.font = "12pt monospace";
+		context.fillStyle = "#ffffff";
+		context.strokeStyle = "#000000";
+		context.fillText("FPS: " + frameRate.toFixed(2), 0,12);
+//        context.strokeText("FPS: " + frameRate.toFixed(2), 0, 0);
+	}
 }
 
 function pause() {
-  paused = true;
+	paused = true;
 }
 
 function _update(delta) {
-  if (paused) {
-    return;
-  }
-  gameDuration = (thisTime - firstTime)/1000;
-  if (update) update(delta);
+	if (paused) {
+		return;
+	}
+	gameDuration = (thisTime - firstTime)/1000;
+	if (delta > maxInterval) delta = maxInterval;
+	if (update) update(delta);
+
+	if (calculateFrameRate) {
+		frameTimesTotal -= frameTimes[frameTimesPointer];
+		frameTimes[frameTimesPointer] = delta;
+		frameTimesTotal += delta;
+		frameTimesPointer++;
+		frameTimesPointer %= frameTimesSize;
+		frameRate = 1000/(frameTimesTotal / frameTimesSize);
+
+		if (frameRate < (1000/targetInterval)*0.8) {
+			frameStutterCount += delta;
+		} else {
+			frameStutterCount = 0;
+		}
+		if (frameStutterCount > 1000) {
+			highQualityGfx = false;
+		}
+	}
 }
 
 function loop() {
-  thisTime = new Date().getTime();
-  delta = thisTime-lastTime;
-  _update(delta);
-  _draw();
-  lastTime = thisTime;
-  interval = targetInterval - (new Date().getTime() - thisTime);
-  interval = interval < 1 ? 1 : interval;
-  setTimeout(loop, interval);
+	thisTime = new Date().getTime();
+	delta = thisTime-lastTime;
+	_update(delta);
+	_draw();
+	lastTime = thisTime;
+	interval = targetInterval - (new Date().getTime() - thisTime);
+	interval = interval < 1 ? 1 : interval;
+	setTimeout(loop, interval);
 }
 
 function _init() {
-  canvas = document.getElementById("canvas");
-  screenSize.x = canvas.width;
-  screenSize.y = canvas.height;
-  context = canvas.getContext("2d");
-  window.onkeydown = keysdown;
-  window.onkeyup = keysup;
-  firstTime = new Date().getTime();
-  lastTime = new Date().getTime();
-  gameDuration = 0;
-  paused = false;
+	canvas = document.getElementById("canvas");
+	screenSize.x = canvas.width;
+	screenSize.y = canvas.height;
+	context = canvas.getContext("2d");
+	window.onkeydown = keysdown;
+	window.onkeyup = keysup;
+	firstTime = new Date().getTime();
+	lastTime = new Date().getTime();
+	gameDuration = 0;
+	paused = false;
 
-  loadSettings();
-  
-  setupSM();
+	loadSettings();
 
-  if (init) init();
-  loop();
+	setupSM();
+
+	console.log(frameTimesTotal);
+	for (var i = 0 ; i < frameTimesSize ; i++) {
+		frameTimes[i] = targetInterval;
+		frameTimesTotal += targetInterval;
+	}
+
+	if (init) init();
+	loop();
 }
 
 function setupSM() {
