@@ -13,7 +13,7 @@ var paused;
 
 var settings = {};
 
-var calculateFrameRate = false;
+var showFrameRate = false;
 var frameTimes = [];
 var frameTimesPointer = 0;
 var frameTimesSize = 10;
@@ -28,7 +28,7 @@ var isIE = (navigator.appName == "Microsoft Internet Explorer");
 function _draw() {
 	if (draw) draw();
 
-	if (calculateFrameRate) {
+	if (showFrameRate) {
 		context.textAlign = "left";
 		context.font = "12pt monospace";
 		context.fillStyle = "#ffffff";
@@ -50,34 +50,33 @@ function _update(delta) {
 	if (delta > maxInterval) delta = maxInterval;
 	if (update) update(delta);
 
-	if (calculateFrameRate) {
-		frameTimesTotal -= frameTimes[frameTimesPointer];
-		frameTimes[frameTimesPointer] = delta;
-		frameTimesTotal += delta;
-		frameTimesPointer++;
-		frameTimesPointer %= frameTimesSize;
-		frameRate = 1000/(frameTimesTotal / frameTimesSize);
+	frameTimesTotal -= frameTimes[frameTimesPointer];
+	frameTimes[frameTimesPointer] = delta;
+	frameTimesTotal += delta;
+	frameTimesPointer++;
+	frameTimesPointer %= frameTimesSize;
+	frameRate = 1000/(frameTimesTotal / frameTimesSize);
 
-		if (frameRate < (1000/targetInterval)*0.8) {
-			frameStutterCount += delta;
-		} else {
-			frameStutterCount = 0;
-		}
-		if (frameStutterCount > 1000) {
-			highQualityGfx = false;
-		}
+	if (frameRate < (1000/targetInterval)*0.8) {
+		frameStutterCount += delta;
+	} else {
+		frameStutterCount = 0;
+	}
+	if (frameStutterCount > 500) {
+		highQualityGfx = false;
 	}
 }
 
 var requestAnimationFrame =
 	window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
 	window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-var currentTime;
+var lastScheduledTime;
 function loop(scheduledTime) {
-	lastTime = currentTime;
-	currentTime = scheduledTime;
+	lastScheduledTime = scheduledTime;
 
+	lastTime = thisTime;
 	thisTime = getTime();
+
 	delta = thisTime-lastTime;
 	_update(delta);
 	_draw();
@@ -92,8 +91,8 @@ function loop(scheduledTime) {
 }
 
 function getTime() {
-	if (currentTime) {
-		return currentTime;
+	if (lastScheduledTime) {
+		return lastScheduledTime;
 	} else {
 		return new Date().getTime();
 	}
@@ -193,7 +192,7 @@ function keysup(e) {
   keys[e.keyCode] = false;
 
   if (e.keyCode === key_f && keys[key_shift]) {
-	  calculateFrameRate = !calculateFrameRate;
+	  showFrameRate = !showFrameRate;
   }
   if (e.keyCode === key_s && keys[key_shift]) {
 	  toggleSound();
