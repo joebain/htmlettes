@@ -23,6 +23,8 @@ var frameRate = 0;
 var highQualityGfx = true;
 var frameStutterCount = 0;
 
+var isIE = (navigator.appName == "Microsoft Internet Explorer");
+
 function _draw() {
 	if (draw) draw();
 
@@ -67,15 +69,34 @@ function _update(delta) {
 	}
 }
 
-function loop() {
-	thisTime = new Date().getTime();
+var requestAnimationFrame =
+	window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
+	window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+var currentTime;
+function loop(scheduledTime) {
+	lastTime = currentTime;
+	currentTime = scheduledTime;
+
+	thisTime = getTime();
 	delta = thisTime-lastTime;
 	_update(delta);
 	_draw();
-	lastTime = thisTime;
-	interval = targetInterval - (new Date().getTime() - thisTime);
-	interval = interval < 1 ? 1 : interval;
-	setTimeout(loop, interval);
+	if (requestAnimationFrame) {
+		requestAnimationFrame(loop, canvas);
+	} else {
+		lastTime = thisTime;
+		interval = targetInterval - (lastTime - thisTime);
+		interval = interval < 1 ? 1 : interval;
+		setTimeout(loop, interval);
+	}
+}
+
+function getTime() {
+	if (currentTime) {
+		return currentTime;
+	} else {
+		return new Date().getTime();
+	}
 }
 
 function _init() {
@@ -181,6 +202,10 @@ function keysup(e) {
 
 function keysdown(e) {
   keys[e.keyCode] = true;
+  if (e.keyCode === key_up || e.keyCode === key_down || e.keyCode === key_space) {
+	  e.preventDefault();
+	  return false;
+  }
 }
 
 // drawing
