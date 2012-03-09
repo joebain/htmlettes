@@ -2,8 +2,8 @@ var thisTime;
 var delta;
 var lastTime;
 var interval;
-var targetInterval = 16;
-var maxInterval = 33;
+var targetInterval = 33;
+var maxInterval = 60;
 var gameDuration;
 var canvas;
 var context;
@@ -13,7 +13,8 @@ var paused;
 
 var settings = {};
 
-var calculateFrameRate = false;
+var calculateFrameRate = true;
+var showFrameRate = false;
 var frameTimes = [];
 var frameTimesPointer = 0;
 var frameTimesSize = 10;
@@ -26,7 +27,7 @@ var frameStutterCount = 0;
 function _draw() {
 	if (draw) draw();
 
-	if (calculateFrameRate) {
+	if (showFrameRate) {
 		context.textAlign = "left";
 		context.font = "12pt monospace";
 		context.fillStyle = "#ffffff";
@@ -44,6 +45,7 @@ function _update(delta) {
 	if (paused) {
 		return;
 	}
+
 	gameDuration = (thisTime - firstTime)/1000;
 	if (delta > maxInterval) delta = maxInterval;
 	if (update) update(delta);
@@ -171,8 +173,9 @@ function soundError() {
 function keysup(e) {
   keys[e.keyCode] = false;
 
+
   if (e.keyCode === key_f && keys[key_shift]) {
-	  calculateFrameRate = !calculateFrameRate;
+	  showFrameRate = !showFrameRate;
   }
   if (e.keyCode === key_s && keys[key_shift]) {
 	  toggleSound();
@@ -180,7 +183,18 @@ function keysup(e) {
 }
 
 function keysdown(e) {
-  keys[e.keyCode] = true;
+	keys[e.keyCode] = true;
+
+	switch (e.keyCode) {
+	case key_up:
+	case key_down:
+	case key_left:
+	case key_right:
+	case key_space:
+		e.preventDefault();
+		return false;
+		break;
+	}
 }
 
 // drawing

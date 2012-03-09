@@ -223,7 +223,11 @@ function draw() {
 
 		context.font = "60pt cuteline";
 		if (levelIsGold(currentLevel)) {
-			context.fillStyle = "#efe327";
+			var goldGrad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
+			goldGrad.addColorStop(0.8, "#efe327");
+			goldGrad.addColorStop(1, "#ffffff");
+			context.fillStyle = goldGrad;
+//            context.fillStyle = "#efe327";
 		} else {
 //            context.fillStyle = "#ffffff";
 //            context.fillStyle = grad;
@@ -261,8 +265,8 @@ function draw() {
 		context.closePath();
 		context.fill();
 
-		context.font = "40pt cuteline";
-		context.fillText("press space", screenSize.x/2, screenSize.y/2+200);
+		context.font = "36pt ostrich-regular";
+		context.fillText("press space", screenSize.x/2, screenSize.y/2+230);
 	} else if (gameState === PLAYING || gameState === LEVEL_LOST || gameState === LEVEL_WON) {
 
 		// draw the world
@@ -928,7 +932,8 @@ function update(delta) {
 					mother.wasMoving = {x:0, y:0};
 				}
 			}
-		} else {
+		}
+		if (mother.moving === undefined) {
 			var x = Math.floor(mother.x/tileSize);
 			var y = Math.floor(mother.y/tileSize);
 			if (blockIsEmpty(x, y+1) &&
@@ -940,129 +945,160 @@ function update(delta) {
 				mother.aim = {x:mother.x, y:mother.y+tileSize};
 				mother.hasMomentum = true;
 				fallSound.play();
-			} else 
+			} else {
 				mother.hasMomentum = false;
-				if (map[x][y+1] === SPRING_TILE) {
-					mother.moving = {x:0, y:-1};
-					mother.aim = {x:mother.x, y:mother.y-tileSize};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x][y+1].springX = 0;
-					mapExtra[x][y+1].springY = -1;
-					mapExtra[x][y+1].springTime = new Date();
-				}
-				else if (map[x][y-1] === SPRING_TILE) {
-					mother.moving = {x:0, y:+1};
-					mother.aim = {x:mother.x, y:mother.y+tileSize};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x][y-1].springX = 0;
-					mapExtra[x][y-1].springY = 1;
-					mapExtra[x][y-1].springTime = new Date();
-				}
-				else if (map[x+1][y] === SPRING_TILE) {
-					mother.moving = {x:-1, y:0};
-					mother.aim = {x:mother.x-tileSize, y:mother.y};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x+1][y].springX = -1;
-					mapExtra[x+1][y].springY = 0;
-					mapExtra[x+1][y].springTime = new Date();
-				}
-				else if (map[x-1][y] === SPRING_TILE) {
-					mother.moving = {x:1, y:0};
-					mother.aim = {x:mother.x+tileSize, y:mother.y};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x-1][y].springX = 1;
-					mapExtra[x-1][y].springY = 0;
-					mapExtra[x-1][y].springTime = new Date();
-				}
-			else {
-				if (!moveKeyedAt) {
-					desiredMove = {x:0, y:0};
-				}
-				if (!mother.moving) {
-					if (keys[key_right]) {
-						if (!moveKeyedAt) moveKeyedAt = new Date();
-						desiredMove.x += 1;
-						if (blockIsNotSlippery(x,y+1)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						} else if (blockIsNotSlippery(x,y-1)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						}
-					}
-					if (keys[key_left]) {
-						if (!moveKeyedAt) moveKeyedAt = new Date();
-						desiredMove.x -= 1;
-						if (blockIsNotSlippery(x,y+1)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						} else if (blockIsNotSlippery(x,y-1)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						}
-					}
-					if (keys[key_down]) {
-						if (!moveKeyedAt) moveKeyedAt = new Date();
-						desiredMove.y += 1;
-						if (blockIsNotSlippery(x+1,y)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						} else if (blockIsNotSlippery(x-1,y)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						}
-					}
-					if (keys[key_up]) {
-						if (!moveKeyedAt) moveKeyedAt = new Date();
-						desiredMove.y -= 1;
-						if (blockIsNotSlippery(x+1,y)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						} else if (blockIsNotSlippery(x-1,y)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						}
-					}
-					if (desiredMove.x > 1) desiredMove.x = 1;
-					if (desiredMove.x < -1) desiredMove.x = -1;
-					if (desiredMove.y > 1) desiredMove.y = 1;
-					if (desiredMove.y < -1) desiredMove.y = -1;
-				}
-				if (desiredMove.x !== 0 || desiredMove.y !== 0) {
-					if (moveKeyedAt && new Date() - moveKeyedAt > cWaitForMoveTime) {
-						moveKeyedAt = undefined;
-						if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
-							mother.moving = desiredMove;
-							mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
-							walkSound.play();
+			}
+			if (map[x][y+1] === SPRING_TILE) {
+				mother.moving = {x:0, y:-1};
+				mother.aim = {x:mother.x, y:mother.y-tileSize};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x][y+1].springX = 0;
+				mapExtra[x][y+1].springY = -1;
+				mapExtra[x][y+1].springTime = new Date();
+			}
+			else if (map[x][y-1] === SPRING_TILE) {
+				mother.moving = {x:0, y:+1};
+				mother.aim = {x:mother.x, y:mother.y+tileSize};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x][y-1].springX = 0;
+				mapExtra[x][y-1].springY = 1;
+				mapExtra[x][y-1].springTime = new Date();
+			}
+			else if (map[x+1][y] === SPRING_TILE) {
+				mother.moving = {x:-1, y:0};
+				mother.aim = {x:mother.x-tileSize, y:mother.y};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x+1][y].springX = -1;
+				mapExtra[x+1][y].springY = 0;
+				mapExtra[x+1][y].springTime = new Date();
+			}
+			else if (map[x-1][y] === SPRING_TILE) {
+				mother.moving = {x:1, y:0};
+				mother.aim = {x:mother.x+tileSize, y:mother.y};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x-1][y].springX = 1;
+				mapExtra[x-1][y].springY = 0;
+				mapExtra[x-1][y].springTime = new Date();
+			}
+		}
 
-							var crumbleTile = function(x,y) {
-								if (!mapExtra[x][y].crumbled) {
-									mapExtra[x][y].crumbled = true;
-									mapExtra[x][y].crumbleTime = new Date();
-								}
-							};
-							// check for leaving crumble tiles
-							if (mother.moving.y !== 0) {
-								if (map[x][y-mother.moving.y] === CRUMBLE_TILE) {
-									crumbleTile(x, y-mother.moving.y);
-								}
-							} else {
-								if (map[x][y+1] === CRUMBLE_TILE) {
-									crumbleTile(x, y+1);
-								}
-								if (map[x][y-1] === CRUMBLE_TILE) {
-									crumbleTile(x, y-1);
-								}
-							}
-							if (mother.moving.x !== 0) {
-								if (map[x-mother.moving.x][y] === CRUMBLE_TILE) {
-									crumbleTile(x-mother.moving.x, y);
-								}
-							} else {
-								if (map[x+1][y] === CRUMBLE_TILE) {
-									crumbleTile(x+1, y);
-								}
-								if (map[x-1][y] === CRUMBLE_TILE) {
-									crumbleTile(x-1, y);
-								}
-							}
+		// repsond to keypresses
+		var moveRightNow = {x:0, y:0};
+		if (!moveKeyedAt) {
+			desiredMove = {x:0, y:0};
+		}
+		if (keys[key_right]) {
+			if (!moveKeyedAt) moveKeyedAt = new Date();
+			desiredMove.x += 1;
+			moveRightNow.x = 1;
+		}
+		if (keys[key_left]) {
+			if (!moveKeyedAt) moveKeyedAt = new Date();
+			desiredMove.x -= 1;
+			moveRightNow.x = -1;
+		}
+		if (keys[key_down]) {
+			if (!moveKeyedAt) moveKeyedAt = new Date();
+			desiredMove.y += 1;
+			moveRightNow.y = 1;
+		}
+		if (keys[key_up]) {
+			if (!moveKeyedAt) moveKeyedAt = new Date();
+			desiredMove.y -= 1;
+			moveRightNow.y = -1;
+		}
+		if (desiredMove.x > 1) desiredMove.x = 1;
+		if (desiredMove.x < -1) desiredMove.x = -1;
+		if (desiredMove.y > 1) desiredMove.y = 1;
+		if (desiredMove.y < -1) desiredMove.y = -1;
+		if (moveRightNow.x === 0) {
+			desiredMove.x = 0;
+		}
+		if (moveRightNow.y === 0) {
+			desiredMove.y = 0;
+		}
+		console.log("d: " + desiredMove.x + "," + desiredMove.y + "  n: " + moveRightNow.x + "," + moveRightNow.y);
+		if ((moveRightNow.x === desiredMove.x && moveRightNow.y === desiredMove.y) && (desiredMove.x !== 0 || desiredMove.y !== 0) && mother.moving === undefined) {
+			if (moveKeyedAt && new Date() - moveKeyedAt > cWaitForMoveTime) {
+				moveKeyedAt = undefined;
+				var makeMove = false;
+				if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
+					makeMove = true;
+				} else if (blockIsEmpty(x, y+desiredMove.y)) {
+					desiredMove.x = 0;
+					makeMove = true;
+				} else if (blockIsEmpty(x+desiredMove.x, y)) {
+					desiredMove.y = 0;
+					makeMove = true;
+				}
+				if (makeMove) {
+					mother.moving = desiredMove;
+					mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
+
+					if (desiredMove.x > 0) {
+						if (blockIsNotSlippery(x,y+1)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						} else if (blockIsNotSlippery(x,y-1)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
+						}
+					} else if (desiredMove.x < 0) {
+						if (blockIsNotSlippery(x,y+1)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
+						} else if (blockIsNotSlippery(x,y-1)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						}
+					} else if (desiredMove.y > 0) {
+						if (blockIsNotSlippery(x+1,y)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
+						} else if (blockIsNotSlippery(x-1,y)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						}
+					} else if (desiredMove.y < 0) {
+						if (blockIsNotSlippery(x+1,y)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						} else if (blockIsNotSlippery(x-1,y)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
+						}
+					}
+
+
+					if (settings.sound) {
+						walkSound.play();
+					}
+
+					var crumbleTile = function(x,y) {
+						if (!mapExtra[x][y].crumbled) {
+							mapExtra[x][y].crumbled = true;
+							mapExtra[x][y].crumbleTime = new Date();
+						}
+					};
+					// check for leaving crumble tiles
+					if (mother.moving.y !== 0) {
+						if (map[x][y-mother.moving.y] === CRUMBLE_TILE) {
+							crumbleTile(x, y-mother.moving.y);
+						}
+					} else {
+						if (map[x][y+1] === CRUMBLE_TILE) {
+							crumbleTile(x, y+1);
+						}
+						if (map[x][y-1] === CRUMBLE_TILE) {
+							crumbleTile(x, y-1);
+						}
+					}
+					if (mother.moving.x !== 0) {
+						if (map[x-mother.moving.x][y] === CRUMBLE_TILE) {
+							crumbleTile(x-mother.moving.x, y);
+						}
+					} else {
+						if (map[x+1][y] === CRUMBLE_TILE) {
+							crumbleTile(x+1, y);
+						}
+						if (map[x-1][y] === CRUMBLE_TILE) {
+							crumbleTile(x-1, y);
 						}
 					}
 				}
