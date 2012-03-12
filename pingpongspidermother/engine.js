@@ -1,6 +1,6 @@
-var thisTime;
+var thisTime = getTime();
 var delta;
-var lastTime;
+var lastTime = getTime();
 var interval;
 var targetInterval = 16;
 var maxInterval = 33;
