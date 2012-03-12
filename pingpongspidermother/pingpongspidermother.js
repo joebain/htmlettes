@@ -42,8 +42,8 @@ var currentLevel = 1;
 var lastLevel = 11;
 var highestLevelUnlocked = 1;
 
-var stateChangeTime = new Date();
-var lastKeyPressTime = new Date();
+var stateChangeTime = getTime();
+var lastKeyPressTime = getTime();
 
 var walkSound;
 var fallSound;
@@ -159,7 +159,7 @@ function loadLevel(levelNumber) {
 		}
 
 		gameState = PLAYING;
-		stateChangeTime = new Date();
+		stateChangeTime = getTime();
 	});
 }
 
@@ -182,11 +182,13 @@ function draw() {
 	if (spotlightPos.y < 0 || spotlightPos.y > screenSize.y) spotlightPos.vY *= -1;
 	spotlightPos.x += spotlightPos.vX/10;
 	spotlightPos.y += spotlightPos.vY/10;
-	var grad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
-	grad.addColorStop(0, "#000000");
-	grad.addColorStop(1, "#222222");
-	context.fillStyle = grad;
-	context.fillRect(0,0,screenSize.x, screenSize.y);
+	if (!isIE && highQualityGfx) {
+		var grad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
+		grad.addColorStop(0, "#000000");
+		grad.addColorStop(1, "#222222");
+		context.fillStyle = grad;
+		context.fillRect(0,0,screenSize.x, screenSize.y);
+	}
 
 
 	if (gameState === LOADING) return;
@@ -214,10 +216,12 @@ function draw() {
 		context.font = "80pt cuteline";
 		context.textAlign = "center";
 		context.fillStyle = "#ffffff";
-		var grad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
-		grad.addColorStop(0.6, "#ffffff");
-		grad.addColorStop(1, "#efe327");
-		context.fillStyle = grad;
+		if (!isIE && highQualityGfx) {
+			var grad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
+			grad.addColorStop(0.6, "#ffffff");
+			grad.addColorStop(1, "#efe327");
+			context.fillStyle = grad;
+		}
 		context.fillText("Ping-Pong", screenSize.x/2, screenSize.y/2 - 200);
 		context.fillText("Spider Mother", screenSize.x/2, screenSize.y/2 -70);
 
@@ -229,15 +233,21 @@ function draw() {
 			context.fillStyle = goldGrad;
 //            context.fillStyle = "#efe327";
 		} else {
-//            context.fillStyle = "#ffffff";
-//            context.fillStyle = grad;
+			if (!isIE && highQualityGfx) {
+				context.fillStyle = grad;
+			} else {
+				context.fillStyle = "#ffffff";
+			}
 		}
 		context.fillText("Level " + currentLevel, screenSize.x/2, screenSize.y/2+100);
 
-//        context.strokeStyle = "#ffffff";
-//        context.fillStyle = "#ffffff";
-		context.strokeStyle = grad;
-		context.fillStyle = grad;
+		if (!isIE && highQualityGfx) {
+			context.strokeStyle = grad;
+			context.fillStyle = grad;
+		} else {
+			context.strokeStyle = "#ffffff";
+			context.fillStyle = "#ffffff";
+		}
 		context.lineWidth = 1.5;
 		context.beginPath();
 		context.moveTo(screenSize.x/2-250, screenSize.y/2+75);
@@ -358,7 +368,7 @@ function draw() {
 						
 						if (mapExtra[x][y].crumbled) {
 							var cCrumbleDuration = 1000;
-							var crumbleAmount = (new Date() - mapExtra[x][y].crumbleTime)/cCrumbleDuration;
+							var crumbleAmount = (getTime() - mapExtra[x][y].crumbleTime)/cCrumbleDuration;
 							if (crumbleAmount > 1) {
 								break;
 							}
@@ -572,7 +582,7 @@ function draw() {
 
 						var extendX = 0, extendY = 0;
 						if (mapExtra[x][y].springTime) {
-							var extend = (new Date() - mapExtra[x][y].springTime); 
+							var extend = (getTime() - mapExtra[x][y].springTime); 
 							if (extend > cExtendDuration*(cExtendRetractMult+1+cExtendWaitMult)) {
 								mapExtra[x][y].springTime = undefined;
 								mapExtra[x][y].springX = undefined;
@@ -755,39 +765,39 @@ function blockIsNotSlippery(x,y) {
 }
 
 function update(delta) {
-	Math.seedrandom(new Date().getMilliseconds());
+	Math.seedrandom(getTime());//.getMilliseconds());
 	if (gameState === LOADING) return;
 
 	if (gameState === LOADED) {
-		if (keys[key_space] && new Date() - stateChangeTime > 200) {
+		if (keys[key_space] && getTime() - stateChangeTime > 200) {
 			gameState = PLAYING;
-			stateChangeTime = new Date();
+			stateChangeTime = getTime();
 		}
 	} else if (gameState === LEVEL_LOST) {
-		if (new Date() - stateChangeTime > 2000) {
+		if (getTime() - stateChangeTime > 2000) {
 			loadLevel(currentLevel);
 		}
 	} else if (gameState === GAME_WON) {
-		if (keys[key_space] && new Date() - stateChangeTime > 200) {
+		if (keys[key_space] && getTime() - stateChangeTime > 200) {
 			gameState = TITLE_SCREEN;
 		}
 	} else if (gameState === TITLE_SCREEN) {
-		if (keys[key_space] && new Date() - stateChangeTime > 200) {
+		if (keys[key_space] && getTime() - stateChangeTime > 200) {
 			loadLevel(currentLevel);
-		} else if (new Date() - lastKeyPressTime > 200) {
+		} else if (getTime() - lastKeyPressTime > 200) {
 			if (keys[key_right]) {
 				currentLevel ++;
 				currentLevel -= 1;
 				currentLevel %= highestLevelUnlocked;
 				currentLevel += 1;
-				lastKeyPressTime = new Date();
+				lastKeyPressTime = getTime();
 			} else if (keys[key_left]) {
 				currentLevel --;
 				currentLevel += highestLevelUnlocked;
 				currentLevel -= 1;
 				currentLevel %= highestLevelUnlocked;
 				currentLevel += 1;
-				lastKeyPressTime = new Date();
+				lastKeyPressTime = getTime();
 			}
 		}
 	} else if (gameState === PLAYING) {
@@ -834,7 +844,7 @@ function update(delta) {
 				}
 				if ((gotGolden && babiesRescued === babies.length) || (!gotGolden && babiesRescued === babies.length-1)) {
 					gameState = LEVEL_WON;
-					stateChangeTime = new Date();
+					stateChangeTime = getTime();
 					nestSound.play();
 				}
 			}
@@ -845,7 +855,7 @@ function update(delta) {
 		var y = Math.floor(mother.y/tileSize);
 		if (map[x][y] === SPIKE_TILE) {
 			gameState = LEVEL_LOST;
-			stateChangeTime = new Date();
+			stateChangeTime = getTime();
 			deathSound.play();
 			return;
 		}
@@ -1139,7 +1149,7 @@ function update(delta) {
 	}
 
 	if (gameState === LEVEL_WON) {
-		if (new Date() - stateChangeTime > 2000) {
+		if (getTime() - stateChangeTime > 2000) {
 			if (currentLevel < lastLevel) {
 				currentLevel = currentLevel+1;
 				gameState = TITLE_SCREEN;

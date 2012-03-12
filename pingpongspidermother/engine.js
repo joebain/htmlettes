@@ -2,8 +2,8 @@ var thisTime;
 var delta;
 var lastTime;
 var interval;
-var targetInterval = 33;
-var maxInterval = 60;
+var targetInterval = 16;
+var maxInterval = 33;
 var gameDuration;
 var canvas;
 var context;
@@ -23,6 +23,8 @@ var frameRate = 0;
 
 var highQualityGfx = true;
 var frameStutterCount = 0;
+
+var isIE = (navigator.appName == "Microsoft Internet Explorer");
 
 function _draw() {
 	if (draw) draw();
@@ -50,34 +52,52 @@ function _update(delta) {
 	if (delta > maxInterval) delta = maxInterval;
 	if (update) update(delta);
 
-	if (calculateFrameRate) {
-		frameTimesTotal -= frameTimes[frameTimesPointer];
-		frameTimes[frameTimesPointer] = delta;
-		frameTimesTotal += delta;
-		frameTimesPointer++;
-		frameTimesPointer %= frameTimesSize;
-		frameRate = 1000/(frameTimesTotal / frameTimesSize);
+	frameTimesTotal -= frameTimes[frameTimesPointer];
+	frameTimes[frameTimesPointer] = delta;
+	frameTimesTotal += delta;
+	frameTimesPointer++;
+	frameTimesPointer %= frameTimesSize;
+	frameRate = 1000/(frameTimesTotal / frameTimesSize);
 
-		if (frameRate < (1000/targetInterval)*0.8) {
-			frameStutterCount += delta;
-		} else {
-			frameStutterCount = 0;
-		}
-		if (frameStutterCount > 1000) {
-			highQualityGfx = false;
-		}
+	if (frameRate < (1000/targetInterval)*0.8) {
+		frameStutterCount += delta;
+	} else {
+		frameStutterCount = 0;
+	}
+	if (frameStutterCount > 500) {
+		highQualityGfx = false;
 	}
 }
 
-function loop() {
-	thisTime = new Date().getTime();
+var requestAnimationFrame =
+	window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
+	window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+var lastScheduledTime;
+function loop(scheduledTime) {
+	lastScheduledTime = scheduledTime;
+
+	lastTime = thisTime;
+	thisTime = getTime();
+
 	delta = thisTime-lastTime;
 	_update(delta);
 	_draw();
-	lastTime = thisTime;
-	interval = targetInterval - (new Date().getTime() - thisTime);
-	interval = interval < 1 ? 1 : interval;
-	setTimeout(loop, interval);
+	if (requestAnimationFrame) {
+		requestAnimationFrame(loop, canvas);
+	} else {
+		lastTime = thisTime;
+		interval = targetInterval - (lastTime - thisTime);
+		interval = interval < 1 ? 1 : interval;
+		setTimeout(loop, interval);
+	}
+}
+
+function getTime() {
+	if (lastScheduledTime) {
+		return lastScheduledTime;
+	} else {
+		return new Date().getTime();
+	}
 }
 
 function _init() {
