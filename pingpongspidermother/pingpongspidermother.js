@@ -761,7 +761,7 @@ function blockIsEmpty(x,y) {
 }
 
 function blockIsNotSlippery(x,y) {
-	return map[x][y] === SOLID_TILE || map[x][y] === CRUMBLE_TILE || map[x][y] === INVISIBLE_TILE;
+	return map[x][y] === SOLID_TILE || (map[x][y] === CRUMBLE_TILE && !mapExtra[x][y].crumbled) || map[x][y] === INVISIBLE_TILE;
 }
 
 function update(delta) {
@@ -965,7 +965,7 @@ function update(delta) {
 				springSound.play();
 				mapExtra[x][y+1].springX = 0;
 				mapExtra[x][y+1].springY = -1;
-				mapExtra[x][y+1].springTime = new Date();
+				mapExtra[x][y+1].springTime = getTime();
 			}
 			else if (map[x][y-1] === SPRING_TILE) {
 				mother.moving = {x:0, y:+1};
@@ -974,7 +974,7 @@ function update(delta) {
 				springSound.play();
 				mapExtra[x][y-1].springX = 0;
 				mapExtra[x][y-1].springY = 1;
-				mapExtra[x][y-1].springTime = new Date();
+				mapExtra[x][y-1].springTime = getTime();
 			}
 			else if (map[x+1][y] === SPRING_TILE) {
 				mother.moving = {x:-1, y:0};
@@ -983,7 +983,7 @@ function update(delta) {
 				springSound.play();
 				mapExtra[x+1][y].springX = -1;
 				mapExtra[x+1][y].springY = 0;
-				mapExtra[x+1][y].springTime = new Date();
+				mapExtra[x+1][y].springTime = getTime();
 			}
 			else if (map[x-1][y] === SPRING_TILE) {
 				mother.moving = {x:1, y:0};
@@ -992,7 +992,7 @@ function update(delta) {
 				springSound.play();
 				mapExtra[x-1][y].springX = 1;
 				mapExtra[x-1][y].springY = 0;
-				mapExtra[x-1][y].springTime = new Date();
+				mapExtra[x-1][y].springTime = getTime();
 			}
 		}
 
@@ -1002,22 +1002,22 @@ function update(delta) {
 			desiredMove = {x:0, y:0};
 		}
 		if (keys[key_right]) {
-			if (!moveKeyedAt) moveKeyedAt = new Date();
+			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.x += 1;
 			moveRightNow.x = 1;
 		}
 		if (keys[key_left]) {
-			if (!moveKeyedAt) moveKeyedAt = new Date();
+			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.x -= 1;
 			moveRightNow.x = -1;
 		}
 		if (keys[key_down]) {
-			if (!moveKeyedAt) moveKeyedAt = new Date();
+			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.y += 1;
 			moveRightNow.y = 1;
 		}
 		if (keys[key_up]) {
-			if (!moveKeyedAt) moveKeyedAt = new Date();
+			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.y -= 1;
 			moveRightNow.y = -1;
 		}
@@ -1031,9 +1031,11 @@ function update(delta) {
 		if (moveRightNow.y === 0) {
 			desiredMove.y = 0;
 		}
-		console.log("d: " + desiredMove.x + "," + desiredMove.y + "  n: " + moveRightNow.x + "," + moveRightNow.y);
+		if (moveRightNow.y === 0 && moveRightNow.x === 0) {
+			moveKeyedAt = undefined;
+		}
 		if ((moveRightNow.x === desiredMove.x && moveRightNow.y === desiredMove.y) && (desiredMove.x !== 0 || desiredMove.y !== 0) && mother.moving === undefined) {
-			if (moveKeyedAt && new Date() - moveKeyedAt > cWaitForMoveTime) {
+			if (moveKeyedAt && getTime() - moveKeyedAt > cWaitForMoveTime) {
 				moveKeyedAt = undefined;
 				var makeMove = false;
 				if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
@@ -1045,7 +1047,7 @@ function update(delta) {
 					desiredMove.y = 0;
 					makeMove = true;
 				}
-				if (makeMove) {
+				if ((desiredMove.x !== 0 || desiredMove.y !== 0) && makeMove) {
 					mother.moving = desiredMove;
 					mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
 
@@ -1083,34 +1085,34 @@ function update(delta) {
 					var crumbleTile = function(x,y) {
 						if (!mapExtra[x][y].crumbled) {
 							mapExtra[x][y].crumbled = true;
-							mapExtra[x][y].crumbleTime = new Date();
+							mapExtra[x][y].crumbleTime = getTime();
 						}
 					};
 					// check for leaving crumble tiles
-					if (mother.moving.y !== 0) {
-						if (map[x][y-mother.moving.y] === CRUMBLE_TILE) {
-							crumbleTile(x, y-mother.moving.y);
-						}
-					} else {
+//                    if (mother.moving.y !== 0) {
+//                        if (map[x][y-mother.moving.y] === CRUMBLE_TILE) {
+//                            crumbleTile(x, y-mother.moving.y);
+//                        }
+//                    } else {
 						if (map[x][y+1] === CRUMBLE_TILE) {
 							crumbleTile(x, y+1);
 						}
 						if (map[x][y-1] === CRUMBLE_TILE) {
 							crumbleTile(x, y-1);
 						}
-					}
-					if (mother.moving.x !== 0) {
-						if (map[x-mother.moving.x][y] === CRUMBLE_TILE) {
-							crumbleTile(x-mother.moving.x, y);
-						}
-					} else {
+//                    }
+//                    if (mother.moving.x !== 0) {
+//                        if (map[x-mother.moving.x][y] === CRUMBLE_TILE) {
+//                            crumbleTile(x-mother.moving.x, y);
+//                        }
+//                    } else {
 						if (map[x+1][y] === CRUMBLE_TILE) {
 							crumbleTile(x+1, y);
 						}
 						if (map[x-1][y] === CRUMBLE_TILE) {
 							crumbleTile(x-1, y);
 						}
-					}
+//                    }
 				}
 			}
 		}
