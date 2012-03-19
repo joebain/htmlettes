@@ -12,6 +12,7 @@ var mother = {x:0, y:0, speed:0.004, rotation:0, aimRotation:0,
 var babies = [];
 
 var tentacleSnap = 400;
+var buttonWidth = 70;
 
 var camera = {x:0, y:0};
 
@@ -51,6 +52,7 @@ var babySound;
 var nestSound;
 var deathSound;
 var themeMusic;
+var themeIntro;
 
 var cBlockPadding = 2;
 
@@ -72,10 +74,13 @@ function init() {
 
 	spotlightPos.x = screenSize.x/2;
 	spotlightPos.y = screenSize.y/2;
+
+	buttonWidth = this.screenSize.y / 6;
 }
 
 function initSounds() {
-	themeMusic = soundManager.createSound({id:"theme", url:"adam adamant - brogues.mp3", loops:10000, autoLoad:true, onload: function(){themeMusic.play();}});
+	themeIntro = soundManager.createSound({id:"intro", url:"brogues-intro.mp3", autoLoad:true, onfinish: playMainTheme});
+	themeMusic = soundManager.createSound({id:"theme", url:"brogues-main.mp3", loops:10000, autoLoad:true, onload: playIntro});
 
 	walkSound = makeSFX("walk.mp3");
 	fallSound = makeSFX("fall.mp3");
@@ -83,6 +88,14 @@ function initSounds() {
 	nestSound = makeSFX("nest.mp3");
 	deathSound = makeSFX("death.mp3");
 	springSound = makeSFX("spring.mp3");
+}
+
+function playMainTheme() {
+	themeMusic.play();
+}
+
+function playIntro() {
+	themeIntro.play();
 }
 
 function loadLevel(levelNumber) {
@@ -699,6 +712,176 @@ function draw() {
 		context.closePath();
 		context.stroke();
 
+		// draw touch controls
+		if (isMobile) {
+			context.strokeStyle = "#ffffff";
+			context.fillStyle = "#ffffff";
+
+			// top right
+			context.beginPath();
+			context.moveTo(screenSize.x-buttonWidth*2, 0);
+			context.lineTo(screenSize.x-buttonWidth*2, buttonWidth);
+			context.bezierCurveTo(screenSize.x-buttonWidth*1.5, buttonWidth ,screenSize.x-buttonWidth, buttonWidth*1.5 ,screenSize.x-buttonWidth, buttonWidth*2);
+			context.lineTo(screenSize.x, buttonWidth*2);
+			context.lineTo(screenSize.x, 0);
+			context.lineTo(screenSize.x-buttonWidth*2, 0);
+
+			context.moveTo(screenSize.x-buttonWidth*0.5, buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*1.5, buttonWidth*0.75);
+			context.lineTo(screenSize.x-buttonWidth*0.75, buttonWidth*1.5);
+			context.lineTo(screenSize.x-buttonWidth*0.5, buttonWidth*0.5);
+
+			if (keys[key_up] && keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+			
+
+			// bottom right
+			context.beginPath();
+			context.moveTo(screenSize.x-buttonWidth*2, screenSize.y);
+			context.lineTo(screenSize.x-buttonWidth*2, screenSize.y-buttonWidth);
+			context.bezierCurveTo(screenSize.x-buttonWidth*1.5, screenSize.y-buttonWidth ,screenSize.x-buttonWidth, screenSize.y-buttonWidth*1.5 ,screenSize.x-buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, screenSize.y);
+			context.lineTo(screenSize.x-buttonWidth*2, screenSize.y);
+
+
+			context.moveTo(screenSize.x-buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*1.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(screenSize.x-buttonWidth*0.75, screenSize.y-buttonWidth*1.5);
+			context.lineTo(screenSize.x-buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+
+			if (keys[key_down] && keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// bottom left
+			context.beginPath();
+			context.moveTo(buttonWidth*2, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y-buttonWidth);
+			context.bezierCurveTo(buttonWidth*1.5, screenSize.y-buttonWidth ,buttonWidth, screenSize.y-buttonWidth*1.5 ,buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(0, screenSize.y-buttonWidth*2);
+			context.lineTo(0, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y);
+
+
+			context.moveTo(buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+			context.lineTo(buttonWidth*1.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(buttonWidth*0.75, screenSize.y-buttonWidth*1.5);
+			context.lineTo(buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+
+			if (keys[key_down] && keys[key_left]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// top left
+			context.beginPath();
+			context.moveTo(buttonWidth*2, 0);
+			context.lineTo(buttonWidth*2, buttonWidth);
+			context.bezierCurveTo(buttonWidth*1.5, buttonWidth ,buttonWidth, buttonWidth*1.5 ,buttonWidth, buttonWidth*2);
+			context.lineTo(0, buttonWidth*2);
+			context.lineTo(0, 0);
+			context.lineTo(buttonWidth*2, 0);
+
+
+			context.moveTo(buttonWidth*0.5, buttonWidth*0.5);
+			context.lineTo(buttonWidth*1.5, buttonWidth*0.75);
+			context.lineTo(buttonWidth*0.75, buttonWidth*1.5);
+			context.lineTo(buttonWidth*0.5, buttonWidth*0.5);
+
+			if (keys[key_up] && keys[key_left]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+			// top
+			context.beginPath();
+			context.moveTo(buttonWidth*2, 0);
+			context.lineTo(buttonWidth*2, buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, 0);
+			context.lineTo(buttonWidth*2, 0);
+
+			context.moveTo(screenSize.x*0.5, buttonWidth*0.25);
+			context.lineTo(screenSize.x*0.5-buttonWidth*0.5, buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5+buttonWidth*0.5, buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5, buttonWidth*0.25);
+
+			if (keys[key_up] && !keys[key_left] && !keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// bottom
+			context.beginPath();
+			context.moveTo(buttonWidth*2, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y-buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, screenSize.y-buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y);
+
+			context.moveTo(screenSize.x*0.5, screenSize.y-buttonWidth*0.25);
+			context.lineTo(screenSize.x*0.5-buttonWidth*0.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5+buttonWidth*0.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5, screenSize.y-buttonWidth*0.25);
+
+			if (keys[key_down] && !keys[key_left] && !keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// right
+			context.beginPath();
+			context.moveTo(screenSize.x, buttonWidth*2);
+			context.lineTo(screenSize.x-buttonWidth, buttonWidth*2);
+			context.lineTo(screenSize.x-buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, buttonWidth*2);
+
+			context.moveTo(screenSize.x-buttonWidth*0.25, screenSize.y*0.5);
+			context.lineTo(screenSize.x-buttonWidth*0.75, screenSize.y*0.5-buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*0.75, screenSize.y*0.5+buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*0.25, screenSize.y*0.5);
+
+			if (keys[key_right] && !keys[key_down] && !keys[key_up]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+			// left
+			context.beginPath();
+			context.moveTo(0, buttonWidth*2);
+			context.lineTo(buttonWidth, buttonWidth*2);
+			context.lineTo(buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(0, screenSize.y-buttonWidth*2);
+			context.lineTo(0, buttonWidth*2);
+
+			context.moveTo(buttonWidth*0.25, screenSize.y*0.5);
+			context.lineTo(buttonWidth*0.75, screenSize.y*0.5-buttonWidth*0.5);
+			context.lineTo(buttonWidth*0.75, screenSize.y*0.5+buttonWidth*0.5);
+			context.lineTo(buttonWidth*0.25, screenSize.y*0.5);
+
+			if (keys[key_left] && !keys[key_down] && !keys[key_up]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+		}
+
 
 		// draw the lose
 		if (gameState === LEVEL_LOST) {
@@ -766,6 +949,53 @@ function blockIsNotSlippery(x,y) {
 
 function update(delta) {
 	Math.seedrandom(getTime());//.getMilliseconds());
+
+
+	// responsd to touches
+	if (isMobile) {
+		keys[key_up] = false;
+		keys[key_right] = false;
+		keys[key_down] = false;
+		keys[key_left] = false;
+
+		keys[key_space] = true;
+		for (var t in touches) {
+			var touch = touches[t];
+			var x = touch.pageX - $(canvas).offset().left;
+			var y = touch.pageY - $(canvas).offset().top;
+			if (x > screenSize.x-buttonWidth) {
+				if (y < buttonWidth*2) {
+					keys[key_up] = true;
+					keys[key_right] = true;
+				} else if (y > screenSize.y-buttonWidth*2) {
+					keys[key_down] = true;
+					keys[key_right] = true;
+				} else {
+					keys[key_right] = true;
+				}
+			}
+			else if (x < buttonWidth) {
+				if (y < buttonWidth*2) {
+					keys[key_up] = true;
+					keys[key_left] = true;
+				} else if (y > screenSize.y-buttonWidth*2) {
+					keys[key_down] = true;
+					keys[key_left] = true;
+				} else {
+					keys[key_left] = true;
+				}
+			} else {
+				if (y < buttonWidth) {
+					keys[key_up] = true;
+				} else if (y > screenSize.y-buttonWidth) {
+					keys[key_down] = true;
+				}
+			}
+		}
+	}
+
+
+
 	if (gameState === LOADING) return;
 
 	if (gameState === LOADED) {

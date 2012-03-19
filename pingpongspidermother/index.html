@@ -5,6 +5,7 @@
   <script type="text/javascript" src="engine.js"></script>
   <script type="text/javascript" src="pingpongspidermother.js"></script>
   <script type="text/javascript" src="jquery.js"></script>
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
   <title>Ping Pong Spider Mother</title>
   <style>
 	  @font-face {
@@ -29,6 +30,8 @@
 		  font-size:24px;
 		  background-color:black;
 		  color:white;
+		  user-select:none;
+		  -webkit-user-select:none;
 	  }
 	  a {
 		  color:#efe327;
@@ -39,8 +42,8 @@
 	  }
 	  #content {
 		  margin:auto;
-		  top:0;
-		  bottom:0;
+		  top:0px;
+		 /* bottom:0;*/
 		  left:0;
 		  right:0;
 		  width:800px;
@@ -67,15 +70,15 @@
 </head>
 <body>
 	<div id="content">
-		<div id="info">
-			A game by <a href="http://ohgames.co.uk">Oh, Games</a>.&nbsp;&nbsp;&nbsp;Written in HTML5, <a href="https://github.com/adam-a/htmlettes/tree/master/pingpongspidermother">fork me</a>.
-		</div>
-		<canvas id="canvas" width="800" height="640"></canvas>
-		<div id="controls">
-			<input type="checkbox" id="soundToggle" checked><label for="soundToggle">Sound</label>
-		</div>
-		<div id="instructions">
-			Arrow keys to move, space to start, 'r' to restart a level and escape to quit.
-		</div>
+<!--        <div id="info">-->
+<!--            A game by <a href="http://ohgames.co.uk">Oh, Games</a>.&nbsp;&nbsp;&nbsp;Written in HTML5, <a href="https://github.com/adam-a/htmlettes/tree/master/pingpongspidermother">fork me</a>.-->
+<!--        </div>-->
+		<canvas id="canvas" width="800" height="600"></canvas>
+<!--        <div id="controls">-->
+<!--            <input type="checkbox" id="soundToggle" checked><label for="soundToggle">Sound</label>-->
+<!--        </div>-->
+<!--        <div id="instructions">-->
+<!--            Arrow keys to move, space to start, 'r' to restart a level and escape to quit.-->
+<!--        </div>-->
 	</div>
 </body>
