@@ -15,7 +15,7 @@ var paused;
 var settings = {};
 
 var calculateFrameRate = true;
-var showFrameRate = true;
+var showFrameRate = false;
 var frameTimes = [];
 var frameTimesPointer = 0;
 var frameTimesSize = 10;
@@ -27,7 +27,7 @@ var frameStutterCount = 0;
 
 var isIE = (navigator.appName == "Microsoft Internet Explorer");
 var isAndroid = (navigator.userAgent.match(/Android/i));
-var isMobile = true;
+var isMobile = false;
 
 function _draw() {
 	if (draw) draw();

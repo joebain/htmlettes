@@ -40,7 +40,7 @@ var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
 var currentLevel = 1;
-var lastLevel = 11;
+var lastLevel = 12;
 var highestLevelUnlocked = 1;
 
 var stateChangeTime = getTime();
@@ -112,8 +112,8 @@ function loadLevel(levelNumber) {
 	currentLevel = levelNumber;
 	gameState = LOADING;
 
-	viewWidth = canvas.width / tileSize;
-	viewHeight = canvas.height / tileSize;
+	viewWidth = Math.floor(canvas.width / tileSize);
+	viewHeight = Math.floor(canvas.height / tileSize);
 
 	$.getJSON("level"+levelNumber+".json", function(data) {
 
@@ -1010,6 +1010,7 @@ function update(delta) {
 	} else if (gameState === GAME_WON) {
 		if (keys[key_space] && getTime() - stateChangeTime > 200) {
 			gameState = TITLE_SCREEN;
+			stateChangeTime = getTime();
 		}
 	} else if (gameState === TITLE_SCREEN) {
 		if (keys[key_space] && getTime() - stateChangeTime > 200) {
