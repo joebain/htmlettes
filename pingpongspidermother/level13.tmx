@@ -4,12 +4,12 @@
  <tileset firstgid="8" source="entities.tsx"/>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt2UEOgjAQQNHBYLz/jZVFk8ZU6EKHMbyXdGNYkP5UWogAgO94/Ph6+HfLa9wnxnLWDV7MNs9r6FFFWx9HTfTI0f9f7TXRI0frEbHfRI8cn57nrUuEHpn29lf9WtEjx9F+tzXRI8fM+WMNPbI4D9Yy6hGD3/TI8d5j7YYe+ayPWjw/avG+pJZRj1EXPXLoUUubZz1qaN+j+j2uHucZ7a/0OM9ej37d6JHjqMe9u47f8/2jFj1q0aMW769q0aMWPWqZnWc9cuhRyzbPt4mhB1eynS1m1sX7WM+4WQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIMUTSpIFLw==
+   eJzt2cEKgzAQQMFYLP3/P249BIJEzaHdbHEGcik9SB7RREsBgO94/fj/8O+Wz3gOjGXWBd7MNs9r0SOLuj6umugRo71fnTXRI8b++XHURI8YR8/z2qUUPSKd7a/ataJHjKv9bm2iR4yR88da9IjiPJhLr0fp/KZHjN5+tw494rlf5aJHLt6X5NLr0euiRww9cqnzrEcO9XtUu8fVY57e/kqPec56tOtGjxhXPayPWL5/5KJHLnrk4v1VLnrkokcuo/OsRww9ctnm+TEw9OBOtrPFyLrYj3XGxQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACHewmMFPg==
   </data>
  </layer>
  <layer name="entities" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt1cEJACAMBME8Fe2/XisQRJAozlSwEMJFAAA/KdkBAMCWlh3AEncCgDfZcJjzHwDwHvsNwAn2BQAAOKVmB8DFenYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMQCdPgBg
+   eJzt1rkRACAQA7ELYaD/eumBxDxSBZvZVQDAT1o6AADgYSMdAABsseEAALzEvwUAAADgJj0dAAeb6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqAS82AD8=
   </data>
  </layer>
 </map>

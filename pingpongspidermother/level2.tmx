@@ -4,12 +4,12 @@
  <tileset firstgid="8" source="entities.tsx"/>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt18sKg0AQBECzh/j/fxxyCcvgwSQts2AVDKuepBsfu20AAAAAAADQY3TfAB+jrPTay0ovfaxFH2vRx1r0sYYxzbOcv+cxzXydvF+z1cs1Rjn+NmOdZCWy1EdOqg+dZKRy1EfGmRzPfFf0keH5WMu/737/vXl1/3e0D6xT89dHr6P+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALi3F2umAMc=
+   eJzt18sKwkAQBMBkD+b//1i8yDLkELVlR6mCYZOcQjd57LYBAAAAAPBvxuob4GmUlbWOsrKWPnrRRy/66EUfPYxpbuX8Mfs083Xy3s1WL98xyvGrGeskK5GlPnJSfegkI5WjPjKu5Hjlu6KPDM9HL5+++/335tX939k+sE7NXx9rnfUHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/4A4MAgDH
   </data>
  </layer>
  <layer name="entities" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt1KENACAUQ0EkBPaflwEQCH5SxN0ELxVtDQAAAAAAAOBupQMAAODBTAcAFPNrWfYHftLTAZQY6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4LABNbgAPw==
+   eJzt1MEJACAQA8F7Ktp/vTbhEYWZCpY8UgUAAAAAAHTa6QAAAGi00gEAl/m1LPsDLxnpAK6Y6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOBbB1nnAD8=
   </data>
  </layer>
 </map>
