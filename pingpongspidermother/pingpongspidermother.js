@@ -40,7 +40,7 @@ var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
 var currentLevel = 1;
-var lastLevel = 12;
+var lastLevel = 15;
 var highestLevelUnlocked = 1;
 
 var stateChangeTime = getTime();
