@@ -1232,22 +1232,26 @@ function update(delta) {
 		if (!moveKeyedAt) {
 			desiredMove = {x:0, y:0};
 		}
-		if (keys[key_right]) {
+		if (keys[key_right] || stickyKeys[key_right]) {
+			stickyKeys[key_right] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.x += 1;
 			moveRightNow.x = 1;
 		}
-		if (keys[key_left]) {
+		if (keys[key_left] || stickyKeys[key_left]) {
+			stickyKeys[key_left] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.x -= 1;
 			moveRightNow.x = -1;
 		}
-		if (keys[key_down]) {
+		if (keys[key_down] || stickyKeys[key_down]) {
+			stickyKeys[key_down] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.y += 1;
 			moveRightNow.y = 1;
 		}
-		if (keys[key_up]) {
+		if (keys[key_up] || stickyKeys[key_up]) {
+			stickyKeys[key_up] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.y -= 1;
 			moveRightNow.y = -1;
@@ -1266,7 +1270,7 @@ function update(delta) {
 			moveKeyedAt = undefined;
 		}
 		if ((moveRightNow.x === desiredMove.x && moveRightNow.y === desiredMove.y) && (desiredMove.x !== 0 || desiredMove.y !== 0) && mother.moving === undefined) {
-			if (moveKeyedAt && getTime() - moveKeyedAt > cWaitForMoveTime) {
+			if (moveKeyedAt && (getTime() - moveKeyedAt > cWaitForMoveTime || delta === maxInterval)) {
 				moveKeyedAt = undefined;
 				var makeMove = false;
 				if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {

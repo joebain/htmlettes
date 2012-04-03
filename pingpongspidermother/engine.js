@@ -7,6 +7,7 @@ var maxInterval = 66;
 var gameDuration;
 var canvas;
 var context;
+var stickyKeys = [];
 var keys = [];
 var touches = [];
 var screenSize = {};
@@ -50,6 +51,11 @@ function _update(delta) {
 	if (paused) {
 		return;
 	}
+	var j = 0;
+	for (var i = 0 ; i < 100000000 ; i++) {
+		j += i;
+	}
+	console.log(j);
 
 	gameDuration = (thisTime - firstTime)/1000;
 	if (delta > maxInterval) delta = maxInterval;
@@ -235,6 +241,7 @@ function touchmove(e) {
 
 function keysdown(e) {
 	keys[e.keyCode] = true;
+	stickyKeys[e.keyCode] = true;
 
 	switch (e.keyCode) {
 	case key_up:
