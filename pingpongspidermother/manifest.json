@@ -1,0 +1,14 @@
+{
+  "name": "Ping-Pong Spider Mother",
+  "description": "Play as Ping-Pong, the over protective mother spider. Rescue your spider-babies and get them safely back to the nest in this simple but fun puzzle game.",
+  "version": "1",
+  "app": {
+    "launch": {
+      "web_url": "http://ohgames.co.uk/pingpongspidermother"
+    }
+  },
+  "icons": {
+    "128": "icon_128.png"
+  }
+}
+

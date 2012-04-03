@@ -152,6 +152,8 @@ function setupSM() {
 	soundManager.flashVersion = 9;
 	soundManager.useFlashBlock = false;
 	
+	//init sounds anyway so stuff is not null
+	initSounds();
 	soundManager.onready(function() {
 		initSounds();
 		if (settings.sound === false) {
@@ -190,22 +192,25 @@ var soundIds = 1;
 function makeSFX(url) {
 
 	var dontReactToFinish = false;
-	var sound = soundManager.createSound({
-		id: "sound"+(soundIds++),
-		url:url,
-		multishot:true,
-		volume:40,
-		autoLoad:true,
-		onload:function() {
-//            sound.play();
-		},
-		onfinish: function() {
-//            if (dontReactToFinish) return;
-//            sound.setVolume(40);
-//            dontReactToFinish = true;
-		}
-	});
-	return sound;
+	var sound;
+	if (soundManager.enabled) {
+		sound = soundManager.createSound({
+			id: "sound"+(soundIds++),
+			url:url,
+			multishot:true,
+			volume:40,
+			autoLoad:true,
+			onload:function() {
+				//            sound.play();
+			},
+			onfinish: function() {
+				//            if (dontReactToFinish) return;
+				//            sound.setVolume(40);
+				//            dontReactToFinish = true;
+			}
+		});
+	}
+	return sound ? sound : {play:function(){}};
 }
 
 function soundError() {
