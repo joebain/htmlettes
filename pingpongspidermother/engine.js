@@ -51,10 +51,10 @@ function _update(delta) {
 	if (paused) {
 		return;
 	}
-	var j = 0;
-	for (var i = 0 ; i < 100000000 ; i++) {
-		j += i;
-	}
+//    var j = 0;
+//    for (var i = 0 ; i < 100000000 ; i++) {
+//        j += i;
+//    }
 	console.log(j);
 
 	gameDuration = (thisTime - firstTime)/1000;
