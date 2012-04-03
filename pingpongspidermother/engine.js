@@ -55,7 +55,7 @@ function _update(delta) {
 //    for (var i = 0 ; i < 100000000 ; i++) {
 //        j += i;
 //    }
-	console.log(j);
+//    console.log(j);
 
 	gameDuration = (thisTime - firstTime)/1000;
 	if (delta > maxInterval) delta = maxInterval;
