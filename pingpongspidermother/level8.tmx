@@ -4,7 +4,7 @@
  <tileset firstgid="8" source="entities.tsx"/>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt14EKgjAQANBNpf7/j0NwtNbUDTIt3oPDWFvInbtZCPyaYYlpiWFlbDrrBv/YnNcxPPOcooV6fN7QOX/MPqvH503ZtWV/5PXr2Uu06c1nOX+uz30j1KtPb78q3Xa+V48+eb6GlRgr65K9eqTfpY39cS3qcS15X4rhvU/FyniKtH7tLPefsV88eT2v0rNf7oMyz/mcrXkcIxZX70jnUo9rqdUj71F5z+J4reeC8+M7avuhfO9NYwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR3oAbncBbA==
+   eJzt140KgyAQAOCs2N7/jUeQzDkrhf42vg+OhukYXuetruPX9HOMc/QLY+NVP/CPTfs6dO99jlFDPvbXN84fks/ysb8xudbUR5q/llqiTut+5vOn/DxXQr7atJ5XucfG/dj7qZM+v/1CDIV10VY+4vdSR33cyxn5oF56LoXu+5wKhfEYcf1SL/fO2C5cvJ5P8dnP6yDf53TO2jyOEbKrnnwt+biXUj7SMyo9szhebV/QP85Rqof8f28cAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA40guyBQFw
   </data>
  </layer>
  <layer name="entities" width="100" height="100">

@@ -40,14 +40,17 @@
 	  a:hover {
 		  text-decoration:underline;
 	  }
+	  span.emphasis {
+		  color:#efe327;
+	  }
 	  #content {
 		  margin:auto;
 		  top:0px;
-		  bottom:0;
-		  left:0;
-		  right:0;
+		  bottom:0px;
+		  left:0px;
+		  right:0px;
 		  width:800px;
-		  height:700px;
+		  height:650px;
 		  position: absolute;
 	  }
 	  #info {
@@ -78,7 +81,7 @@
 			<input type="checkbox" id="soundToggle" checked><label for="soundToggle">Sound</label>
 		</div>
 		<div id="instructions">
-			Arrow keys to move, space to start, 'r' to restart a level and escape to quit.
+			<span class="emphasis">Arrow keys</span> to move, <span class="emphasis">space</span> to start, <span class="emphasis">r</span> to restart a level and <span class="emphasis">escape</span> to quit.
 		</div>
 	</div>
 </body>

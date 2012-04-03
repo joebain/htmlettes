@@ -4,12 +4,12 @@
  <tileset firstgid="8" source="entities.tsx"/>
  <layer name="scenery" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt18sKgCAQBdAS//+bWwUiRjUO9OAcGHITxL1ouCwA31JuzNpNeeB7/24mU33km+3jaIgpzTMrU33EtdnVZkZG/w/7I1ef3dUsz3ojJtJHHaz7vUNM5GypzXt7H86oHNEc+/NKHzmyctRHjpn7ubs6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAb7cB5b0AuQ==
+   eJztwTEBAAAAwqD1T+1lC6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAbnEAAAQ==
   </data>
  </layer>
  <layer name="entities" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt1LEJACAMRUFLRfef1xUUDEq8q1O84pNSAICs6sJND6/glHY7AB7ml5HZzr5HWAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/GUCjbEAPw==
+   eJztwTEBAAAAwqD1T+1lC6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAbnEAAAQ==
   </data>
  </layer>
 </map>
