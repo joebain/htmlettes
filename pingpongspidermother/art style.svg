@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="434.06718"
-     inkscape:cy="458.36116"
+     inkscape:zoom="0.35"
+     inkscape:cx="42.625484"
+     inkscape:cy="165.299"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -55,7 +55,7 @@
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect3759"
        width="696.39569"
-       height="670.97833"
+       height="840.97833"
        x="51.51778"
        y="309.39499" />
     <rect
@@ -72,6 +72,61 @@
        height="150"
        x="151.14285"
        y="776.07648" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3003"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><flowRegion
+         id="flowRegion3005"><rect
+           id="rect3007"
+           width="240"
+           height="167.14285"
+           x="405.71429"
+           y="789.50507" /></flowRegion><flowPara
+         id="flowPara3009" /></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Ostrich Sans Rounded;-inkscape-font-specification:Ostrich Sans Rounded Medium"
+       x="615.71429"
+       y="365.21933"
+       id="text3011"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3013"
+         x="615.71429"
+         y="365.21933">Oh, Games</tspan></text>
+    <path
+       style="fill:none;stroke:#ffccaa;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+       d="m 408.57144,994.50507 0,-93.57142 187.14285,0 0,93.57142"
+       id="path3792" />
+    <path
+       style="fill:none;stroke:#008000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+       d="m 595.71429,1014.5051 0,73.5714 -187.14285,0 0,-77.8571"
+       id="rect3015" />
+    <path
+       style="fill:none;stroke:#008000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 410,882.36218 67.14286,0 -35.78937,-61.989 z"
+       id="path3787"
+       inkscape:connector-curvature="0" />
+    <path
+       transform="matrix(0.94804997,-0.31812143,0.31812143,0.94804997,0,0)"
+       style="fill:#000000;stroke:#ac9d93;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;fill-opacity:1"
+       d="m 231.03137,1108.1633 140,0 27.55964,18.6998 -27.55964,21.3002 -140,0 z"
+       id="rect3794"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc" />
+    <path
+       style="fill:none;stroke:#ac9d93;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 616.42858,983.79075 87.85713,-31.42857"
+       id="path3797"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="fill:none;stroke:#28170b;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3799"
+       width="41.500542"
+       height="41.500542"
+       x="140.41121"
+       y="1114.027"
+       transform="matrix(0.93746657,-0.34807531,0.34807531,0.93746657,0,0)" />
   </g>
   <g
      inkscape:label="Layer 1"

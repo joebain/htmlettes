@@ -12,6 +12,7 @@ var mother = {x:0, y:0, speed:0.004, rotation:0, aimRotation:0,
 var babies = [];
 
 var tentacleSnap = 400;
+var buttonWidth = 70;
 
 var camera = {x:0, y:0};
 
@@ -39,7 +40,7 @@ var PLAIN_TILE = 100;
 var CRUMBLE_TILE = 5;
 
 var currentLevel = 1;
-var lastLevel = 11;
+var lastLevel = 12;
 var highestLevelUnlocked = 1;
 
 var stateChangeTime = getTime();
@@ -51,6 +52,7 @@ var babySound;
 var nestSound;
 var deathSound;
 var themeMusic;
+var themeIntro;
 
 var cBlockPadding = 2;
 
@@ -72,10 +74,13 @@ function init() {
 
 	spotlightPos.x = screenSize.x/2;
 	spotlightPos.y = screenSize.y/2;
+
+	buttonWidth = this.screenSize.y / 6;
 }
 
 function initSounds() {
-	themeMusic = soundManager.createSound({id:"theme", url:"adam adamant - brogues.mp3", loops:10000, autoLoad:true, onload: function(){themeMusic.play();}});
+	themeIntro = soundManager.createSound({id:"intro", url:"brogues-intro.mp3", autoLoad:true, onfinish: playMainTheme});
+	themeMusic = soundManager.createSound({id:"theme", url:"brogues-main.mp3", loops:10000, autoLoad:true, onload: playIntro});
 
 	walkSound = makeSFX("walk.mp3");
 	fallSound = makeSFX("fall.mp3");
@@ -83,6 +88,14 @@ function initSounds() {
 	nestSound = makeSFX("nest.mp3");
 	deathSound = makeSFX("death.mp3");
 	springSound = makeSFX("spring.mp3");
+}
+
+function playMainTheme() {
+	themeMusic.play();
+}
+
+function playIntro() {
+	themeIntro.play();
 }
 
 function loadLevel(levelNumber) {
@@ -99,8 +112,8 @@ function loadLevel(levelNumber) {
 	currentLevel = levelNumber;
 	gameState = LOADING;
 
-	viewWidth = canvas.width / tileSize;
-	viewHeight = canvas.height / tileSize;
+	viewWidth = Math.floor(canvas.width / tileSize);
+	viewHeight = Math.floor(canvas.height / tileSize);
 
 	$.getJSON("level"+levelNumber+".json", function(data) {
 
@@ -227,7 +240,11 @@ function draw() {
 
 		context.font = "60pt cuteline";
 		if (levelIsGold(currentLevel)) {
-			context.fillStyle = "#efe327";
+			var goldGrad = context.createRadialGradient(spotlightPos.x, spotlightPos.y, 500, spotlightPos.x, spotlightPos.y, 0);
+			goldGrad.addColorStop(0.8, "#efe327");
+			goldGrad.addColorStop(1, "#ffffff");
+			context.fillStyle = goldGrad;
+//            context.fillStyle = "#efe327";
 		} else {
 			if (!isIE && highQualityGfx) {
 				context.fillStyle = grad;
@@ -271,8 +288,8 @@ function draw() {
 		context.closePath();
 		context.fill();
 
-		context.font = "40pt cuteline";
-		context.fillText("press space", screenSize.x/2, screenSize.y/2+200);
+		context.font = "36pt ostrich-regular";
+		context.fillText("press space", screenSize.x/2, screenSize.y/2+230);
 	} else if (gameState === PLAYING || gameState === LEVEL_LOST || gameState === LEVEL_WON) {
 
 		// draw the world
@@ -695,6 +712,176 @@ function draw() {
 		context.closePath();
 		context.stroke();
 
+		// draw touch controls
+		if (isMobile) {
+			context.strokeStyle = "#ffffff";
+			context.fillStyle = "#ffffff";
+
+			// top right
+			context.beginPath();
+			context.moveTo(screenSize.x-buttonWidth*2, 0);
+			context.lineTo(screenSize.x-buttonWidth*2, buttonWidth);
+			context.bezierCurveTo(screenSize.x-buttonWidth*1.5, buttonWidth ,screenSize.x-buttonWidth, buttonWidth*1.5 ,screenSize.x-buttonWidth, buttonWidth*2);
+			context.lineTo(screenSize.x, buttonWidth*2);
+			context.lineTo(screenSize.x, 0);
+			context.lineTo(screenSize.x-buttonWidth*2, 0);
+
+			context.moveTo(screenSize.x-buttonWidth*0.5, buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*1.5, buttonWidth*0.75);
+			context.lineTo(screenSize.x-buttonWidth*0.75, buttonWidth*1.5);
+			context.lineTo(screenSize.x-buttonWidth*0.5, buttonWidth*0.5);
+
+			if (keys[key_up] && keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+			
+
+			// bottom right
+			context.beginPath();
+			context.moveTo(screenSize.x-buttonWidth*2, screenSize.y);
+			context.lineTo(screenSize.x-buttonWidth*2, screenSize.y-buttonWidth);
+			context.bezierCurveTo(screenSize.x-buttonWidth*1.5, screenSize.y-buttonWidth ,screenSize.x-buttonWidth, screenSize.y-buttonWidth*1.5 ,screenSize.x-buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, screenSize.y);
+			context.lineTo(screenSize.x-buttonWidth*2, screenSize.y);
+
+
+			context.moveTo(screenSize.x-buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*1.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(screenSize.x-buttonWidth*0.75, screenSize.y-buttonWidth*1.5);
+			context.lineTo(screenSize.x-buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+
+			if (keys[key_down] && keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// bottom left
+			context.beginPath();
+			context.moveTo(buttonWidth*2, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y-buttonWidth);
+			context.bezierCurveTo(buttonWidth*1.5, screenSize.y-buttonWidth ,buttonWidth, screenSize.y-buttonWidth*1.5 ,buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(0, screenSize.y-buttonWidth*2);
+			context.lineTo(0, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y);
+
+
+			context.moveTo(buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+			context.lineTo(buttonWidth*1.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(buttonWidth*0.75, screenSize.y-buttonWidth*1.5);
+			context.lineTo(buttonWidth*0.5, screenSize.y-buttonWidth*0.5);
+
+			if (keys[key_down] && keys[key_left]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// top left
+			context.beginPath();
+			context.moveTo(buttonWidth*2, 0);
+			context.lineTo(buttonWidth*2, buttonWidth);
+			context.bezierCurveTo(buttonWidth*1.5, buttonWidth ,buttonWidth, buttonWidth*1.5 ,buttonWidth, buttonWidth*2);
+			context.lineTo(0, buttonWidth*2);
+			context.lineTo(0, 0);
+			context.lineTo(buttonWidth*2, 0);
+
+
+			context.moveTo(buttonWidth*0.5, buttonWidth*0.5);
+			context.lineTo(buttonWidth*1.5, buttonWidth*0.75);
+			context.lineTo(buttonWidth*0.75, buttonWidth*1.5);
+			context.lineTo(buttonWidth*0.5, buttonWidth*0.5);
+
+			if (keys[key_up] && keys[key_left]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+			// top
+			context.beginPath();
+			context.moveTo(buttonWidth*2, 0);
+			context.lineTo(buttonWidth*2, buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, 0);
+			context.lineTo(buttonWidth*2, 0);
+
+			context.moveTo(screenSize.x*0.5, buttonWidth*0.25);
+			context.lineTo(screenSize.x*0.5-buttonWidth*0.5, buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5+buttonWidth*0.5, buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5, buttonWidth*0.25);
+
+			if (keys[key_up] && !keys[key_left] && !keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// bottom
+			context.beginPath();
+			context.moveTo(buttonWidth*2, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y-buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, screenSize.y-buttonWidth);
+			context.lineTo(screenSize.x - buttonWidth*2, screenSize.y);
+			context.lineTo(buttonWidth*2, screenSize.y);
+
+			context.moveTo(screenSize.x*0.5, screenSize.y-buttonWidth*0.25);
+			context.lineTo(screenSize.x*0.5-buttonWidth*0.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5+buttonWidth*0.5, screenSize.y-buttonWidth*0.75);
+			context.lineTo(screenSize.x*0.5, screenSize.y-buttonWidth*0.25);
+
+			if (keys[key_down] && !keys[key_left] && !keys[key_right]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+
+			// right
+			context.beginPath();
+			context.moveTo(screenSize.x, buttonWidth*2);
+			context.lineTo(screenSize.x-buttonWidth, buttonWidth*2);
+			context.lineTo(screenSize.x-buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, screenSize.y-buttonWidth*2);
+			context.lineTo(screenSize.x, buttonWidth*2);
+
+			context.moveTo(screenSize.x-buttonWidth*0.25, screenSize.y*0.5);
+			context.lineTo(screenSize.x-buttonWidth*0.75, screenSize.y*0.5-buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*0.75, screenSize.y*0.5+buttonWidth*0.5);
+			context.lineTo(screenSize.x-buttonWidth*0.25, screenSize.y*0.5);
+
+			if (keys[key_right] && !keys[key_down] && !keys[key_up]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+
+			// left
+			context.beginPath();
+			context.moveTo(0, buttonWidth*2);
+			context.lineTo(buttonWidth, buttonWidth*2);
+			context.lineTo(buttonWidth, screenSize.y-buttonWidth*2);
+			context.lineTo(0, screenSize.y-buttonWidth*2);
+			context.lineTo(0, buttonWidth*2);
+
+			context.moveTo(buttonWidth*0.25, screenSize.y*0.5);
+			context.lineTo(buttonWidth*0.75, screenSize.y*0.5-buttonWidth*0.5);
+			context.lineTo(buttonWidth*0.75, screenSize.y*0.5+buttonWidth*0.5);
+			context.lineTo(buttonWidth*0.25, screenSize.y*0.5);
+
+			if (keys[key_left] && !keys[key_down] && !keys[key_up]) {
+				context.fill();
+			} else {
+				context.stroke();
+			}
+		}
+
 
 		// draw the lose
 		if (gameState === LEVEL_LOST) {
@@ -757,11 +944,58 @@ function blockIsEmpty(x,y) {
 }
 
 function blockIsNotSlippery(x,y) {
-	return map[x][y] === SOLID_TILE || map[x][y] === CRUMBLE_TILE || map[x][y] === INVISIBLE_TILE;
+	return map[x][y] === SOLID_TILE || (map[x][y] === CRUMBLE_TILE && !mapExtra[x][y].crumbled) || map[x][y] === INVISIBLE_TILE;
 }
 
 function update(delta) {
 	Math.seedrandom(getTime());//.getMilliseconds());
+
+
+	// responsd to touches
+	if (isMobile) {
+		keys[key_up] = false;
+		keys[key_right] = false;
+		keys[key_down] = false;
+		keys[key_left] = false;
+
+		keys[key_space] = true;
+		for (var t in touches) {
+			var touch = touches[t];
+			var x = touch.pageX - $(canvas).offset().left;
+			var y = touch.pageY - $(canvas).offset().top;
+			if (x > screenSize.x-buttonWidth) {
+				if (y < buttonWidth*2) {
+					keys[key_up] = true;
+					keys[key_right] = true;
+				} else if (y > screenSize.y-buttonWidth*2) {
+					keys[key_down] = true;
+					keys[key_right] = true;
+				} else {
+					keys[key_right] = true;
+				}
+			}
+			else if (x < buttonWidth) {
+				if (y < buttonWidth*2) {
+					keys[key_up] = true;
+					keys[key_left] = true;
+				} else if (y > screenSize.y-buttonWidth*2) {
+					keys[key_down] = true;
+					keys[key_left] = true;
+				} else {
+					keys[key_left] = true;
+				}
+			} else {
+				if (y < buttonWidth) {
+					keys[key_up] = true;
+				} else if (y > screenSize.y-buttonWidth) {
+					keys[key_down] = true;
+				}
+			}
+		}
+	}
+
+
+
 	if (gameState === LOADING) return;
 
 	if (gameState === LOADED) {
@@ -776,6 +1010,7 @@ function update(delta) {
 	} else if (gameState === GAME_WON) {
 		if (keys[key_space] && getTime() - stateChangeTime > 200) {
 			gameState = TITLE_SCREEN;
+			stateChangeTime = getTime();
 		}
 	} else if (gameState === TITLE_SCREEN) {
 		if (keys[key_space] && getTime() - stateChangeTime > 200) {
@@ -938,7 +1173,8 @@ function update(delta) {
 					mother.wasMoving = {x:0, y:0};
 				}
 			}
-		} else {
+		}
+		if (mother.moving === undefined) {
 			var x = Math.floor(mother.x/tileSize);
 			var y = Math.floor(mother.y/tileSize);
 			if (blockIsEmpty(x, y+1) &&
@@ -950,131 +1186,164 @@ function update(delta) {
 				mother.aim = {x:mother.x, y:mother.y+tileSize};
 				mother.hasMomentum = true;
 				fallSound.play();
-			} else 
+			} else {
 				mother.hasMomentum = false;
-				if (map[x][y+1] === SPRING_TILE) {
-					mother.moving = {x:0, y:-1};
-					mother.aim = {x:mother.x, y:mother.y-tileSize};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x][y+1].springX = 0;
-					mapExtra[x][y+1].springY = -1;
-					mapExtra[x][y+1].springTime = getTime();
-				}
-				else if (map[x][y-1] === SPRING_TILE) {
-					mother.moving = {x:0, y:+1};
-					mother.aim = {x:mother.x, y:mother.y+tileSize};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x][y-1].springX = 0;
-					mapExtra[x][y-1].springY = 1;
-					mapExtra[x][y-1].springTime = getTime();
-				}
-				else if (map[x+1][y] === SPRING_TILE) {
-					mother.moving = {x:-1, y:0};
-					mother.aim = {x:mother.x-tileSize, y:mother.y};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x+1][y].springX = -1;
-					mapExtra[x+1][y].springY = 0;
-					mapExtra[x+1][y].springTime = getTime();
-				}
-				else if (map[x-1][y] === SPRING_TILE) {
-					mother.moving = {x:1, y:0};
-					mother.aim = {x:mother.x+tileSize, y:mother.y};
-					mother.hasMomentum = true;
-					springSound.play();
-					mapExtra[x-1][y].springX = 1;
-					mapExtra[x-1][y].springY = 0;
-					mapExtra[x-1][y].springTime = getTime();
-				}
-			else {
-				if (!moveKeyedAt) {
-					desiredMove = {x:0, y:0};
-				}
-				if (!mother.moving) {
-					if (keys[key_right]) {
-						if (!moveKeyedAt) moveKeyedAt = getTime();
-						desiredMove.x += 1;
-						if (blockIsNotSlippery(x,y+1)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						} else if (blockIsNotSlippery(x,y-1)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						}
-					}
-					if (keys[key_left]) {
-						if (!moveKeyedAt) moveKeyedAt = getTime();
-						desiredMove.x -= 1;
-						if (blockIsNotSlippery(x,y+1)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						} else if (blockIsNotSlippery(x,y-1)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						}
-					}
-					if (keys[key_down]) {
-						if (!moveKeyedAt) moveKeyedAt = getTime();
-						desiredMove.y += 1;
-						if (blockIsNotSlippery(x+1,y)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						} else if (blockIsNotSlippery(x-1,y)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						}
-					}
-					if (keys[key_up]) {
-						if (!moveKeyedAt) moveKeyedAt = getTime();
-						desiredMove.y -= 1;
-						if (blockIsNotSlippery(x+1,y)) {
-							mother.aimRotation = mother.rotation + Math.PI/2;
-						} else if (blockIsNotSlippery(x-1,y)) {
-							mother.aimRotation = mother.rotation - Math.PI/2;
-						}
-					}
-					if (desiredMove.x > 1) desiredMove.x = 1;
-					if (desiredMove.x < -1) desiredMove.x = -1;
-					if (desiredMove.y > 1) desiredMove.y = 1;
-					if (desiredMove.y < -1) desiredMove.y = -1;
-				}
-				if (desiredMove.x !== 0 || desiredMove.y !== 0) {
-					if (moveKeyedAt && getTime() - moveKeyedAt > cWaitForMoveTime) {
-						moveKeyedAt = undefined;
-						if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
-							mother.moving = desiredMove;
-							mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
-							walkSound.play();
+			}
+			if (map[x][y+1] === SPRING_TILE) {
+				mother.moving = {x:0, y:-1};
+				mother.aim = {x:mother.x, y:mother.y-tileSize};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x][y+1].springX = 0;
+				mapExtra[x][y+1].springY = -1;
+				mapExtra[x][y+1].springTime = getTime();
+			}
+			else if (map[x][y-1] === SPRING_TILE) {
+				mother.moving = {x:0, y:+1};
+				mother.aim = {x:mother.x, y:mother.y+tileSize};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x][y-1].springX = 0;
+				mapExtra[x][y-1].springY = 1;
+				mapExtra[x][y-1].springTime = getTime();
+			}
+			else if (map[x+1][y] === SPRING_TILE) {
+				mother.moving = {x:-1, y:0};
+				mother.aim = {x:mother.x-tileSize, y:mother.y};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x+1][y].springX = -1;
+				mapExtra[x+1][y].springY = 0;
+				mapExtra[x+1][y].springTime = getTime();
+			}
+			else if (map[x-1][y] === SPRING_TILE) {
+				mother.moving = {x:1, y:0};
+				mother.aim = {x:mother.x+tileSize, y:mother.y};
+				mother.hasMomentum = true;
+				springSound.play();
+				mapExtra[x-1][y].springX = 1;
+				mapExtra[x-1][y].springY = 0;
+				mapExtra[x-1][y].springTime = getTime();
+			}
+		}
 
-							var crumbleTile = function(x,y) {
-								if (!mapExtra[x][y].crumbled) {
-									mapExtra[x][y].crumbled = true;
-									mapExtra[x][y].crumbleTime = getTime();
-								}
-							};
-							// check for leaving crumble tiles
-							if (mother.moving.y !== 0) {
-								if (map[x][y-mother.moving.y] === CRUMBLE_TILE) {
-									crumbleTile(x, y-mother.moving.y);
-								}
-							} else {
-								if (map[x][y+1] === CRUMBLE_TILE) {
-									crumbleTile(x, y+1);
-								}
-								if (map[x][y-1] === CRUMBLE_TILE) {
-									crumbleTile(x, y-1);
-								}
-							}
-							if (mother.moving.x !== 0) {
-								if (map[x-mother.moving.x][y] === CRUMBLE_TILE) {
-									crumbleTile(x-mother.moving.x, y);
-								}
-							} else {
-								if (map[x+1][y] === CRUMBLE_TILE) {
-									crumbleTile(x+1, y);
-								}
-								if (map[x-1][y] === CRUMBLE_TILE) {
-									crumbleTile(x-1, y);
-								}
-							}
+		// repsond to keypresses
+		var moveRightNow = {x:0, y:0};
+		if (!moveKeyedAt) {
+			desiredMove = {x:0, y:0};
+		}
+		if (keys[key_right]) {
+			if (!moveKeyedAt) moveKeyedAt = getTime();
+			desiredMove.x += 1;
+			moveRightNow.x = 1;
+		}
+		if (keys[key_left]) {
+			if (!moveKeyedAt) moveKeyedAt = getTime();
+			desiredMove.x -= 1;
+			moveRightNow.x = -1;
+		}
+		if (keys[key_down]) {
+			if (!moveKeyedAt) moveKeyedAt = getTime();
+			desiredMove.y += 1;
+			moveRightNow.y = 1;
+		}
+		if (keys[key_up]) {
+			if (!moveKeyedAt) moveKeyedAt = getTime();
+			desiredMove.y -= 1;
+			moveRightNow.y = -1;
+		}
+		if (desiredMove.x > 1) desiredMove.x = 1;
+		if (desiredMove.x < -1) desiredMove.x = -1;
+		if (desiredMove.y > 1) desiredMove.y = 1;
+		if (desiredMove.y < -1) desiredMove.y = -1;
+		if (moveRightNow.x === 0) {
+			desiredMove.x = 0;
+		}
+		if (moveRightNow.y === 0) {
+			desiredMove.y = 0;
+		}
+		if (moveRightNow.y === 0 && moveRightNow.x === 0) {
+			moveKeyedAt = undefined;
+		}
+		if ((moveRightNow.x === desiredMove.x && moveRightNow.y === desiredMove.y) && (desiredMove.x !== 0 || desiredMove.y !== 0) && mother.moving === undefined) {
+			if (moveKeyedAt && getTime() - moveKeyedAt > cWaitForMoveTime) {
+				moveKeyedAt = undefined;
+				var makeMove = false;
+				if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
+					makeMove = true;
+				} else if (blockIsEmpty(x, y+desiredMove.y)) {
+					desiredMove.x = 0;
+					makeMove = true;
+				} else if (blockIsEmpty(x+desiredMove.x, y)) {
+					desiredMove.y = 0;
+					makeMove = true;
+				}
+				if ((desiredMove.x !== 0 || desiredMove.y !== 0) && makeMove) {
+					mother.moving = desiredMove;
+					mother.aim = {x:mother.x+desiredMove.x*tileSize, y:mother.y+desiredMove.y*tileSize};
+
+					if (desiredMove.x > 0) {
+						if (blockIsNotSlippery(x,y+1)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						} else if (blockIsNotSlippery(x,y-1)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
+						}
+					} else if (desiredMove.x < 0) {
+						if (blockIsNotSlippery(x,y+1)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
+						} else if (blockIsNotSlippery(x,y-1)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						}
+					} else if (desiredMove.y > 0) {
+						if (blockIsNotSlippery(x+1,y)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
+						} else if (blockIsNotSlippery(x-1,y)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						}
+					} else if (desiredMove.y < 0) {
+						if (blockIsNotSlippery(x+1,y)) {
+							mother.aimRotation = mother.rotation + Math.PI/2;
+						} else if (blockIsNotSlippery(x-1,y)) {
+							mother.aimRotation = mother.rotation - Math.PI/2;
 						}
 					}
+
+
+					if (settings.sound) {
+						walkSound.play();
+					}
+
+					var crumbleTile = function(x,y) {
+						if (!mapExtra[x][y].crumbled) {
+							mapExtra[x][y].crumbled = true;
+							mapExtra[x][y].crumbleTime = getTime();
+						}
+					};
+					// check for leaving crumble tiles
+//                    if (mother.moving.y !== 0) {
+//                        if (map[x][y-mother.moving.y] === CRUMBLE_TILE) {
+//                            crumbleTile(x, y-mother.moving.y);
+//                        }
+//                    } else {
+						if (map[x][y+1] === CRUMBLE_TILE) {
+							crumbleTile(x, y+1);
+						}
+						if (map[x][y-1] === CRUMBLE_TILE) {
+							crumbleTile(x, y-1);
+						}
+//                    }
+//                    if (mother.moving.x !== 0) {
+//                        if (map[x-mother.moving.x][y] === CRUMBLE_TILE) {
+//                            crumbleTile(x-mother.moving.x, y);
+//                        }
+//                    } else {
+						if (map[x+1][y] === CRUMBLE_TILE) {
+							crumbleTile(x+1, y);
+						}
+						if (map[x-1][y] === CRUMBLE_TILE) {
+							crumbleTile(x-1, y);
+						}
+//                    }
 				}
 			}
 		}

@@ -1,21 +1,19 @@
-var thisTime = getTime();
+var thisTime;
 var delta;
-var lastTime = getTime();
+var lastTime;
 var interval;
-var targetInterval = 33;
-var maxInterval = 66;
+var targetInterval = 16;
+var maxInterval = 33;
 var gameDuration;
 var canvas;
 var context;
 var keys = [];
-var touches = [];
 var screenSize = {};
 var paused;
 
 var settings = {};
 
-var calculateFrameRate = true;
-var showFrameRate = false;
+var calculateFrameRate = false;
 var frameTimes = [];
 var frameTimesPointer = 0;
 var frameTimesSize = 10;
@@ -25,14 +23,10 @@ var frameRate = 0;
 var highQualityGfx = true;
 var frameStutterCount = 0;
 
-var isIE = (navigator.appName == "Microsoft Internet Explorer");
-var isAndroid = (navigator.userAgent.match(/Android/i));
-var isMobile = false;
-
 function _draw() {
 	if (draw) draw();
 
-	if (showFrameRate) {
+	if (calculateFrameRate) {
 		context.textAlign = "left";
 		context.font = "12pt monospace";
 		context.fillStyle = "#ffffff";
@@ -50,81 +44,51 @@ function _update(delta) {
 	if (paused) {
 		return;
 	}
-
 	gameDuration = (thisTime - firstTime)/1000;
 	if (delta > maxInterval) delta = maxInterval;
 	if (update) update(delta);
 
-	frameTimesTotal -= frameTimes[frameTimesPointer];
-	frameTimes[frameTimesPointer] = delta;
-	frameTimesTotal += delta;
-	frameTimesPointer++;
-	frameTimesPointer %= frameTimesSize;
-	frameRate = 1000/(frameTimesTotal / frameTimesSize);
+	if (calculateFrameRate) {
+		frameTimesTotal -= frameTimes[frameTimesPointer];
+		frameTimes[frameTimesPointer] = delta;
+		frameTimesTotal += delta;
+		frameTimesPointer++;
+		frameTimesPointer %= frameTimesSize;
+		frameRate = 1000/(frameTimesTotal / frameTimesSize);
 
-	if (frameRate < (1000/targetInterval)*0.8) {
-		frameStutterCount += delta;
-	} else {
-		frameStutterCount = 0;
-	}
-	if (frameStutterCount > 500) {
-		highQualityGfx = false;
+		if (frameRate < (1000/targetInterval)*0.8) {
+			frameStutterCount += delta;
+		} else {
+			frameStutterCount = 0;
+		}
+		if (frameStutterCount > 1000) {
+			highQualityGfx = false;
+		}
 	}
 }
 
-var requestAnimationFrame =
-	window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
-	window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-var lastScheduledTime;
-function loop(scheduledTime) {
-	lastScheduledTime = scheduledTime;
-
-	lastTime = thisTime;
-	thisTime = getTime();
-
+function loop() {
+	thisTime = new Date().getTime();
 	delta = thisTime-lastTime;
 	_update(delta);
 	_draw();
-	if (requestAnimationFrame) {
-		requestAnimationFrame(loop, canvas);
-	} else {
-		lastTime = thisTime;
-		interval = targetInterval - (lastTime - thisTime);
-		interval = interval < 1 ? 1 : interval;
-		setTimeout(loop, interval);
-	}
-}
-
-function getTime() {
-	if (lastScheduledTime) {
-		return lastScheduledTime;
-	} else {
-		return new Date().getTime();
-	}
+	lastTime = thisTime;
+	interval = targetInterval - (new Date().getTime() - thisTime);
+	interval = interval < 1 ? 1 : interval;
+	setTimeout(loop, interval);
 }
 
 function _init() {
 	canvas = document.getElementById("canvas");
-
-	if(isAndroid){
-		window.scrollTo(4,$(canvas).offset().top+4);
-		canvas.width = window.innerWidth;// / window.devicePixelRatio;
-		canvas.height = window.innerHeight;// / window.devicePixelRatio;
-	}
-
 	screenSize.x = canvas.width;
 	screenSize.y = canvas.height;
 	context = canvas.getContext("2d");
 	window.onkeydown = keysdown;
 	window.onkeyup = keysup;
-	document.addEventListener("touchstart", touchstart, false);
-	document.addEventListener("touchend", touchend, false);
-	document.addEventListener("touchmove", touchmove, false);
 	firstTime = new Date().getTime();
 	lastTime = new Date().getTime();
 	gameDuration = 0;
 	paused = false;
-
 
 	loadSettings();
 
@@ -155,12 +119,10 @@ function setupSM() {
 	soundManager.ontimeout(soundError);
 
 	soundToggleEl = $("#soundToggle");
-	if (soundToggleEl[0]) {
-		soundToggleEl[0].checked = settings.sound;
-		soundToggleEl.change(function() {
-			toggleSound();
-		});
-	}
+	soundToggleEl[0].checked = settings.sound;
+	soundToggleEl.change(function() {
+		toggleSound();
+	});
 }
 
 function toggleSound() {
@@ -188,15 +150,15 @@ function makeSFX(url) {
 		id: "sound"+(soundIds++),
 		url:url,
 		multishot:true,
-		volume:40,
+		volume:0,
 		autoLoad:true,
 		onload:function() {
-//            sound.play();
+			sound.play();
 		},
 		onfinish: function() {
-//            if (dontReactToFinish) return;
-//            sound.setVolume(40);
-//            dontReactToFinish = true;
+			if (dontReactToFinish) return;
+			sound.setVolume(40);
+			dontReactToFinish = true;
 		}
 	});
 	return sound;
@@ -209,43 +171,16 @@ function soundError() {
 function keysup(e) {
   keys[e.keyCode] = false;
 
-
   if (e.keyCode === key_f && keys[key_shift]) {
-	  showFrameRate = !showFrameRate;
+	  calculateFrameRate = !calculateFrameRate;
   }
   if (e.keyCode === key_s && keys[key_shift]) {
 	  toggleSound();
   }
 }
 
-function touchstart(e) {
-	touches = e.targetTouches;
-	e.preventDefault();
-}
-
-function touchend(e) {
-	touches = e.targetTouches;
-	e.preventDefault();
-}
-
-function touchmove(e) {
-	touches = e.targetTouches;
-	e.preventDefault();
-}
-
 function keysdown(e) {
-	keys[e.keyCode] = true;
-
-	switch (e.keyCode) {
-	case key_up:
-	case key_down:
-	case key_left:
-	case key_right:
-	case key_space:
-		e.preventDefault();
-		return false;
-		break;
-	}
+  keys[e.keyCode] = true;
 }
 
 // drawing
