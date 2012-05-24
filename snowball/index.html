@@ -1,0 +1,77 @@
+<!doctype html>
+<head>
+  <script type="text/javascript" src="seedrandom.js"></script>
+  <script type="text/javascript" src="dat.gui.js"></script>
+  <script type="text/javascript" src="Stats.js"></script>
+  <script type="text/javascript" src="soundmanager2.js"></script>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="Box2dWeb-2.1.a.3.js"></script>
+  <script type="text/javascript" src="engine.js"></script>
+  <script type="text/javascript" src="snowball.js"></script>
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+  <title>Snowball</title>
+  <style>
+	  @font-face {
+		  font-family: "sirin-stencil";
+		  src: url("SirinStencil-Regular.ttf");
+	  }
+	  body {
+		  font-family:"sirin-stencil" sans;
+		  background-color:#ffffff;
+		  font-size:24px;
+		  color:#5ee1d9;
+		  user-select:none;
+		  -webkit-user-select:none;
+	  }
+	  a {
+		  color:#1f1bbc;
+		  text-decoration:none;
+	  }
+	  a:hover {
+		  text-decoration:underline;
+	  }
+	  span.emphasis {
+		  color:#1f1bbc;
+	  }
+	  #content {
+		  margin:auto;
+		  top:0px;
+		  bottom:0px;
+		  left:0px;
+		  right:0px;
+		  width:800px;
+		  height:650px;
+		  position: absolute;
+	  }
+	  #info {
+		  float:right;
+	  }
+	  #instructions {
+		  float:right;
+	  }
+	  #controls {
+		  float:left;
+	  }
+	  #controls:hover {
+		  color:#1f1bbc;
+	  }
+	  #canvas {
+		  margin:2px;
+		  border:double 3px white;
+	  }
+  </style>
+</head>
+<body>
+	<div id="content">
+		<div id="info">
+			A game by <a href="http://ohgames.co.uk">Oh, Games</a>.&nbsp;&nbsp;&nbsp;Written in HTML5.
+		</div>
+		<canvas id="canvas" width="800" height="600"></canvas>
+		<div id="controls">
+			<input type="checkbox" id="soundToggle" checked><label for="soundToggle">Sound</label>
+		</div>
+		<div id="instructions">
+			<span class="emphasis">Space</span> to start, <span class="emphasis">arrow keys</span> to play.
+		</div>
+	</div>
+</body>
