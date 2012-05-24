@@ -7,6 +7,7 @@ var maxInterval = 66;
 var gameDuration;
 var canvas;
 var context;
+var stickyKeys = [];
 var keys = [];
 var touches = [];
 var screenSize = {};
@@ -50,6 +51,11 @@ function _update(delta) {
 	if (paused) {
 		return;
 	}
+//    var j = 0;
+//    for (var i = 0 ; i < 100000000 ; i++) {
+//        j += i;
+//    }
+//    console.log(j);
 
 	gameDuration = (thisTime - firstTime)/1000;
 	if (delta > maxInterval) delta = maxInterval;
@@ -146,6 +152,8 @@ function setupSM() {
 	soundManager.flashVersion = 9;
 	soundManager.useFlashBlock = false;
 	
+	//init sounds anyway so stuff is not null
+	initSounds();
 	soundManager.onready(function() {
 		initSounds();
 		if (settings.sound === false) {
@@ -184,22 +192,25 @@ var soundIds = 1;
 function makeSFX(url) {
 
 	var dontReactToFinish = false;
-	var sound = soundManager.createSound({
-		id: "sound"+(soundIds++),
-		url:url,
-		multishot:true,
-		volume:40,
-		autoLoad:true,
-		onload:function() {
-//            sound.play();
-		},
-		onfinish: function() {
-//            if (dontReactToFinish) return;
-//            sound.setVolume(40);
-//            dontReactToFinish = true;
-		}
-	});
-	return sound;
+	var sound;
+	if (soundManager.enabled) {
+		sound = soundManager.createSound({
+			id: "sound"+(soundIds++),
+			url:url,
+			multishot:true,
+			volume:40,
+			autoLoad:true,
+			onload:function() {
+				//            sound.play();
+			},
+			onfinish: function() {
+				//            if (dontReactToFinish) return;
+				//            sound.setVolume(40);
+				//            dontReactToFinish = true;
+			}
+		});
+	}
+	return sound ? sound : {play:function(){}};
 }
 
 function soundError() {
@@ -235,6 +246,7 @@ function touchmove(e) {
 
 function keysdown(e) {
 	keys[e.keyCode] = true;
+	stickyKeys[e.keyCode] = true;
 
 	switch (e.keyCode) {
 	case key_up:

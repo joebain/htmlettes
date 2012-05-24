@@ -79,8 +79,13 @@ function init() {
 }
 
 function initSounds() {
-	themeIntro = soundManager.createSound({id:"intro", url:"brogues-intro.mp3", autoLoad:true, onfinish: playMainTheme});
-	themeMusic = soundManager.createSound({id:"theme", url:"brogues-main.mp3", loops:10000, autoLoad:true, onload: playIntro});
+	if (soundManager.enabled) {
+		themeIntro = soundManager.createSound({id:"intro", url:"brogues-intro.mp3", autoLoad:true, onfinish: playMainTheme});
+		themeMusic = soundManager.createSound({id:"theme", url:"brogues-main.mp3", loops:10000, autoLoad:true, onload: playIntro});
+	} else {
+		themeIntro = {play:function(){}};
+		themeMusic = {play:function(){}};
+	}
 
 	walkSound = makeSFX("walk.mp3");
 	fallSound = makeSFX("fall.mp3");
@@ -1058,7 +1063,9 @@ function update(delta) {
 				lastBabyRescued = baby;
 			} else if (Math.floor(mother.x/tileSize) === Math.floor(baby.x/tileSize) && Math.floor(mother.y/tileSize) === Math.floor(baby.y/tileSize)) {
 				baby.rescued = true;
-				babySound.play();
+				if (settings.sound) {
+					babySound.play();
+				}
 			}
 		}
 
@@ -1076,7 +1083,9 @@ function update(delta) {
 				if ((gotGolden && babiesRescued === babies.length) || (!gotGolden && babiesRescued === babies.length-1)) {
 					gameState = LEVEL_WON;
 					stateChangeTime = getTime();
-					nestSound.play();
+					if (settings.sound) {
+						nestSound.play();
+					}
 				}
 			}
 		}
@@ -1087,7 +1096,9 @@ function update(delta) {
 		if (map[x][y] === SPIKE_TILE) {
 			gameState = LEVEL_LOST;
 			stateChangeTime = getTime();
-			deathSound.play();
+			if (settings.sound) {
+				deathSound.play();
+			}
 			return;
 		}
 
@@ -1144,7 +1155,9 @@ function update(delta) {
 						mother.aim.y += mother.wasMoving.y*tileSize;
 						mother.moving.x = mother.wasMoving.x;
 						mother.moving.y = mother.wasMoving.y;
-						fallSound.play();
+						if (settings.sound) {
+							fallSound.play();
+						}
 					} else if (emptyBlocks+iceBlocks === 4 && iceBlocks >= 1) {
 						if (mother.wasMoving.x !== 0 && mother.wasMoving.y !== 0) {
 							mother.wasMoving.x = 0;
@@ -1162,7 +1175,9 @@ function update(delta) {
 							mother.moving.x = mother.wasMoving.x;
 							mother.moving.y = mother.wasMoving.y;
 						}
-						fallSound.play();
+						if (settings.sound) {
+							fallSound.play();
+						}
 					} else {
 						mother.moving = undefined;
 						mother.wasMoving = {x:0, y:0};
@@ -1185,7 +1200,9 @@ function update(delta) {
 				mother.moving = {x:0, y:+1};
 				mother.aim = {x:mother.x, y:mother.y+tileSize};
 				mother.hasMomentum = true;
-				fallSound.play();
+				if (settings.sound) {
+					fallSound.play();
+				}
 			} else {
 				mother.hasMomentum = false;
 			}
@@ -1193,7 +1210,9 @@ function update(delta) {
 				mother.moving = {x:0, y:-1};
 				mother.aim = {x:mother.x, y:mother.y-tileSize};
 				mother.hasMomentum = true;
-				springSound.play();
+				if (settings.sound) {
+					springSound.play();
+				}
 				mapExtra[x][y+1].springX = 0;
 				mapExtra[x][y+1].springY = -1;
 				mapExtra[x][y+1].springTime = getTime();
@@ -1202,7 +1221,9 @@ function update(delta) {
 				mother.moving = {x:0, y:+1};
 				mother.aim = {x:mother.x, y:mother.y+tileSize};
 				mother.hasMomentum = true;
-				springSound.play();
+				if (settings.sound) {
+					springSound.play();
+				}
 				mapExtra[x][y-1].springX = 0;
 				mapExtra[x][y-1].springY = 1;
 				mapExtra[x][y-1].springTime = getTime();
@@ -1211,7 +1232,9 @@ function update(delta) {
 				mother.moving = {x:-1, y:0};
 				mother.aim = {x:mother.x-tileSize, y:mother.y};
 				mother.hasMomentum = true;
-				springSound.play();
+				if (settings.sound) {
+					springSound.play();
+				}
 				mapExtra[x+1][y].springX = -1;
 				mapExtra[x+1][y].springY = 0;
 				mapExtra[x+1][y].springTime = getTime();
@@ -1220,7 +1243,9 @@ function update(delta) {
 				mother.moving = {x:1, y:0};
 				mother.aim = {x:mother.x+tileSize, y:mother.y};
 				mother.hasMomentum = true;
-				springSound.play();
+				if (settings.sound) {
+					springSound.play();
+				}
 				mapExtra[x-1][y].springX = 1;
 				mapExtra[x-1][y].springY = 0;
 				mapExtra[x-1][y].springTime = getTime();
@@ -1232,22 +1257,26 @@ function update(delta) {
 		if (!moveKeyedAt) {
 			desiredMove = {x:0, y:0};
 		}
-		if (keys[key_right]) {
+		if (keys[key_right] || stickyKeys[key_right]) {
+			stickyKeys[key_right] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.x += 1;
 			moveRightNow.x = 1;
 		}
-		if (keys[key_left]) {
+		if (keys[key_left] || stickyKeys[key_left]) {
+			stickyKeys[key_left] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.x -= 1;
 			moveRightNow.x = -1;
 		}
-		if (keys[key_down]) {
+		if (keys[key_down] || stickyKeys[key_down]) {
+			stickyKeys[key_down] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.y += 1;
 			moveRightNow.y = 1;
 		}
-		if (keys[key_up]) {
+		if (keys[key_up] || stickyKeys[key_up]) {
+			stickyKeys[key_up] = false;
 			if (!moveKeyedAt) moveKeyedAt = getTime();
 			desiredMove.y -= 1;
 			moveRightNow.y = -1;
@@ -1266,7 +1295,7 @@ function update(delta) {
 			moveKeyedAt = undefined;
 		}
 		if ((moveRightNow.x === desiredMove.x && moveRightNow.y === desiredMove.y) && (desiredMove.x !== 0 || desiredMove.y !== 0) && mother.moving === undefined) {
-			if (moveKeyedAt && getTime() - moveKeyedAt > cWaitForMoveTime) {
+			if (moveKeyedAt && (getTime() - moveKeyedAt > cWaitForMoveTime || delta === maxInterval)) {
 				moveKeyedAt = undefined;
 				var makeMove = false;
 				if (blockIsEmpty(x+desiredMove.x, y+desiredMove.y)) {
