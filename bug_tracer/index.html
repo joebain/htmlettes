@@ -1,0 +1,259 @@
+<head>
+	<title>Joe Bain</title>
+	<link href='http://fonts.googleapis.com/css?family=Codystar' rel='stylesheet' type='text/css'>
+	<style>
+		body {
+			width:100%;
+			height:100%;
+			margin:0;
+			padding:0;
+		}
+		.joebain {
+			font-family: "Codystar", "helvetica", "ariel", sans;
+			font-size:100px;
+			color:white;
+
+			text-align:center;
+
+			width:800px;
+			height:150px;
+			top:0;
+			bottom:0;
+			left:0;
+			right:0;
+			position:absolute;
+			margin:auto;
+		}
+		* a {
+			text-decoration:none;
+			color:white;
+		}
+		#setwordform {
+			width:400px;
+			margin:auto;
+			height:52px;
+			top:-62px;
+			position:relative;
+			margin:auto;
+			left:0;
+			right:0;
+			transition-property:top;
+			transition-duration:0.5s;
+			-webkit-transition-property:top;
+			-webkit-transition-duration:0.5s;
+			-moz-transition-property:top;
+			-moz-transition-duration:0.5s;
+			border-bottom-right-radius: 5px;
+			border-bottom-left-radius: 5px;
+			color:black;
+			background-color:white;
+			padding:5px;
+		}
+		#setwordbutton {
+			font-size:20px;
+			color:black;
+			background-color:white;
+			text-align:center;
+			cursor:pointer;
+			width:40px;
+			border-bottom-right-radius: 5px;
+			border-bottom-left-radius: 5px;
+			margin:auto;
+			position:absolute;
+			top:57px;
+			left:0;
+			right:0;
+			padding-bottom:5px;
+		}
+		#setwordtextinput {
+			height: 48px;
+			border: none;
+			border-bottom: solid 2px #333;
+			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+			font-size: 32px;
+			color: #333;
+			width: 295px;
+			padding: 2px;
+		}
+		#setwordtextinput:active {
+			border:none;
+		}
+		#setwordsubmit {
+			border: none;
+			background-color: #333;
+			color: white;
+			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+			font-size: 32px;
+			height: 48px;
+			width: 100px;
+			text-align: left;
+			cursor:pointer;
+		}
+		#canvas {
+			position:absolute;
+			top:0;
+			left:0;
+			z-index:-1;
+		}
+
+	</style>
+	<script>
+		window.onload = function(e) {
+
+			// handle the form etc
+			var button = document.getElementById("setWordButton");
+			var form = document.getElementById("setWordForm");
+			var textInput = document.getElementById("setWordTextInput");
+			button.onclick = function(e) {
+				if (form.style.top === "" || parseInt(form.style.top) === -62) {
+					form.style.top = 0;
+				} else {
+					form.style.top = -62;
+				}
+			};
+
+			form.onsubmit = function(e) {
+				e.preventDefault();
+					window.location = "http://joeba.in/#" + textInput.value;
+					window.location.reload();
+				return true;
+			};
+
+
+
+
+			var word = "joeba.in";
+			if (window.location.hash) {
+				word = window.location.hash.substr(1);
+			}
+			var canvas = document.getElementById("canvas");
+			var pWidth = document.body.clientWidth;
+			var pHeight = document.body.clientHeight;
+			canvas.height = pHeight;
+			canvas.width = pWidth;
+			var gridSize = 10;
+			
+			var context = canvas.getContext('2d');
+			context.globalCompositeOperation = "lighter";
+			context.fillStyle = "#333";
+			context.fillRect(0,0,pWidth, pHeight);
+
+			var backCanvas = document.createElement("canvas");
+			backCanvas.width = Math.floor(pWidth/gridSize);
+			backCanvas.height = Math.floor(pHeight/gridSize);
+			var bContext = backCanvas.getContext("2d");
+			var bImData = bContext.getImageData(0,0,backCanvas.width, backCanvas.height);
+			setTimeout(function() {
+				bContext.fillStyle = "#fff";
+				var fontSize = backCanvas.height*(1/0.9)
+				var textMeasurements;
+				do {
+					fontSize = Math.round(fontSize*0.9);
+					bContext.font = fontSize+ 'px "Arial Black", "Arial Bold", Gadget, sans-serif';
+					console.log(bContext.font);
+					textMeasurements = bContext.measureText(word);
+					console.log(textMeasurements.width);
+				} while (textMeasurements.width*gridSize > pWidth);
+				bContext.fillText(word, -textMeasurements.width/2 + backCanvas.width/2, backCanvas.height/2 + fontSize/3);
+					bContext.beginPath();
+					bContext.arc(0, 0, backCanvas.height, 0, Math.PI*2, true); 
+					context.fill();
+				bImData = bContext.getImageData(0,0,backCanvas.width, backCanvas.height);
+				//context.drawImage(backCanvas, 0, 0, pWidth, pHeight);
+			}, 1000);
+
+			var updateInterval = 50;
+			var bug = function() {
+				var colour = "#ff0";
+				var rand = Math.random();
+				if (rand < 0.33) {
+					colour = "#0ff";
+				} else if (rand < 0.66) {
+					colour = "#f0f";
+				}
+				var bugX = Math.floor(Math.random() * pWidth);
+				var bugY = Math.floor(Math.random() * pHeight);
+				var bugvy = Math.random()-0.5;
+				var bugvx = Math.random()-0.5;
+
+				this.update = function() {
+					bugvx += Math.random()*2-1;
+					bugvy += Math.random()*2-1;
+					var newBugX = bugX + Math.round(bugvx)*gridSize;
+					var newBugY = bugY + Math.round(bugvy)*gridSize;
+					var isWhite = function(x,y,imData) {
+						x = Math.floor(x/gridSize);
+						y = Math.floor(y/gridSize);
+						var r = imData.data[y*imData.width*4+x*4];
+						var g = imData.data[y*imData.width*4+x*4+1];
+						var b = imData.data[y*imData.width*4+x*4+2];
+						return r > 0 || g > 0 || b > 0;
+					};
+					for (var chances = 0 ; chances < 4 ; chances++) {
+						if (isWhite(bugX,bugY,bImData) && !isWhite(newBugX, newBugY, bImData)) {
+							if (Math.random() > 0.5) {
+								bugvy *= -1;
+							} else {
+								bugvx *= -1;
+							}
+						} else {
+							break;
+						}
+						newBugX = bugX + Math.round(bugvx)*gridSize;
+						newBugY = bugY + Math.round(bugvy)*gridSize;
+					}
+					bugX += Math.round(bugvx)*gridSize;
+					bugY += Math.round(bugvy)*gridSize;
+					if (bugX > pWidth) bugX -= pWidth;
+					if (bugX < 0) bugX += pWidth;
+					if (bugY > pHeight) bugY -= pHeight;
+					if (bugY < 0) bugY += pHeight;
+					if (bugvx > 1) bugvx = 1;
+					if (bugvx < -1) bugvx = -1;
+					if (bugvy > 1) bugvy = 1;
+					if (bugvy < -1) bugvy = -1;
+
+					var circleSize = gridSize*0.5*Math.random();
+					if (isWhite(bugX,bugY,bImData)) {
+						//context.globalCompositeOperation = "lighter";
+						//context.fillStyle = "#fff";
+					} else {
+						//context.globalCompositeOperation = "darker";
+						//context.fillStyle = colour;
+					}
+
+					context.fillStyle = colour;
+					context.beginPath();
+					context.arc(bugX-circleSize/2, bugY-circleSize/2, circleSize, 0, Math.PI*2, true); 
+					context.fill();
+				};
+				return this;
+			};
+			var bugs = [];
+			for (var i = 0 ; i < 20 ; i++) {
+				bugs[i] = new bug();
+			}
+			var update = function() {
+				for (var i in bugs) {
+					bugs[i].update();
+				}
+				setTimeout(update, updateInterval);
+			};
+			update();
+
+		};
+	</script>
+</head>
+<body>
+	<form id="setWordForm">
+		<input type="text" id="setWordTextInput" />
+		<input type="submit" id="setWordSubmit" value="Set" />
+		<div id="setWordButton">...</div>
+	</form>
+<!--	<div class="joebain">
+		<a href="mailto:mrjoebain@gmail.com">Joe Bain</a>
+	</div> -->
+	<a href="mailto:mrjoebain@gmail.com">
+		<canvas id="canvas" />
+	</a>
+</body>
