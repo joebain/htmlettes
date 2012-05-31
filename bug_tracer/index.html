@@ -1,6 +1,5 @@
 <head>
 	<title>Joe Bain</title>
-	<link href='http://fonts.googleapis.com/css?family=Codystar' rel='stylesheet' type='text/css'>
 	<style>
 		body {
 			width:100%;
@@ -8,31 +7,18 @@
 			margin:0;
 			padding:0;
 		}
-		.joebain {
-			font-family: "Codystar", "helvetica", "ariel", sans;
-			font-size:100px;
-			color:white;
-
-			text-align:center;
-
-			width:800px;
-			height:150px;
-			top:0;
-			bottom:0;
-			left:0;
-			right:0;
-			position:absolute;
-			margin:auto;
-		}
 		* a {
 			text-decoration:none;
 			color:white;
 		}
-		#setwordform {
+		#settingsForm {
+			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+			font-size: 32px;
+			color: #333;
 			width:400px;
 			margin:auto;
-			height:52px;
-			top:-62px;
+			height:122px;
+			top:-132px;
 			position:relative;
 			margin:auto;
 			left:0;
@@ -45,13 +31,11 @@
 			-moz-transition-duration:0.5s;
 			border-bottom-right-radius: 5px;
 			border-bottom-left-radius: 5px;
-			color:black;
 			background-color:white;
 			padding:5px;
 		}
 		#setwordbutton {
 			font-size:20px;
-			color:black;
 			background-color:white;
 			text-align:center;
 			cursor:pointer;
@@ -60,34 +44,47 @@
 			border-bottom-left-radius: 5px;
 			margin:auto;
 			position:absolute;
-			top:57px;
+			top:127px;
 			left:0;
 			right:0;
 			padding-bottom:5px;
 		}
 		#setwordtextinput {
+			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+			font-size: 32px;
 			height: 48px;
 			border: none;
 			border-bottom: solid 2px #333;
-			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
-			font-size: 32px;
 			color: #333;
-			width: 295px;
+			width: 288px;
 			padding: 2px;
 		}
 		#setwordtextinput:active {
 			border:none;
 		}
 		#setwordsubmit {
+			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+			font-size: 32px;
 			border: none;
 			background-color: #333;
 			color: white;
-			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
-			font-size: 32px;
 			height: 48px;
 			width: 100px;
 			text-align: left;
 			cursor:pointer;
+		}
+		#styleSelect {
+			-webkit-appearance:none;
+			-moz-appearance:none;
+			margin-top: 10px;
+			width: 100%;
+			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+			font-size: 32px;
+			border: none;
+			background-color: #333;
+			color: white;
+			padding-left: 5px;
+			border-radius:0;
 		}
 		#canvas {
 			position:absolute;
@@ -102,19 +99,19 @@
 
 			// handle the form etc
 			var button = document.getElementById("setWordButton");
-			var form = document.getElementById("setWordForm");
+			var form = document.getElementById("settingsForm");
 			var textInput = document.getElementById("setWordTextInput");
 			button.onclick = function(e) {
-				if (form.style.top === "" || parseInt(form.style.top) === -62) {
+				if (form.style.top === "" || parseInt(form.style.top) === -132) {
 					form.style.top = 0;
 				} else {
-					form.style.top = -62;
+					form.style.top = -132;
 				}
 			};
 
 			form.onsubmit = function(e) {
 				e.preventDefault();
-					window.location = "http://joeba.in/#" + textInput.value;
+					window.location = window.location.origin + "/#" + textInput.value;
 					window.location.reload();
 				return true;
 			};
@@ -132,11 +129,26 @@
 			canvas.height = pHeight;
 			canvas.width = pWidth;
 			var gridSize = 10;
+
+			//var style = "grey_circles";
+			var style = "lines";
+			//var style = "circles";
+
+			var inverse = true;
+			var lightOnDark = false;
 			
 			var context = canvas.getContext('2d');
-			context.globalCompositeOperation = "lighter";
-			context.fillStyle = "#333";
+			if (lightOnDark) {
+				context.globalCompositeOperation = "lighter";
+				context.fillStyle = "#333";
+			} else {
+				context.globalCompositeOperation = "darker";
+				context.fillStyle = "#ddd";
+			}
 			context.fillRect(0,0,pWidth, pHeight);
+
+			//context.strokeWidth = 2;
+
 
 			var backCanvas = document.createElement("canvas");
 			backCanvas.width = Math.floor(pWidth/gridSize);
@@ -179,6 +191,8 @@
 				this.update = function() {
 					bugvx += Math.random()*2-1;
 					bugvy += Math.random()*2-1;
+					var oldBugX = bugX;
+					var oldBugY = bugY;
 					var newBugX = bugX + Math.round(bugvx)*gridSize;
 					var newBugY = bugY + Math.round(bugvy)*gridSize;
 					var isWhite = function(x,y,imData) {
@@ -190,7 +204,13 @@
 						return r > 0 || g > 0 || b > 0;
 					};
 					for (var chances = 0 ; chances < 4 ; chances++) {
-						if (isWhite(bugX,bugY,bImData) && !isWhite(newBugX, newBugY, bImData)) {
+						var shouldRetry = false;
+						if (inverse) {
+							shouldRetry = (!isWhite(bugX,bugY,bImData) && isWhite(newBugX, newBugY, bImData));
+						} else {
+							shouldRetry = (isWhite(bugX,bugY,bImData) && !isWhite(newBugX, newBugY, bImData));
+						}
+						if (shouldRetry) {
 							if (Math.random() > 0.5) {
 								bugvy *= -1;
 							} else {
@@ -204,33 +224,63 @@
 					}
 					bugX += Math.round(bugvx)*gridSize;
 					bugY += Math.round(bugvy)*gridSize;
-					if (bugX > pWidth) bugX -= pWidth;
-					if (bugX < 0) bugX += pWidth;
-					if (bugY > pHeight) bugY -= pHeight;
-					if (bugY < 0) bugY += pHeight;
-					if (bugvx > 1) bugvx = 1;
-					if (bugvx < -1) bugvx = -1;
-					if (bugvy > 1) bugvy = 1;
-					if (bugvy < -1) bugvy = -1;
+					var wrapped_around = false;
+					if (bugX > pWidth) { wrapped_around = true;  bugX -= pWidth;}
+					if (bugX < 0) { wrapped_around = true;  bugX += pWidth;}
+					if (bugY > pHeight) { wrapped_around = true;  bugY -= pHeight;}
+					if (bugY < 0) { wrapped_around = true;  bugY += pHeight;}
+					if (bugvx > 1) {  bugvx = 1;}
+					if (bugvx < -1) {  bugvx = -1;}
+					if (bugvy > 1) {  bugvy = 1;}
+					if (bugvy < -1) {  bugvy = -1;}
 
-					var circleSize = gridSize*0.5*Math.random();
-					if (isWhite(bugX,bugY,bImData)) {
-						//context.globalCompositeOperation = "lighter";
-						//context.fillStyle = "#fff";
-					} else {
-						//context.globalCompositeOperation = "darker";
-						//context.fillStyle = colour;
+
+					switch (style) {
+						case "circles":
+							var circleSize = gridSize*0.5*Math.random();
+
+							context.fillStyle = colour;
+							context.beginPath();
+							context.arc(bugX-circleSize/2, bugY-circleSize/2, circleSize, 0, Math.PI*2, true); 
+							context.fill();
+							break;
+
+						case "lines":
+							// dont draw if we wrapped around
+							if (!wrapped_around) {
+								if (lightOnDark) {
+									context.strokeStyle = "#fff";
+								} else {
+									context.strokeStyle = "#000";
+								}
+								context.beginPath();
+								context.moveTo(oldBugX, oldBugY); 
+								context.lineTo(bugX, bugY); 
+								context.stroke();
+							}
+							break;
+
+						case "grey_circles":
+							if (lightOnDark) {
+								context.fillStyle = "#111";
+							} else {
+								context.fillStyle = "#eee";
+							}
+							var halfRectSize = 0.2;
+							//context.fillRect(bugX-gridSize*halfRectSize, bugY-gridSize*halfRectSize, gridSize*halfRectSize*2, gridSize*halfRectSize*2);
+							context.beginPath();
+							context.arc(bugX-gridSize*halfRectSize, bugY-gridSize*halfRectSize, gridSize*halfRectSize*2, 0, Math.PI*2, true); 
+							context.fill();
+							break;
+
 					}
-
-					context.fillStyle = colour;
-					context.beginPath();
-					context.arc(bugX-circleSize/2, bugY-circleSize/2, circleSize, 0, Math.PI*2, true); 
-					context.fill();
 				};
 				return this;
 			};
 			var bugs = [];
-			for (var i = 0 ; i < 20 ; i++) {
+			var numberOfBugs = 30;
+			if (inverse) numberOfBugs = numberOfBugs* 10;
+			for (var i = 0 ; i < numberOfBugs ; i++) {
 				bugs[i] = new bug();
 			}
 			var update = function() {
@@ -245,15 +295,17 @@
 	</script>
 </head>
 <body>
-	<form id="setWordForm">
+	<form id="settingsForm">
 		<input type="text" id="setWordTextInput" />
 		<input type="submit" id="setWordSubmit" value="Set" />
+		<select id="styleSelect">
+			<option value="grey_circles">Grey Circles</option>
+			<option value="cmy_circles">CMY Circles</option>
+			<option value="white_lines">White Lines</option>
+			<option value="dark_lines">Dark Lines</option>
+		</select>
+		<input type="checkbox" id="inverseCheckbox" ><label for="inverseCheckbox">Invert</label>
 		<div id="setWordButton">...</div>
 	</form>
-<!--	<div class="joebain">
-		<a href="mailto:mrjoebain@gmail.com">Joe Bain</a>
-	</div> -->
-	<a href="mailto:mrjoebain@gmail.com">
-		<canvas id="canvas" />
-	</a>
+	<canvas id="canvas" />
 </body>
