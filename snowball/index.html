@@ -1,47 +1,37 @@
 <!doctype html>
 <head>
   <script type="text/javascript" src="seedrandom.js"></script>
+  <script type="text/javascript" src="dat.gui.js"></script>
+  <script type="text/javascript" src="Stats.js"></script>
   <script type="text/javascript" src="soundmanager2.js"></script>
-  <script type="text/javascript" src="engine.js"></script>
-  <script type="text/javascript" src="pingpongspidermother.js"></script>
   <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="Box2dWeb-2.1.a.3.js"></script>
+  <script type="text/javascript" src="engine.js"></script>
+  <script type="text/javascript" src="snowball.js"></script>
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
-  <title>Ping Pong Spider Mother</title>
+  <title>Snowball</title>
   <style>
 	  @font-face {
-		  font-family: "cuteline";
-		  /*src: url("cuteline.ttf") format('truetype');*/
-		  src: url("cuteline.woff") format("woff"),
-		       url("cuteline.ttf") format('truetype');
-	  }
-	  @font-face {
-		  font-family: "ostrich-regular";
-		  /*src: url("ostrich-regular.ttf") format('truetype');*/
-		  src: url("ostrich-regular.woff") format("woff"),
-		       url("ostrich-regular.ttf") format('truetype');
-	  }
-	  @font-face {
-		  font-family: "ostrich-bold";
-		  src: url("ostrich-bold.ttf");
+		  font-family: "sirin-stencil";
+		  src: url("SirinStencil-Regular.ttf");
 	  }
 	  body {
+		  font-family:"sirin-stencil" sans;
 		  background-color:#ffffff;
-		  font-family:"ostrich-regular", "Helvetica", Arial, sans;
 		  font-size:24px;
-		  background-color:black;
-		  color:white;
+		  color:#5ee1d9;
 		  user-select:none;
 		  -webkit-user-select:none;
 	  }
 	  a {
-		  color:#efe327;
+		  color:#1f1bbc;
 		  text-decoration:none;
 	  }
 	  a:hover {
 		  text-decoration:underline;
 	  }
 	  span.emphasis {
-		  color:#efe327;
+		  color:#1f1bbc;
 	  }
 	  #content {
 		  margin:auto;
@@ -63,7 +53,7 @@
 		  float:left;
 	  }
 	  #controls:hover {
-		  color:#efe327;
+		  color:#1f1bbc;
 	  }
 	  #canvas {
 		  margin:2px;
@@ -74,14 +64,14 @@
 <body>
 	<div id="content">
 		<div id="info">
-			A game by <a href="http://ohgames.co.uk">Oh, Games</a>.&nbsp;&nbsp;&nbsp;Written in HTML5, <a href="https://github.com/adam-a/htmlettes/tree/master/pingpongspidermother">fork me</a>.
+			A game by <a href="http://ohgames.co.uk">Oh, Games</a>.&nbsp;&nbsp;&nbsp;Written in HTML5.
 		</div>
 		<canvas id="canvas" width="800" height="600"></canvas>
 		<div id="controls">
 			<input type="checkbox" id="soundToggle" checked><label for="soundToggle">Sound</label>
 		</div>
 		<div id="instructions">
-			<span class="emphasis">Arrow keys</span> to move, <span class="emphasis">space</span> to start, <span class="emphasis">r</span> to restart a level and <span class="emphasis">escape</span> to quit.
+			<span class="emphasis">Space</span> to start, <span class="emphasis">arrow keys</span> to play.
 		</div>
 	</div>
 </body>

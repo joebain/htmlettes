@@ -2,12 +2,11 @@ var thisTime = getTime();
 var delta;
 var lastTime = getTime();
 var interval;
-var targetInterval = 33;
-var maxInterval = 66;
+var targetInterval = 16;
+var maxInterval = 33;
 var gameDuration;
 var canvas;
 var context;
-var stickyKeys = [];
 var keys = [];
 var touches = [];
 var screenSize = {};
@@ -25,6 +24,7 @@ var frameRate = 0;
 
 var highQualityGfx = true;
 var frameStutterCount = 0;
+var stats = new Stats();
 
 var isIE = (navigator.appName == "Microsoft Internet Explorer");
 var isAndroid = (navigator.userAgent.match(/Android/i));
@@ -51,11 +51,8 @@ function _update(delta) {
 	if (paused) {
 		return;
 	}
-//    var j = 0;
-//    for (var i = 0 ; i < 100000000 ; i++) {
-//        j += i;
-//    }
-//    console.log(j);
+
+    stats.update();
 
 	gameDuration = (thisTime - firstTime)/1000;
 	if (delta > maxInterval) delta = maxInterval;
@@ -142,6 +139,16 @@ function _init() {
 		frameTimesTotal += targetInterval;
 	}
 
+
+	// Align top-left
+	stats.getDomElement().style.position = 'absolute';
+	stats.getDomElement().style.left = '0px';
+	stats.getDomElement().style.top = '0px';
+
+//    document.body.appendChild( stats.getDomElement() );
+
+
+
 	if (init) init();
 	loop();
 }
@@ -152,8 +159,6 @@ function setupSM() {
 	soundManager.flashVersion = 9;
 	soundManager.useFlashBlock = false;
 	
-	//init sounds anyway so stuff is not null
-	initSounds();
 	soundManager.onready(function() {
 		initSounds();
 		if (settings.sound === false) {
@@ -192,25 +197,22 @@ var soundIds = 1;
 function makeSFX(url) {
 
 	var dontReactToFinish = false;
-	var sound;
-	if (soundManager.enabled) {
-		sound = soundManager.createSound({
-			id: "sound"+(soundIds++),
-			url:url,
-			multishot:true,
-			volume:40,
-			autoLoad:true,
-			onload:function() {
-				//            sound.play();
-			},
-			onfinish: function() {
-				//            if (dontReactToFinish) return;
-				//            sound.setVolume(40);
-				//            dontReactToFinish = true;
-			}
-		});
-	}
-	return sound ? sound : {play:function(){}};
+	var sound = soundManager.createSound({
+		id: "sound"+(soundIds++),
+		url:url,
+		multishot:true,
+		volume:40,
+		autoLoad:true,
+		onload:function() {
+//            sound.play();
+		},
+		onfinish: function() {
+//            if (dontReactToFinish) return;
+//            sound.setVolume(40);
+//            dontReactToFinish = true;
+		}
+	});
+	return sound;
 }
 
 function soundError() {
@@ -246,7 +248,6 @@ function touchmove(e) {
 
 function keysdown(e) {
 	keys[e.keyCode] = true;
-	stickyKeys[e.keyCode] = true;
 
 	switch (e.keyCode) {
 	case key_up:
