@@ -1,0 +1,153 @@
+body {
+	width:100%;
+	height:100%;
+	margin:0;
+	padding:0;
+}
+* a {
+	text-decoration:none;
+	color:white;
+}
+.h1 {
+	font-size: 32px;
+	margin:5px 0px;
+	border-bottom:solid 2px #ddd;
+	text-align:left;
+	padding-left:10px;
+	line-height:0.8em;
+}
+.break {
+	height:30px;
+	border-top:solid 2px #ddd;
+	margin-top:10px;
+}
+#settingsForm {
+	font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+	font-size: 18px;
+	color: #333;
+	width:400px;
+	margin:auto;
+	position:relative;
+	margin:auto;
+	top:-1000;
+	left:0;
+	right:0;
+	transition-property:top;
+	transition-duration:0.5s;
+	-webkit-transition-property:top;
+	-webkit-transition-duration:0.5s;
+	-moz-transition-property:top;
+	-moz-transition-duration:0.5s;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	background-color:white;
+	padding:5px;
+	padding-bottom:10px;
+	text-align:center;
+}
+.sourceTab {
+}
+.sourceTabLabel {
+	cursor:pointer;
+	text-align:left;
+	padding-left:15px;
+}
+.sourceTabLabel.active {
+	background-color:#333;
+	color:white;
+}
+.sourceTabLabel.active:hover {
+	background-color:#ddd;
+	color:#333;
+}
+.sourceTabLabel.inactive {
+	background-color:#ddd;
+	color:#333;
+}
+.sourceTabLabel.inactive:hover {
+	background-color:#333;
+	color:white;
+}
+.sourceContent {
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	width:100%;
+	padding:15px 10%;
+	border-left:solid 2px #333;
+	border-right:solid 2px #333;
+}
+#bottombit {
+	width:40px;
+	margin:auto;
+	position:relative;
+}
+#tabrevealbutton {
+	font-size:20px;
+	background-color:white;
+	text-align:center;
+	cursor:pointer;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	position:absolute;
+	top:0px;
+	left:0;
+	right:0;
+	padding-bottom:5px;
+}
+#setwordtextinput {
+	font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+	font-size: 32px;
+	height: 48px;
+	border: none;
+	border-bottom: solid 2px #333;
+	color: #333;
+	width: 100%;
+	padding: 2px;
+	text-align:center;
+}
+#setwordtextinput:active {
+	border:none;
+}
+#submitButton {
+	font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+	font-size: 32px;
+	border: none;
+	background-color: #333;
+	color: white;
+	height: 48px;
+	width: 100px;
+	text-align: left;
+	cursor:pointer;
+	text-align:center;
+	border-radius:5px;
+}
+#selectOptions {
+	text-align:center;
+	width:300px;
+	margin:auto;
+}
+#styleSelect {
+	-webkit-appearance:none;
+	-moz-appearance:none;
+	margin-top: 10px;
+	width: 100%;
+	font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+	font-size: 18px;
+	border: none;
+	background-color: #333;
+	color: white;
+	padding-left: 15px;
+	border-radius:0;
+	text-align:left;
+}
+#styleSelect option {
+	background-color: #333;
+	color: white;
+}
+#canvas {
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:-1;
+}
+

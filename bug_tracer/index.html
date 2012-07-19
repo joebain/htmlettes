@@ -1,311 +1,47 @@
 <head>
 	<title>Joe Bain</title>
-	<style>
-		body {
-			width:100%;
-			height:100%;
-			margin:0;
-			padding:0;
-		}
-		* a {
-			text-decoration:none;
-			color:white;
-		}
-		#settingsForm {
-			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
-			font-size: 32px;
-			color: #333;
-			width:400px;
-			margin:auto;
-			height:122px;
-			top:-132px;
-			position:relative;
-			margin:auto;
-			left:0;
-			right:0;
-			transition-property:top;
-			transition-duration:0.5s;
-			-webkit-transition-property:top;
-			-webkit-transition-duration:0.5s;
-			-moz-transition-property:top;
-			-moz-transition-duration:0.5s;
-			border-bottom-right-radius: 5px;
-			border-bottom-left-radius: 5px;
-			background-color:white;
-			padding:5px;
-		}
-		#setwordbutton {
-			font-size:20px;
-			background-color:white;
-			text-align:center;
-			cursor:pointer;
-			width:40px;
-			border-bottom-right-radius: 5px;
-			border-bottom-left-radius: 5px;
-			margin:auto;
-			position:absolute;
-			top:127px;
-			left:0;
-			right:0;
-			padding-bottom:5px;
-		}
-		#setwordtextinput {
-			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
-			font-size: 32px;
-			height: 48px;
-			border: none;
-			border-bottom: solid 2px #333;
-			color: #333;
-			width: 288px;
-			padding: 2px;
-		}
-		#setwordtextinput:active {
-			border:none;
-		}
-		#setwordsubmit {
-			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
-			font-size: 32px;
-			border: none;
-			background-color: #333;
-			color: white;
-			height: 48px;
-			width: 100px;
-			text-align: left;
-			cursor:pointer;
-		}
-		#styleSelect {
-			-webkit-appearance:none;
-			-moz-appearance:none;
-			margin-top: 10px;
-			width: 100%;
-			font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
-			font-size: 32px;
-			border: none;
-			background-color: #333;
-			color: white;
-			padding-left: 5px;
-			border-radius:0;
-		}
-		#canvas {
-			position:absolute;
-			top:0;
-			left:0;
-			z-index:-1;
-		}
-
-	</style>
-	<script>
-		window.onload = function(e) {
-
-			// handle the form etc
-			var button = document.getElementById("setWordButton");
-			var form = document.getElementById("settingsForm");
-			var textInput = document.getElementById("setWordTextInput");
-			button.onclick = function(e) {
-				if (form.style.top === "" || parseInt(form.style.top) === -132) {
-					form.style.top = 0;
-				} else {
-					form.style.top = -132;
-				}
-			};
-
-			form.onsubmit = function(e) {
-				e.preventDefault();
-					window.location = window.location.origin + "/#" + textInput.value;
-					window.location.reload();
-				return true;
-			};
-
-
-
-
-			var word = "joeba.in";
-			if (window.location.hash) {
-				word = window.location.hash.substr(1);
-			}
-			var canvas = document.getElementById("canvas");
-			var pWidth = document.body.clientWidth;
-			var pHeight = document.body.clientHeight;
-			canvas.height = pHeight;
-			canvas.width = pWidth;
-			var gridSize = 10;
-
-			//var style = "grey_circles";
-			var style = "lines";
-			//var style = "circles";
-
-			var inverse = true;
-			var lightOnDark = false;
-			
-			var context = canvas.getContext('2d');
-			if (lightOnDark) {
-				context.globalCompositeOperation = "lighter";
-				context.fillStyle = "#333";
-			} else {
-				context.globalCompositeOperation = "darker";
-				context.fillStyle = "#ddd";
-			}
-			context.fillRect(0,0,pWidth, pHeight);
-
-			//context.strokeWidth = 2;
-
-
-			var backCanvas = document.createElement("canvas");
-			backCanvas.width = Math.floor(pWidth/gridSize);
-			backCanvas.height = Math.floor(pHeight/gridSize);
-			var bContext = backCanvas.getContext("2d");
-			var bImData = bContext.getImageData(0,0,backCanvas.width, backCanvas.height);
-			setTimeout(function() {
-				bContext.fillStyle = "#fff";
-				var fontSize = backCanvas.height*(1/0.9)
-				var textMeasurements;
-				do {
-					fontSize = Math.round(fontSize*0.9);
-					bContext.font = fontSize+ 'px "Arial Black", "Arial Bold", Gadget, sans-serif';
-					console.log(bContext.font);
-					textMeasurements = bContext.measureText(word);
-					console.log(textMeasurements.width);
-				} while (textMeasurements.width*gridSize > pWidth);
-				bContext.fillText(word, -textMeasurements.width/2 + backCanvas.width/2, backCanvas.height/2 + fontSize/3);
-					bContext.beginPath();
-					bContext.arc(0, 0, backCanvas.height, 0, Math.PI*2, true); 
-					context.fill();
-				bImData = bContext.getImageData(0,0,backCanvas.width, backCanvas.height);
-				//context.drawImage(backCanvas, 0, 0, pWidth, pHeight);
-			}, 1000);
-
-			var updateInterval = 50;
-			var bug = function() {
-				var colour = "#ff0";
-				var rand = Math.random();
-				if (rand < 0.33) {
-					colour = "#0ff";
-				} else if (rand < 0.66) {
-					colour = "#f0f";
-				}
-				var bugX = Math.floor(Math.random() * pWidth);
-				var bugY = Math.floor(Math.random() * pHeight);
-				var bugvy = Math.random()-0.5;
-				var bugvx = Math.random()-0.5;
-
-				this.update = function() {
-					bugvx += Math.random()*2-1;
-					bugvy += Math.random()*2-1;
-					var oldBugX = bugX;
-					var oldBugY = bugY;
-					var newBugX = bugX + Math.round(bugvx)*gridSize;
-					var newBugY = bugY + Math.round(bugvy)*gridSize;
-					var isWhite = function(x,y,imData) {
-						x = Math.floor(x/gridSize);
-						y = Math.floor(y/gridSize);
-						var r = imData.data[y*imData.width*4+x*4];
-						var g = imData.data[y*imData.width*4+x*4+1];
-						var b = imData.data[y*imData.width*4+x*4+2];
-						return r > 0 || g > 0 || b > 0;
-					};
-					for (var chances = 0 ; chances < 4 ; chances++) {
-						var shouldRetry = false;
-						if (inverse) {
-							shouldRetry = (!isWhite(bugX,bugY,bImData) && isWhite(newBugX, newBugY, bImData));
-						} else {
-							shouldRetry = (isWhite(bugX,bugY,bImData) && !isWhite(newBugX, newBugY, bImData));
-						}
-						if (shouldRetry) {
-							if (Math.random() > 0.5) {
-								bugvy *= -1;
-							} else {
-								bugvx *= -1;
-							}
-						} else {
-							break;
-						}
-						newBugX = bugX + Math.round(bugvx)*gridSize;
-						newBugY = bugY + Math.round(bugvy)*gridSize;
-					}
-					bugX += Math.round(bugvx)*gridSize;
-					bugY += Math.round(bugvy)*gridSize;
-					var wrapped_around = false;
-					if (bugX > pWidth) { wrapped_around = true;  bugX -= pWidth;}
-					if (bugX < 0) { wrapped_around = true;  bugX += pWidth;}
-					if (bugY > pHeight) { wrapped_around = true;  bugY -= pHeight;}
-					if (bugY < 0) { wrapped_around = true;  bugY += pHeight;}
-					if (bugvx > 1) {  bugvx = 1;}
-					if (bugvx < -1) {  bugvx = -1;}
-					if (bugvy > 1) {  bugvy = 1;}
-					if (bugvy < -1) {  bugvy = -1;}
-
-
-					switch (style) {
-						case "circles":
-							var circleSize = gridSize*0.5*Math.random();
-
-							context.fillStyle = colour;
-							context.beginPath();
-							context.arc(bugX-circleSize/2, bugY-circleSize/2, circleSize, 0, Math.PI*2, true); 
-							context.fill();
-							break;
-
-						case "lines":
-							// dont draw if we wrapped around
-							if (!wrapped_around) {
-								if (lightOnDark) {
-									context.strokeStyle = "#fff";
-								} else {
-									context.strokeStyle = "#000";
-								}
-								context.beginPath();
-								context.moveTo(oldBugX, oldBugY); 
-								context.lineTo(bugX, bugY); 
-								context.stroke();
-							}
-							break;
-
-						case "grey_circles":
-							if (lightOnDark) {
-								context.fillStyle = "#111";
-							} else {
-								context.fillStyle = "#eee";
-							}
-							var halfRectSize = 0.2;
-							//context.fillRect(bugX-gridSize*halfRectSize, bugY-gridSize*halfRectSize, gridSize*halfRectSize*2, gridSize*halfRectSize*2);
-							context.beginPath();
-							context.arc(bugX-gridSize*halfRectSize, bugY-gridSize*halfRectSize, gridSize*halfRectSize*2, 0, Math.PI*2, true); 
-							context.fill();
-							break;
-
-					}
-				};
-				return this;
-			};
-			var bugs = [];
-			var numberOfBugs = 30;
-			if (inverse) numberOfBugs = numberOfBugs* 10;
-			for (var i = 0 ; i < numberOfBugs ; i++) {
-				bugs[i] = new bug();
-			}
-			var update = function() {
-				for (var i in bugs) {
-					bugs[i].update();
-				}
-				setTimeout(update, updateInterval);
-			};
-			update();
-
-		};
-	</script>
+	<link href="style.css" rel="stylesheet">
+	<script type="text/javascript" src="bugtracer.js"></script>
 </head>
 <body>
 	<form id="settingsForm">
-		<input type="text" id="setWordTextInput" />
-		<input type="submit" id="setWordSubmit" value="Set" />
+		<div class="h1">Source</div>
+		<div id="sourceTabs">
+			<div class="sourceTab">
+				<div class="sourceTabLabel">Word</div>
+				<div class="sourceContent">
+					<input type="text" id="setWordTextInput" />
+				</div>
+			</div>
+			<div class="sourceTab">
+				<div class="sourceTabLabel">Image</div>
+				<div class="sourceContent">
+				</div>
+			</div>
+			<div class="sourceTab">
+				<div class="sourceTabLabel">Draw</div>
+				<div class="sourceContent">
+				</div>
+			</div>
+		</div>
+		<div class="break"></div>
+		<div class="h1">Style</div>
 		<select id="styleSelect">
 			<option value="grey_circles">Grey Circles</option>
-			<option value="cmy_circles">CMY Circles</option>
-			<option value="white_lines">White Lines</option>
-			<option value="dark_lines">Dark Lines</option>
+			<option value="circles">CMY Circles</option>
+			<option value="lines">Lines</option>
+			<option value="squares">Squares</option>
 		</select>
-		<input type="checkbox" id="inverseCheckbox" ><label for="inverseCheckbox">Invert</label>
-		<div id="setWordButton">...</div>
+		<div id="selectOptions">
+			<input type="checkbox" id="inverseCheckbox" ><label for="inverseCheckbox">Invert</label>
+			<input type="checkbox" id="lightOnDarkCheckbox" ><label for="lightOnDarkCheckbox">Light on Dark</label>
+			<input type="range" id="fadeOutRange" min="0.0" max="1.0" step="0.05"><label for="fadeOutRange">Fade out</label>
+		</div>
+		<div class="break"></div>
+		<input type="submit" id="submitButton" value="Set" />
+		<div id="bottomBit">
+			<div id="tabRevealButton">...</div>
+		</div>
 	</form>
 	<canvas id="canvas" />
 </body>
