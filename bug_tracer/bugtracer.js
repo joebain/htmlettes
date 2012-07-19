@@ -64,7 +64,7 @@ window.onload = function(e) {
 	};
 
 	var formHeight = form.clientHeight;
-	form.style.top = 0;//-formHeight;
+	form.style.top = -formHeight;
 	button.onclick = function(e) {
 		if (form.style.top === "" || parseInt(form.style.top) === -formHeight) {
 			form.style.top = 0;
@@ -88,6 +88,11 @@ window.onload = function(e) {
 				sourceName.classList.add("inactive");
 				sourceName.classList.remove("active");
 			}
+		}
+		if (form.style.top === "" || parseInt(form.style.top) === -formHeight) {
+			form.style.top = -form.clientHeight;
+		} else {
+			form.style.top = 0;
 		}
 		formHeight = form.clientHeight;
 	}
