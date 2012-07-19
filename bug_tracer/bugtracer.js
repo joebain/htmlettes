@@ -20,11 +20,11 @@ window.onload = function(e) {
 		word = params.word || "joeba.in";
 		style = params.style || "circles";
 		source = params.source || "word";
-		inverse = params.inverse || "yes";
+		inverse = params.inverse || "no";
 		inverse = inverse == "yes";
-		lightOnDark = params.lightOnDark || "no";
+		lightOnDark = params.lightOnDark || "yes";
 		lightOnDark = lightOnDark == "yes";
-		fadeOut = params.fadeOut || 1.0;
+		fadeOut = params.fadeOut || 0.0;
 	}
 	function setUrlParams() {
 		var params = {
