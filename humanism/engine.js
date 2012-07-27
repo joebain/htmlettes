@@ -144,6 +144,7 @@ function _init() {
 }
 
 function keysup(e) {
+	if (window.keyup) keyup(e.keyCode);
   keys[e.keyCode] = false;
 }
 
@@ -163,6 +164,7 @@ function touchmove(e) {
 }
 
 function keysdown(e) {
+	if (window.keydown) keydown(e.keyCode);
 	keys[e.keyCode] = true;
 
 	switch (e.keyCode) {
@@ -198,11 +200,21 @@ function line(p1, p2, colour, width) {
 }
 
 // maths
+function clampup(v, max) {
+	if (max === undefined) max = 1.0;
+	v = v > max ? max : v;
+	return v;
+}
+
+function clampdown(v, min) {
+	if (min === undefined) min = 1.0;
+	v = v < -min ? -min : v;
+	return v;
+}
 
 function clamp(v, max) {
 	if (max === undefined) max = 1.0;
 	v = v > max ? max : v;
-	v = v < -max ? -max : v;
 	return v;
 }
 
