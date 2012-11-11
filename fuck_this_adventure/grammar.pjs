@@ -1,0 +1,39 @@
+start
+  = s
+
+s "sentence"
+  = vp
+
+vp "verb phrase"
+  = vp:(v _ np _ adv (_ pp)?
+  / v _ np (_ pp)? _ adv
+  / adv _ v _ np (_ pp)?
+  / v _ np (_ pp)?
+  / v _ pp) { return {type:"VP", value:vp};}
+
+np "noun phrase"
+  = np:((det _)? (adj _)? n (_ pp)?) { return {type:"NP", value:np};}
+
+pp "prepositional phrase"
+  = pp:(p _ np) { return {type:"PP", value: pp}; }
+
+_ "seperator"
+  = " "
+
+v "verb"
+  = v:($VERBS) { return { type:"VB", value:v }; }
+
+det "determiner"
+  = d:($ARTICLES) { return { type:"DT", value:d }; }
+
+n "noun"
+  = n:($NOUNS) { return { type:"NN", value:n }; }
+
+p "preposition"
+  = p:($PREPOSITIONS) { return { type:"IN", value:p }; }
+
+adv "adverb"
+  = a:($ADVERBS) { return { type:"RB", value:a }; }
+
+adj "adjective"
+  = a:($ADJECTIVES) { return { type:"JJ", value:a }; }
