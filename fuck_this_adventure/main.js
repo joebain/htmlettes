@@ -7,13 +7,18 @@ window.onload = function() {
 
 	output = document.getElementById("output");
 
-	output.innerHTML = getPlace(world.things.me.position).description;
+	var world = new World;
+	world.init();
+
+	output.innerHTML = world.getPlace(world.things.me.position).description;
 
 	input.addEventListener("keydown", function(e) {
 		if (e.keyCode === 13) /*enter*/ {
 			var command = parseInput(input.value);
-			var response = advanceTheWorld(command);
+			var response = world.advance(command);
 			output.innerHTML = response;
+			output.innerHTML +=  "<br/>Water level: " + world.things.water.level; 
+			input.value = "";
 		}
 	});
 

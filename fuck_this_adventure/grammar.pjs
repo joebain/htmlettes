@@ -5,14 +5,20 @@ s "sentence"
   = vp
 
 vp "verb phrase"
-  = vp:(v _ np _ adv (_ pp)?
-  / v _ np (_ pp)? _ adv
-  / adv _ v _ np (_ pp)?
-  / v _ np (_ pp)?
-  / v _ pp) { return {type:"VP", value:vp};}
+  = vp:(
+	    adv _ v _ pp
+	  / v _ pp _ adv
+	  / v _ pp
+	  / v _ np _ adv (_ pp)?
+	  / v _ np (_ pp)? _ adv
+	  / adv _ v _ np (_ pp)?
+	  / v _ np (_ pp)?
+  ) { return {type:"VP", value:vp};}
 
 np "noun phrase"
-  = np:((det _)? (adj _)? n (_ pp)?) { return {type:"NP", value:np};}
+  = np:(
+      (det _)? (adj _)? n (_ pp)?
+  ) { return {type:"NP", value:np};}
 
 pp "prepositional phrase"
   = pp:(p _ np) { return {type:"PP", value: pp}; }

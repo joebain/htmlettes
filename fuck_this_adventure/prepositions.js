@@ -4,5 +4,6 @@ var prepositions = [
 	"on",
 	"over",
 	"to",
-	"in"
+	"in",
+	"up"
 ];
