@@ -5,6 +5,9 @@
 	<script type="text/javascript" src="lib/underscore.js"></script>
 	<script type="text/javascript" src="lib/peg.js"></script>
 
+	<script type="text/javascript" src="lib/dat.gui.js"></script>
+	<script type="text/javascript" src="lib/box2d.js"></script>
+
 	<script type="text/javascript" src="cat.js"></script>
 	<script type="text/javascript" src="me.js"></script>
 
@@ -17,12 +20,17 @@
 
 	<script type="text/javascript" src="world.js"></script>
 
+	<script type="text/javascript" src="illustration.js"></script>
+
 	<script type="text/javascript" src="main.js"></script>
 </head>
 <body>
-	<div id="input">
-		<input type="text" id="commandInput" />
-	</div>
-	<div id="output">
+	<canvas id="illustration">
+	</canvas>
+	<div id="content">
+		<input type="text" id="input" />
+		<div id="output">
+		</div>
+		<div id="reset">Reset</div>
 	</div>
 </body>

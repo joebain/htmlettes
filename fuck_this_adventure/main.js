@@ -1,17 +1,31 @@
 var input;
 var output;
+var illustrationEl;
 
 var parser;
-window.onload = function() {
-	input = document.getElementById("commandInput");
 
+
+window.onload = function() {
+	input = document.getElementById("input");
 	output = document.getElementById("output");
 
+	illustrationEl = document.getElementById("illustration");
+	resetButton = document.getElementById("reset");
+	reset.onclick = function() {
+		illustration.init();
+	};
+
+
+	// set up the world
 	var world = new World;
 	world.init();
 
+
+	// initial description
 	output.innerHTML = world.getPlace(world.things.me.position).description;
 
+
+	// process input
 	input.addEventListener("keydown", function(e) {
 		if (e.keyCode === 13) /*enter*/ {
 			var command = parseInput(input.value);
@@ -21,6 +35,9 @@ window.onload = function() {
 			input.value = "";
 		}
 	});
+
+	
+	// get the grammar
 
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", "grammar.pjs");
@@ -37,6 +54,13 @@ window.onload = function() {
 		}
 	};
 	xhr.send();
+
+	// set up the illustration
+	var illustration = new Illustration(illustrationEl, world);
+	setInterval(function() {
+		illustration.update();
+		illustration.draw();
+	}, 1000/30);
 };
 
 

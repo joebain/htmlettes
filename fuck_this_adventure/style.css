@@ -1,0 +1,34 @@
+body {
+	margin:0;
+	padding:0;
+}
+#content {
+	position:absolute;
+	width: 400px;
+	height: 400px;
+	margin:auto;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background: rgba(255,255,255,0.3);
+	text-align:center;
+}
+#content input {
+	font-size:20px;
+	width:300px;
+	margin:20px 0px;
+	height:30px;
+}
+#content #output {
+	font-size:16px;
+	width:280px;
+	text-align:justify;
+	margin:auto;
+}
+#illustration {
+	position:absolute;
+	width: 100%;
+	height:100%;
+	background: rgb(60,50,50);
+}
