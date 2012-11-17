@@ -57,8 +57,13 @@ window.onload = function() {
 
 	// set up the illustration
 	var illustration = new Illustration(illustrationEl, world);
+	var startTime = new Date().getTime();
+	var thisTime = startTime, lastTime = startTime;
 	setInterval(function() {
-		illustration.update();
+		lastTime = thisTime;
+		thisTime = new Date().getTime();
+		var delta = (thisTime - lastTime)/1000.0;
+		illustration.update(delta);
 		illustration.draw();
 	}, 1000/30);
 };
