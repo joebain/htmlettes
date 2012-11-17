@@ -91,7 +91,7 @@ var cat = {
 							response = "The cat still enjoys your signing but it doesn't seem to be as enetertained as before.";
 						}
 					} else {
-						response = "The cat seems to nervous to enjoy the song.";
+						response = "The cat seems too nervous to enjoy the song.";
 					}
 				}
 

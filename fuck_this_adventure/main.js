@@ -10,10 +10,6 @@ window.onload = function() {
 	output = document.getElementById("output");
 
 	illustrationEl = document.getElementById("illustration");
-	resetButton = document.getElementById("reset");
-	reset.onclick = function() {
-		illustration.init();
-	};
 
 
 	// set up the world
