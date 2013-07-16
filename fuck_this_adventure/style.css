@@ -1,6 +1,7 @@
 body {
 	margin:0;
 	padding:0;
+	background: rgb(60,50,50);
 }
 #content {
 	position:absolute;
@@ -28,7 +29,12 @@ body {
 }
 #illustration {
 	position:absolute;
-	width: 100%;
-	height:100%;
+	width: 400px;
+	height: 400px;
+	margin:auto;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
 	background: rgb(60,50,50);
 }

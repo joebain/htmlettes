@@ -60,8 +60,10 @@ window.onload = function() {
 		thisTime = new Date().getTime();
 		var delta = (thisTime - lastTime)/1000.0;
 		illustration.update(delta);
-		illustration.draw();
 	}, 1000/30);
+	setInterval(function() {
+		illustration.draw();
+	}, 1000/10);
 };
 
 
