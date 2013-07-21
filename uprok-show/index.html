@@ -1,0 +1,305 @@
+<head>
+	<title>Uprok - Codeshow</title>
+
+	<style>
+		body {
+			font-family: Ostrich, Helvetica, Arial, sans-serif;
+			font-size:70px;
+			opacity:0;
+			-webkit-transition:opacity 1s;
+			-moz-transition:opacity 1s;
+			-o-transition:opacity 1s;
+			overflow-x:hidden;
+		}
+		* {
+			margin:0;
+			padding:0;
+			font-size:24px;
+			text-align:center;
+
+			box-sizing:border-box;
+		}
+		@font-face {
+			font-family: OstrichTracks;
+			src: url("ostrich-bold.ttf");
+		}
+		@font-face {
+			font-family: Ostrich;
+			src: url("ostrich-regular.ttf");
+		}
+		@font-face {
+			font-family: OstrichBlack;
+			src: url("ostrich-black.ttf");
+		}
+			
+		h1 {
+			font-family: OstrichTracks, Helvetica, Arial, sans-serif;
+			text-transform: uppercase;
+			font-size: 130px;		
+			padding:10px 40px;
+		}
+		h2 {
+			font-family: OstrichTracks, Helvetica, Arial, sans-serif;
+			/*font-family: Ostrich, Helvetica, Arial, sans-serif;*/
+			font-size: 90px;		
+			padding:10px 40px;
+		}
+		li {
+			margin: 0px 15px;
+			list-style-type: none;
+			display: inline;
+		}
+		a {
+			text-decoration:none;
+			font-size:70px;
+			font-family: OstrichTracks, Helvetica, Arial, sans-serif;
+		}
+		a:hover {
+			text-decoration:underline;
+		}
+		i {
+			font-size:50px;
+		}
+		i a {
+			font-size:50px;
+		}
+
+		p {
+			font-size:70px;
+			padding:20px 40px;
+		}
+
+
+
+		.page {
+			width:100%;
+			height:600px;
+			position:relative;
+			background-color:#000;
+		}
+		#page-1, #page-1 * {
+			color: #000;
+			background-color:#fff;
+		}
+		#page-2, #page-2 * {
+			color:#99df19;
+		}
+		#page-3, #page-3 * {
+			color: #0cc4ec;
+			background-color:#fff;
+		}
+		#page-4, #page-4 * {
+			color: #fa611e;
+		}
+		#page-5, #page-5 * {
+			color: #710bf6;
+			background-color:#fff;
+		}
+		#page-6, #page-6 * {
+			color: #d82095;
+		}
+		#page-7, #page-7 * {
+			color: #dcc20d;
+			background-color:#fff;
+		}
+		#page-n, #page-n * {
+			color:#fff;
+		}
+
+		.centred {
+			margin:0;
+			padding:0;
+			display:inline-block;
+		}
+		.post-centred {
+			display:block;
+			position:absolute;
+			margin:auto;
+			top:0;
+			bottom:0;
+			left:0;
+			right:0;
+		}
+		#game {
+			margin: auto;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;		
+		}
+
+		.down-arrow {
+			position:absolute;
+			margin:auto;
+			lefT:0;
+			right:0;
+			bottom: 200px;
+		}
+
+		#credits-link {
+			width:100%;
+			text-align:center;
+			color:white;
+			bottom:50px;
+		}
+
+	
+		
+
+	</style>
+
+	<script>
+		var currentPage = 0;
+
+		var speed = 30;
+		var waiting = 0;
+		var seeking = 1;
+		var state = waiting;
+
+		var pageHeight = window.innerHeight;
+		var target = 0;
+
+
+		addEventListener("load", function() {
+			setTimeout(function() {
+				document.getElementsByTagName("body")[0].style.opacity = 1;
+				var pages = document.getElementsByClassName("page");
+				for (var p = 0 ; p < pages.length ; p++) {
+					var page = pages[p];
+					page.style.height = pageHeight;
+				}
+
+				var centreds = document.getElementsByClassName("centred");
+				for (var c = 0 ; c < centreds.length ; c++) {
+					var centred = centreds[c];
+					centred.style.height = centred.clientHeight + 20;
+					centred.style.width = centred.clientWidth + 20;
+					centred.className = "centred post-centred";
+				}
+
+				window.addEventListener("keydown", function(e) {
+					if (e.keyCode === 40 || e.keyCode == 38) {
+						e.preventDefault();
+						return false;
+					}
+				});
+				window.addEventListener("keyup", function(e) {
+					currentPage = Math.round(window.scrollY / pageHeight);
+					if (e.keyCode === 40) { // down
+						if (currentPage < pages.length-1) {
+							currentPage ++;
+							state = seeking;
+							target = pageHeight * currentPage;
+							e.preventDefault();
+							return false;
+						}
+					}
+					else if (e.keyCode === 38) { // up
+						if (currentPage > 0) {
+							currentPage --;
+							state = seeking;
+							target = pageHeight * currentPage;
+							e.preventDefault();
+							return false;
+						}
+					}
+				});
+
+			}, 1000);
+		}, false);
+
+		var scrollTimeout;
+		addEventListener("scroll", function(e) {
+			clearTimeout(scrollTimeout);
+			scrollTimeout = setTimeout(function() {
+				currentPage = Math.round(window.scrollY / pageHeight);
+				target = currentPage * pageHeight;
+				state = seeking;
+			}, 100);
+		});
+
+		setInterval(function() {
+			if (state === seeking) {
+				if (Math.abs(window.scrollY - target) < speed*2) {
+					window.scrollTo(0, target);
+					state = waiting;
+				} else if (target > window.scrollY) {
+					window.scrollTo(0, window.scrollY + speed);
+				} else if (target < window.scrollY) {
+					window.scrollTo(0, window.scrollY - speed);
+				}
+			}
+		}, 10);
+		
+	</script>
+</head>
+<body>
+	<div id="page-1" class="page">
+		<div class="centred">
+			<h1>Uprok</h1>
+		</div>
+	</div>
+	<div id="page-2" class="page">
+		<div class="centred">
+			<h2>A local multiplayer, one button, HTML5 game using Canvas and WebAudio</h2>
+			<p>The game was initially developed during a game jam at the the <a href="http://wiki.london.hackspace.org.uk/view/London_Hackspace">London Hackspace</a>. It was expanded as an entry to The Experimental Gameplay Project's <a href="http://experimentalgameplay.com/blog/2011/12/5-buttons-competition-in-decemberjanuary/">5 BUTTONS</a> competition. It has also been at two <a href="http://thewildrumpus.co.uk/">Wild Rumpus</a> events.
+			</p>
+		</div>
+	</div>
+	<div id="page-3" class="page">
+		<div class="centred">
+			<a href="http://joeba.in/uprok"><img src="uprok.png"/></a>
+		</div>
+	</div>
+	<div id="page-4" class="page">
+		<div class="centred">
+			<a href="https://github.com/joebain/uprok"><h1>The code</h1></a>
+		</div>
+	</div>
+	<div id="page-5" class="page">
+		<div class="centred">
+			<h2>WebAudio for sound</h2>
+			<p>Routing effects <i>(sounds.js:203)</i></p>
+			<p>Loading wavs <i>(sounds.js:448, 141; sounds/js/*)</i></p>
+		</div>
+	</div>
+	<div id="page-6" class="page">
+		<div class="centred">
+			<h2>Live tweaking</h2>
+			<p><i>Use <a href="http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage">dat.gui</a></i></p>
+			<p>Enable <i>(flyrock.js:165, index.html:286,296)</i></p>
+			<p>Making controls <i>(flyrock.js:168)</i></p>
+			<p>Effect functions <i>(sounds.js:1)</i></p>
+			<p>Load and save <i>(flyrock.js:512)</i></p>
+		</div>
+	</div>
+	<div id="page-7" class="page">
+		<div class="centred">
+			<h2>Moving and drawing</h2>
+			<p>Update positions (don't new) <i>(flyrock.js:1106)</i></p>
+			<p>Draw the viewport <i>(flyrock.js:1325)</i></p>
+		</div>
+	</div>
+<!--    <div id="page-8" class="page">-->
+<!--        <div class="centred">-->
+<!--            <h2></h2>-->
+<!--            <p>-->
+<!--            </p>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div id="page-9" class="page">-->
+<!--        <div class="centred">-->
+<!--            <h2></h2>-->
+<!--            <p>-->
+<!--            </p>-->
+<!--        </div>-->
+<!--    </div>-->
+	<div id="page-n" class="page">
+		<div class="centred" id="contact-details">
+			<p>Joe Bain</p>
+			<p><a href="http://twitter.com/oh_cripes">@oh_cripes</a></p>
+<!--                <p><a href="http://joeba.in">http://joeba.in/</a></p>-->
+		</div>
+	</div>
+</body>
