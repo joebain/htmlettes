@@ -1,0 +1,319 @@
+<head>
+	<title>HTML5 - A Technical Perspective</title>
+
+	<style>
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-Black.ttf");
+			font-weight: 900;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-Bold.ttf");
+			font-weight: 700;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-Semibold.ttf");
+			font-weight: 500;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-Regular.ttf");
+			font-weight: 400;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-Light.ttf");
+			font-weight: 300;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-ExtraLight.ttf");
+			font-weight: 100;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-BlackIt.ttf");
+			font-weight: 900;
+			font-style: italic;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-BoldIt.ttf");
+			font-weight: 700;
+			font-style: italic;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-SemiboldIt.ttf");
+			font-weight: 500;
+			font-style: italic;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-It.ttf");
+			font-weight: 400;
+			font-style: italic;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-LightIt.ttf");
+			font-weight: 300;
+			font-style: italic;
+		}
+		@font-face {
+			font-family: SourceSans;
+			src: url("SourceSansPro-ExtraLightIt.ttf");
+			font-weight: 100;
+			font-style: italic;
+		}
+
+		body {
+			font-family: SourceSans, Helvetica, Arial, sans-serif;
+			opacity:0;
+			-webkit-transition:opacity 1s;
+			-moz-transition:opacity 1s;
+			-o-transition:opacity 1s;
+			overflow-x:hidden;
+		}
+		* {
+			margin:0;
+			padding:0;
+			text-align:center;
+
+			box-sizing:border-box;
+		}
+		h1 {
+			font-family: SourceSans, Helvetica, Arial, sans-serif;
+			font-size: 120px;		
+			padding:10px 40px;
+			font-weight: 900;
+		}
+		h2 {
+			font-family: SourceSans, Helvetica, Arial, sans-serif;
+			font-size: 90px;		
+			padding:10px 40px;
+			font-weight: 300;
+		}
+		h3 {
+			font-family: SourceSans, Helvetica, Arial, sans-serif;
+			font-size: 55px;		
+			padding:10px 40px;
+			font-weight: 400;
+		}
+		li {
+			margin: 0px 15px;
+			list-style-type: none;
+			display: inline;
+		}
+		a {
+			text-decoration:none;
+			font-family: SourceSans, Helvetica, Arial, sans-serif;
+			font-weight: 700;
+			color: #e44d26;
+		}
+		a:hover {
+			text-decoration:underline;
+		}
+
+		p {
+			font-size:45px;
+			padding:20px 40px;
+		}
+
+
+
+		.page {
+			width:100%;
+			height:600px;
+			position:relative;		
+		}
+		.page:nth-child(even) {
+			color:#e44d26;
+			background-color: #1D1D41;
+		}
+		.page:nth-child(odd) {
+			background-color:#fff;
+			color: #1D1D41;
+		}
+		#page-1, #page-1 * {
+		}
+
+		.centred {
+			margin:0;
+			padding:0;
+			display:inline-block;
+		}
+		.post-centred {
+			display:block;
+			position:absolute;
+			margin:auto;
+			top:0;
+			bottom:0;
+			left:0;
+			right:0;
+		}
+		#game {
+			margin: auto;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;		
+		}
+
+		.down-arrow {
+			position:absolute;
+			margin:auto;
+			lefT:0;
+			right:0;
+			bottom: 200px;
+		}
+
+		#credits-link {
+			width:100%;
+			text-align:center;
+			color:white;
+			bottom:50px;
+		}
+
+	
+		
+
+	</style>
+
+	<script>
+		var currentPage = 0;
+
+		var speed = 30;
+		var waiting = 0;
+		var seeking = 1;
+		var state = waiting;
+
+		var pageHeight = window.innerHeight;
+		var target = 0;
+
+
+		addEventListener("load", function() {
+			setTimeout(function() {
+				document.getElementsByTagName("body")[0].style.opacity = 1;
+				var pages = document.getElementsByClassName("page");
+				for (var p = 0 ; p < pages.length ; p++) {
+					var page = pages[p];
+					page.style.height = pageHeight;
+				}
+
+				var centreds = document.getElementsByClassName("centred");
+				for (var c = 0 ; c < centreds.length ; c++) {
+					var centred = centreds[c];
+					centred.style.height = centred.clientHeight + 20;
+					centred.style.width = centred.clientWidth + 20;
+					centred.className = "centred post-centred";
+				}
+
+				window.addEventListener("keydown", function(e) {
+					if (e.keyCode === 40 || e.keyCode == 38) {
+						e.preventDefault();
+						return false;
+					}
+				});
+				window.addEventListener("keyup", function(e) {
+					currentPage = Math.round(window.scrollY / pageHeight);
+					if (e.keyCode === 40) { // down
+						if (currentPage < pages.length-1) {
+							currentPage ++;
+							state = seeking;
+							target = pageHeight * currentPage;
+							e.preventDefault();
+							return false;
+						}
+					}
+					else if (e.keyCode === 38) { // up
+						if (currentPage > 0) {
+							currentPage --;
+							state = seeking;
+							target = pageHeight * currentPage;
+							e.preventDefault();
+							return false;
+						}
+					}
+				});
+
+			}, 1000);
+		}, false);
+
+		var scrollTimeout;
+		addEventListener("scroll", function(e) {
+			clearTimeout(scrollTimeout);
+			scrollTimeout = setTimeout(function() {
+				currentPage = Math.round(window.scrollY / pageHeight);
+				target = currentPage * pageHeight;
+				state = seeking;
+			}, 100);
+		});
+
+		setInterval(function() {
+			if (state === seeking) {
+				if (Math.abs(window.scrollY - target) < speed*2) {
+					window.scrollTo(0, target);
+					state = waiting;
+				} else if (target > window.scrollY) {
+					window.scrollTo(0, window.scrollY + speed);
+				} else if (target < window.scrollY) {
+					window.scrollTo(0, window.scrollY - speed);
+				}
+			}
+		}, 10);
+		
+	</script>
+</head>
+<body>
+	<div id="page-1" class="page">
+		<div class="centred">
+			<h1>HTML 5</h1>
+			<h2>A Technical Perspective</h2>
+			<p>&nbsp;</p>
+			<h3>Joe Bain</h3>
+		</div>
+	</div>
+	<div id="page-2" class="page">
+		<div class="centred">
+			<h2>An introduction to HTML5 for games.</h2>
+			<p>HTML5 is becoming more popular for games, and is likely to get even more use across all platforms. Here is what you need to know, and why you need to know it.
+			</p>
+		</div>
+	</div>
+	<div id="page-3" class="page">
+		<div class="centred">
+			<embed width=512px src="HTML5_logo_and_wordmark.svg" type="image/svg+xml" />
+		</div>
+	</div>
+	<div id="page-4" class="page">
+		<div class="centred">
+			
+		</div>
+	</div>
+	<div id="page-5" class="page">
+		<div class="centred">
+			
+		</div>
+	</div>
+	<div id="page-6" class="page">
+		<div class="centred">
+			
+		</div>
+	</div>
+	<div id="page-7" class="page">
+		<div class="centred">
+			
+		</div>
+	</div>
+	<div id="page-n" class="page">
+		<div class="centred" id="contact-details">
+			<p>Joe Bain</p>
+			<p><a href="http://twitter.com/oh_cripes">@oh_cripes</a></p>
+			<p><a href="http://joeba.in">http://joeba.in/</a></p>
+		</div>
+	</div>
+</body>
