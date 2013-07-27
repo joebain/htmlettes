@@ -1,0 +1,17 @@
+			<img src="sprites.png" id=sprite-img>
+			<canvas width=53 height=68 id=sprite-canvas></canvas>
+			<script>
+				var canvas = document.getElementById("sprite-canvas");
+				var context = canvas.getContext("2d");
+				var image = document.getElementById("sprite-img");
+				var width = 53;
+				var height = 68;
+				var frames = 11;
+				var frame = 0;
+				function draw() {
+					var n = (frame++)%frames;
+					context.clearRect(0, 0, width, height);
+					context.drawImage(image, n*width, 0, width, height, 0, 0, width, height);
+				}
+				setInterval(draw, 60);
+			</script>

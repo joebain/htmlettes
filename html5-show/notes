@@ -1,0 +1,50 @@
+# Angry Birds - The Basics
+
+ * Render using canvas, don't use the dom
+ * Similar APIs to flash, android, ios
+ * Small code example - draw a circle - draw the rest of the fucking owl
+ * Assets
+   * Load images through XHR
+   * Use spritesheets to reduce http header overheads and for smoother and more reliable animation
+   ```
+   var xhr = new XMLHttpRequest("sprites.png");
+   xhr.onload(function() {
+	   this.image = xhr.;
+	   this.x = 100;
+	   this.y = 100;
+	   this.width = 53;
+	   this.height = 68;
+	   this.frames = 11;
+	   var frame = 0;
+	   function draw() {
+		   var n = (frame++)%this.frames;
+		   context.drawImage(this.image, n*this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+	   }
+	   setTimeout(draw, 30);
+   }
+   xhr.send();
+   ```
+
+ * Audio - last man on the train, still flaky
+   * Most browsers now support <audio> although timing and performance can differ
+   * Flash fallbacks (eg. soundmanager2) are pretty good for now if you want to cover a lot of platforms 
+   * WebAudio in Chrome and Safari is the tits, Firefox will have this soon too.
+
+
+# HexGL - 3D and Performance
+
+ * typed arrays
+ * ASM.js
+ * emscripten
+
+# Run Pixie Run - Mobile
+
+ * 
+
+# Engines
+
+Pick a good engine, it will do a lot of this for you (there are loads though...)
+ * ImpactJS - very popular and longstanding, not free ($99)
+ * Pixi.js and Phaser - widly used and fast, good mobile support, 2d only
+ * Construct2 and GameMaker - GUI driven game making tools with HTML5 export option
+ * Turbulenz - very big engine, comes with a social and multiplayer features and can handle do 3d with fallback plugins
