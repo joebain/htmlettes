@@ -126,6 +126,13 @@
 			margin-right:70px;
 			font-size:70%;
 		}
+		span.sub:after {
+			line-height: 1px;
+			content: ".";
+			font-size: 50px;
+			margin-right: -15px;
+			margin-left: 3px;
+		}
 		
 		li {
 			margin: 0px 15px;
@@ -163,7 +170,7 @@
 			background-color: #1D1D41;
 		}
 		.page:nth-child(even) {
-			background-color:#fff;
+			background-color:#ebebeb;
 			color: #1D1D41;
 		}
 		#page-1, #page-1 * {
@@ -332,7 +339,7 @@
 	<script src="prism.js"></script>
 </head>
 <body>
-	<div id="page-1" class="page">
+	<div class="page">
 		<div class="centred">
 			<h1>HTML 5</h1>
 			<h2>A Technical Perspective</h2>
@@ -340,19 +347,74 @@
 			<h3>Joe Bain</h3>
 		</div>
 	</div>
-	<div id="page-2" class="page">
+	<div class="page">
 		<div class="centred">
 			<h2>An introduction to HTML5 for games.</h2>
 			<p>HTML5 is becoming more popular for games, and is likely to get even more use across all platforms. Here is what you need to know, and why you need to know it.
 			</p>
 		</div>
 	</div>
-	<div id="page-3" class="page">
+	<div class="page">
 		<div class="centred">
 			<embed width=512px src="HTML5_logo_and_wordmark.svg" type="image/svg+xml" />
 		</div>
 	</div>
-	<div id="page-4" class="page">
+	<div class="page">
+		<div class="centred">
+			<h2>What is HTML5, really?</h2>
+			<p>Modern html, including <code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code> and <code>&lt;canvas&gt;</code> elements.</p>
+			<p>Fast JavaScript runtimes - <a href="http://code.google.com/p/v8/">V8</a>, <a href="https://blog.mozilla.org/javascript/2012/09/12/ionmonkey-in-firefox-18/">Ion Monkey</a>.</p>
+			<p>Loads of open and free code.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>JavaScript</h2>
+			<img width=800 height=450 src="top_languages.png">
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>But</h2>
+			<p>JavaScript is a bad language</p>
+			<p>It's too slow.</p>
+			<p>No body writes anything serious in it.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h3>JavaScript</h3>
+			<pre class=block><code class=language-javascript>
+var foo = [0];
+console.log((foo == foo) + ',' + (foo == !foo));
+console.log(&quot;foo is &quot; + foo);
+			</code></pre>
+			<pre class=block><code class=language-clike>
+true,true
+foo is 0
+			</code></pre>
+			<h3>C++</h3>
+			<pre class=block><code class=language-clike>
+int bar[] = {1};
+cout &lt;&lt; (bar == bar) + ',' + (bar == !bar) + '\n';
+cout &lt;&lt; &quot;bar is: &quot; + bar[0];
+			</code></pre>
+			<pre class=block><code class=language-clike>
+55ar is: 
+			</code></pre>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<p>Nobody is perfect :)</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Speed</h2>
+		</div>
+	</div>
+	<div class="page">
 		<div class="centred">
 			<h2>by Example</h2>
 			<p>
@@ -383,7 +445,7 @@
 	</div>
 	<div class="page">
 		<div class="centred">
-			<h2>2d Animation</h2>
+			<h2>2D Animation</h2>
 			<p class=item>Use <code>&lt;canvas&gt;</code> not the DOM <span class=sub>for quicker drawing and more functions</span></p>
 			<p class=item>Use sprite sheets <span class=sub>to reduce request overheads and get reliable animations</span></p>
 			<p class=item>Use <code>requestAnimationFrame()</code> <span class=sub>to get smoother framerates</span></p>
@@ -422,9 +484,8 @@
 	<div class="page">
 		<div class="centred">
 			<h2>Audio</h2>
-			<p>Still a bit flaky</p>
-			<p class=item>Most browsers now support <code>&lt;audio&gt;</code> <span class=sub>although timing and performance can differ<span></p>
-			<p class=item>Flash fallbacks (eg. <a href="http://www.schillmania.com/projects/soundmanager2/">SoundManager 2</a>) <span class=sub>are pretty good for now if you want to cover a lot of platforms</span></p>
+			<p class=item>Most browsers now support the <code>&lt;audio&gt;</code> tag <span class=sub>although timing and performance can differ<span></p>
+					<p class=item>Flash fallbacks (eg. <a href="http://www.schillmania.com/projects/soundmanager2/">SoundManager 2</a>) <span class=sub>are pretty good for now if you want to cover a lot of platforms</span></p>
 			<p class=item><code>WebAudio</code> is the cats pyjamas, <span class=sub>Chrome and Safari have good support and Firefox will do soon, it's already part implemented</span></p>
    </div>
    </div>
@@ -444,6 +505,24 @@
 			</a>
 		</div>
 	</div>
+	<div id="webgl" class="page">
+		<div class="centred">
+			<h2>WebGL Info</h2>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>WebGL Code Example</h2>
+		</div>
+	</div>
+	<div id="performance" class="page">
+		<div class="centred">
+			<h2>Performance</h2>
+			<p class=item>Typed arrays <span class=sub>let the browser optimise memory layout and can offer big speed boosts</span></p>
+			<p class=item>ASM.js <span class=sub>is a subset of JavaScript some browsers can optimise heavily</span></p>
+			<p class=item>emscripten <span class=sub>can compile C and C++ to JavaScript, taking advantage of the type systems of those languages</span></p>
+		</div>
+	</div>
 	<div id="pixie" class="page">
 		<div class="centred">
 			<a href="http://www.goodboydigital.com/runpixierun/">
@@ -458,6 +537,11 @@
 				Run Pixie Run
 				</p>
 			</a>
+		</div>
+	</div>
+	<div id="mobile" class="page">
+		<div class="centred">
+			<h2>Mobile Info</h2>
 		</div>
 	</div>
 	<div class="page">
