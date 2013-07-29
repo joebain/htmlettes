@@ -1,0 +1,22 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 6.0 6.0.0.5908 Release
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl _1___Default
+Ka 0.588235 0.588235 0.588235
+Kd 1 1 1
+Ks 0.3 0.3 0.3
+illum 2
+Ns 02.6274
+map_Kd cat.jpg
+# map_bump c_cata_n.tga
+# bump c_cata_n.tga
+# map_opacity 
+# map_d 
+# refl 
+# map_kS 
+# map_kA 
+# map_Ns 

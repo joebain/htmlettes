@@ -91,6 +91,7 @@
 			font-weight: 900;
 		}
 		h2 {
+			letter-spacing: 0.03em;
 			font-family: SourceSans, Helvetica, Arial, sans-serif;
 			font-size: 90px;		
 			padding:10px 40px;
@@ -155,7 +156,7 @@
 		}
 
 		code {
-			opacity:0.9;
+			color: rgb(22, 111, 22);
 			font-weight:lighter;
 			font-size:80%;
 		}
@@ -337,6 +338,10 @@
 	</script>
 	<link href="prism.css" rel="stylesheet" />
 	<script src="prism.js"></script>
+	<script src="three.min.js"></script>
+	<script src="MTLLoader.js"></script>
+	<script src="OBJMTLLoader.js"></script>
+	
 </head>
 <body>
 	<div class="page">
@@ -475,7 +480,7 @@ cout &lt;&lt; &quot;bar is: &quot; + bar[0];
 	draw();
 </script></div>
 			<script>
-				var code = document.getElementById("sprite-example").innerHTML.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+				var code = document.getElementById("sprite-example").innerHTML.trim().replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 				var img = document.getElementById("sprite-img");
 				img.insertAdjacentHTML('afterend', "<pre class=block><code class=language-javascript>" + code + "</code></pre>");
 			</script>
@@ -485,7 +490,7 @@ cout &lt;&lt; &quot;bar is: &quot; + bar[0];
 		<div class="centred">
 			<h2>Audio</h2>
 			<p class=item>Most browsers now support the <code>&lt;audio&gt;</code> tag <span class=sub>although timing and performance can differ<span></p>
-					<p class=item>Flash fallbacks (eg. <a href="http://www.schillmania.com/projects/soundmanager2/">SoundManager 2</a>) <span class=sub>are pretty good for now if you want to cover a lot of platforms</span></p>
+			<p class=item>Flash fallbacks (eg. <a href="http://www.schillmania.com/projects/soundmanager2/">SoundManager 2</a>) <span class=sub>are pretty good for now if you want to cover a lot of platforms</span></p>
 			<p class=item><code>WebAudio</code> is the cats pyjamas, <span class=sub>Chrome and Safari have good support and Firefox will do soon, it's already part implemented</span></p>
    </div>
    </div>
@@ -507,12 +512,51 @@ cout &lt;&lt; &quot;bar is: &quot; + bar[0];
 	</div>
 	<div id="webgl" class="page">
 		<div class="centred">
-			<h2>WebGL Info</h2>
+			<h2>WebGL</h2>
+<p class=item>WebGL is based on OpenGLES 2.0 <span class=sub>- which is what you get on iPhone and Android</span></p>
+<p class=item>Full access to the GPU with GLSL ES 1.0 shaders <span class=sub>- fragment and vertex shaders are available</span></p>
+<p class=item>Supported in Firefox since 2011, Chrome and Safari since 2012, <span class=sub>IE now has experimental support and so do some Android browsers</span></p>
 		</div>
 	</div>
 	<div class="page">
 		<div class="centred">
-			<h2>WebGL Code Example</h2>
+			<canvas id=webgl-canvas width=600 height=200></canvas>
+			<script id=webgl-example>
+var renderer = new THREE.WebGLRenderer(
+		{canvas:document.getElementById("webgl-canvas")});
+
+var camera = new THREE.PerspectiveCamera( 45, 3, 1, 1000 );
+var scene = new THREE.Scene();
+var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+directionalLight.position.set( 0, 0, 1 );
+scene.add( directionalLight );
+scene.add( new THREE.AmbientLight( 0x101030 ) );
+
+var cat;
+var loader = new THREE.OBJMTLLoader();
+loader.addEventListener( 'load', function ( event ) {
+	cat = event.content;
+	cat.position.y = -8;
+	cat.position.z = -30;
+	cat.rotation.x = -Math.PI/2.4;
+	scene.add( cat );
+});
+loader.load( 'cat/cat.obj', 'cat/cat.mtl' );
+
+function animate() {
+	cat.rotation.z += 0.005;
+	renderer.render( scene, camera );
+	requestAnimationFrame( animate );
+}
+animate();
+			</script>
+			<script>
+			(function() {
+				var code = document.getElementById("webgl-example").innerHTML.trim().replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+				var canvas = document.getElementById("webgl-canvas");
+				canvas.insertAdjacentHTML('beforebegin', "<pre class=block><code class=language-javascript>" + code + "</code></pre>");
+			})();
+			</script>
 		</div>
 	</div>
 	<div id="performance" class="page">
