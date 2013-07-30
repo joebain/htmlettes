@@ -381,9 +381,9 @@
 	<div class="page">
 		<div class="centred">
 			<h2>But</h2>
+			<p>No body writes anything serious in it.</p>
 			<p>JavaScript is a bad language</p>
 			<p>It's too slow.</p>
-			<p>No body writes anything serious in it.</p>
 		</div>
 	</div>
 	<div class="page">
@@ -525,12 +525,12 @@ cout &lt;&lt; &quot;bar is: &quot; + bar[0];
 var renderer = new THREE.WebGLRenderer(
 		{canvas:document.getElementById("webgl-canvas")});
 
-var camera = new THREE.PerspectiveCamera( 45, 3, 1, 1000 );
+var camera = new THREE.PerspectiveCamera(45, 3, 1, 1000);
 var scene = new THREE.Scene();
-var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-directionalLight.position.set( 0, 0, 1 );
-scene.add( directionalLight );
-scene.add( new THREE.AmbientLight( 0x101030 ) );
+var directionalLight = new THREE.DirectionalLight(0xffeedd);
+directionalLight.position.set(0, 0, 1);
+scene.add(directionalLight);
+scene.add(new THREE.AmbientLight(0x101030));
 
 var cat;
 var loader = new THREE.OBJMTLLoader();
@@ -539,14 +539,14 @@ loader.addEventListener( 'load', function ( event ) {
 	cat.position.y = -8;
 	cat.position.z = -30;
 	cat.rotation.x = -Math.PI/2.4;
-	scene.add( cat );
+	scene.add(cat);
 });
-loader.load( 'cat/cat.obj', 'cat/cat.mtl' );
+loader.load('cat/cat.obj', 'cat/cat.mtl');
 
 function animate() {
-	cat.rotation.z += 0.005;
-	renderer.render( scene, camera );
-	requestAnimationFrame( animate );
+	if (cat) cat.rotation.z += 0.005;
+	renderer.render(scene, camera);
+	requestAnimationFrame(animate);
 }
 animate();
 			</script>
@@ -585,7 +585,10 @@ animate();
 	</div>
 	<div id="mobile" class="page">
 		<div class="centred">
-			<h2>Mobile Info</h2>
+			<h2>Mobile HTML5</h2>
+			<p class=item>Mobile browsers support touch gestures <span class=sub>- <code>touchstart</code>, <code>touchend</code> and <code>touchmove</code> events are your friends</span></p>
+			<p class=item>You can rotation and screen size info too <span class=sub>- <code>window.clientWidth()</code> &amp; <code>window.clientHeight()</code></span></p>
+			<p class=item>Make an app out of an HTML5 game <span class=sub>- use frameworks like <a href="">Phonegap</a> and <a href="that one which accelerates canvas drawing"></a></span>
 		</div>
 	</div>
 	<div class="page">
