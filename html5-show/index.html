@@ -558,8 +558,8 @@ animate();
 		<div class="centred">
 			<h2>Performance</h2>
 			<p class=item>Typed arrays <span class=sub>let the browser optimise memory layout and can offer big speed boosts</span></p>
-			<p class=item>ASM.js <span class=sub>is a subset of JavaScript some browsers can optimise heavily</span></p>
-			<p class=item>emscripten <span class=sub>can compile C and C++ to JavaScript, taking advantage of the type systems of those languages</span></p>
+			<p class=item>Avoid <code>new</code> for stable framerates<span class=sub>garbage collection still causes noticeable skips</span></p>
+			<p class=item>ASM.js &amp; emscripten <span class=sub> compile static languages to JavaScript, heavily optimised and within 2x native speed</span></p>
 		</div>
 	</div>
 	<div id="pixie" class="page">
@@ -582,7 +582,7 @@ animate();
 		<div class="centred">
 			<h2>Mobile HTML5</h2>
 			<p class=item>Mobile browsers support touch gestures <span class=sub>- <code>touchstart</code>, <code>touchend</code> and <code>touchmove</code> events are your friends</span></p>
-			<p class=item>You can rotation and screen size info too <span class=sub>- <code>deviceorientation</code> events and <code>window.matchMedia()</code></span></p>
+			<p class=item>You can get rotation and screen size info too <span class=sub>- <code>deviceorientation</code> events and <code>window.matchMedia()</code></span></p>
 			<p class=item>Make an app out of an HTML5 game <span class=sub>- use frameworks like <a href="http://phonegap.com/">Phonegap</a> and <a href="http://ludei.com/tech/cocoonjs">CoocoonJS</a></span>
 		</div>
 	</div>
@@ -590,12 +590,14 @@ animate();
 		<div class="centred">
 			<h2>Engines</h2>
 
-			<p>Pick a good engine, it will do a lot of this for you (there are loads though...)</p>
+			<h3>Two Dee</h3>
 			<p class=item><a href="http://impactjs.com/">ImpactJS</a> <span class=sub>- very popular and longstanding, not free ($99)</span></p>
 			<p class=item><a href="https://github.com/GoodBoyDigital/pixi.js/">Pixi.js</a> and <a href="https://github.com/photonstorm/phaser">Phaser</a> <span class=sub>- widly used and fast, good mobile support, 2d only</span></p>
 			<p class=item><a href="https://www.scirra.com/construct2">Construct2</a> and <a href="http://www.yoyogames.com/gamemaker/studio">GameMaker</a> <span class=sub>- GUI driven game making tools with HTML5 export option. Gamemaker costs $200+ for HTML5 export, Construct2 has a limited free version</span></p>
+			<h3>Three Dee</h3>
 			<p class=item><a href="http://threejs.org/">Three.js</a> <span class=sub>- very popular for 3D on the web, although not a fully fledged game engine</span></p>
-			<p class=item><a href="https://github.com/turbulenz/turbulenz_engine">Turbulenz</a> <span class=sub>- a very big engine, comes with a social and multiplayer features and can do 3d with fallback plugins when WebGL isn't available</span></p>
+			<p class=item><a href="http://playcanvas.com/">playcanvas</a></li> <span class=sub>- sophisticated browser based dev tools, online and 3D ($15/month for private projects)</span></p>
+			<p class=item><a href="https://github.com/turbulenz/turbulenz_engine">Turbulenz</a> <span class=sub>- another big engine, comes with a social and multiplayer features and can do 3D with fallback plugins when WebGL isn't available</span></p>
 		</div>
 	</div>
 	<div id="page-8" class="page">
@@ -614,6 +616,7 @@ animate();
 				<li><a href="https://github.com/photonstorm/phaser">Phaser</a></li>
 				<li><a href="https://github.com/GoodBoyDigital/pixi.js/">pixi.js</a></li>
 				<li><a href="http://coquette.maryrosecook.com/">Coquette</a></li>
+				<li><a href="http://playcanvas.com/">playcanvas</a></li>
 				<li><a href="https://github.com/turbulenz/turbulenz_engine">Turbulenz</a></li>
 				<li><a href="http://threejs.org/">Three.js</a></li>
 				<li><a href="http://impactjs.com/">ImpactJS</a></li>
