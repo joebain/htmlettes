@@ -1,0 +1,9 @@
+.big-view {
+	border: 2px solid black;
+	border-radius: 5px;
+	margin: 10px;
+	width: 100px;
+	height: 80px;
+	overflow: auto;
+	display: inline-block;
+}

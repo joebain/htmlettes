@@ -1,0 +1,310 @@
+<head>
+	<title>Backbone.js - Handling Large Collections</title>
+
+	<link href="css/prism.css" rel="stylesheet">
+	<link href="css/slides.css"rel=" stylesheet">
+	
+	<script src="js/slides.js" type="text/javascript"></script>
+	<script src="js/prism.js" type="text/javascript"></script>
+	
+</head>
+<body>
+	<div class="page">
+		<div class="centred">
+			<h1>Backbone.js</h1>
+			<h2>Handling Large Collections</h2>
+			<p>&nbsp;</p>
+			<h3>Joe Bain</h3>
+			<p><a href="http://joeba.in/backbone-show">http://joeba.in/backbone-show</a></p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>About me</h2>
+			<p>I have been working at OMG Life on Autographer, a wearable camera.</p>
+			<p>I had a background writing C#, Java, TCL and Objective-C. Now freelance.</p>
+			<div class=img-wrap>
+				<img src=img/autographer.jpg>
+			</div>
+			<p>
+			The camera takes between 500 and 2000 images a day. It is sold with an ecosystem of software - desktop, mobile and web.
+			</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<p>
+			<div class=img-wrap>
+				<img src=img/autographer-desktop.gif>
+			</div>
+			</p>
+			<p>The desktop software manages images from the camera for users. It allows them to import, tag and search the images.</p>
+			<p>Each image can contain GPS data and the app also lets users create videos and gifs, and share everything to social networks.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Technology</h2>
+			<p>Around 20k lines of Javascript on the frontend.</p>
+			<p>2 years in development.</p>
+			<p>Backend is C++ and uses SQLite and Mongoose libraries.</p>
+			<p>On Windows it uses embedded Firefox, WebView (Safari) on OSX.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<p><em>Backbone.js</em> is used to structure the app. Currently 0.9.1 with modifications.</p>
+			<p>We use a global event system.</p>
+			<ul>
+				<li>Events from <code>Views</code> request actions.</li>
+				<li><code>Controllers</code> modify <code>Models</code>.</li>
+				<li><code>Views</code> update themselves to reflect state in <code>Models</code>.</li>
+			</ul>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Controller</h2>
+			<p>Backbone doesn't have controllers.</p>
+			<pre class=block><code class=language-javascript>
+Backbone.Controller = Backbone.Events.extend();
+			</code></pre>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h1>Memory</h1>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Pooling</h2>
+			<p>Object pooling and DOM Element pooling</p>
+			<pre class=block><code class=language-javascript>
+var myView = ViewPool.get();
+/* ... */
+myView.destroy();
+			</code></pre>
+			<pre class=block><code class=language-javascript>
+var ViewPool = function() {
+	this.views = [];
+};
+ViewPool.prototype.get = function() {
+	if (this.views.length) {
+		return this.views.splice(0,1);
+	} else {
+		var view = new View();
+		var that = this;
+		view.onDestroy(function() {
+			that.views.push(view);
+		});
+		return view;
+	}
+}
+			</code></pre>
+			<p>Pooling is hard to get right.</p>
+			<p>We had a lot of bugs.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Event listeners</h2>
+			<p>Make sure to remove event listeners.</p>
+			<p>Dangling event handlers will trap objects in their closures and clog up the heap.</p>
+			<p><code>object.listenTo()</code> rather than <code>event.on()</code></p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Is this necessary?</h2>
+			<p>Browser memory management is getting better all the time.</p>
+			<p>We got more noticeable improvements by upgrading Firefox.</p>
+			<p>Although this is not an option for everyone.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h1>Speed</h1>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>DOM maipulation dominates</h2>
+			<div class=img-wrap>
+				<img src=img/dom-benchmark.png>
+			</div>
+			<p>
+			<a href=http://jsperf.com/dom-creation-bench>jsPerf/dom-creation-benchmark</a>
+			</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<p>Avoid touching the DOM.</p>
+			<p>Avoid jQuery, use native methods or close to native.</p>
+			<p>Avoid <code>empty()</code> inside of <code>render()</code> in large views.</p>
+			<p><em> In order to perform updates as efficiently as possible, we diff the return value from the previous call to render with the new one, and generate a minimal set of changes to be applied to the DOM.</em> - <a href="http://facebook.github.io/react/blog/2013/06/05/why-react.html">Pete Hunt</a>, React developer</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<div class=img-wrap>
+				<img src=img/autographer-stream.png>
+			</div>
+			<p>The viewable content has to be updated whenever the user scrolls one row or more.</p>
+			<p>Originally we would clear and readd every element.</p>
+			<p>Changed to incremental addictions and removals. Only add elements which are not already on the page and remove those which are no longer in view.</p>
+			<p>We build up an array of rows with images and date markers when the data changes. This is like a proxy for the DOM.</p>
+			<p>We cache about 8 pages so we don't have to make so many requests.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Bring database problems to the user</h2>
+			<p>Avoid big joins in SQL, the user will be waiting for them.</p>
+			<p>Let the server return the bare minimum.</p>
+			<p>Defer loading data until as late as possible.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<div class=img-wrap>
+				<img src=img/autographer-rows.png>
+			</div>
+			<p>Every image was being loaded in with a list of tags and full metadata.</p>
+			<p>We only need to know whether the image is a favourite or has a tag.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<div class=img-wrap>
+				<img src=img/autographer-calendar.png>
+			</div>
+			<p>We would load every image for a day in the month up-front.</p>
+			<p>Better user experience if we only load once the user interacts.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h1>Consistency</h1>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Backbone.ProxyCollection</h2>
+			<p>We added a new type for Backbone to share data between collections.</p>
+			<ul>
+				<li><code>Model</code>s are shared between <code>Collection</code>s.</li>
+				<li>All <code>Model</code>s are added to a master <code>Collection</code>.</li>
+				<li><code>destory()</code>ing a model removes it from every collection.</li>
+			</ul>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>ProxyCollection example</h2>
+			<pre class=block><code class=language-javascript>
+var master = new PhotoCollection();
+var proxyOne = new ProxyPhotoCollection(master);
+var proxyTwo = new ProxyPhotoCollection(master);
+			</code></pre>
+			<p class=comment>
+			<code>PhotoCollection</code> is a <code>Backbone.Collection</code><br>
+			<code>ProxyPhotoCollection</code> is a <code>Backbone.ProxyPhotoCollection</code>
+			</p>
+			<pre class=block><code class=language-javascript>
+proxyOne.fetch({pages: [1,2]});
+			</code></pre>
+			<p class=comment>
+			<code>proxyOne</code> will load pages 1 and 2, <code>proxyTwo</code> will stay empty. <code>master</code><br>
+			<code>proxyOne</code> have the same contents once <code>fetch()</code> completes.
+			</p>
+			<pre class=block><code class=language-javascript>
+proxyTwo.fetch({pages: [2,3]});
+			</code></pre>
+			<p class=comment>
+			<code>proxyTwo</code> will share the photos from page 2 with <code>proxyOne</code>.<br>
+			<code>master</code> contains pages 1, 2 and 3.
+			</p>
+			<pre class=block><code class=language-javascript>
+proxyTwo.at(0).destroy();
+			</code></pre>
+			<p class=comment>
+			The photo is removed from all three <code>collection</code>s.
+			</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h1>Other problems</h1>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<p>Chrome developer tools frequently grind and crash.</p>
+			<ul>
+				<li>Clear the network panel and console frequently.</li>
+			</ul>
+			<p>Test data sets measure in GBs.</p>
+			<ul>
+				<li>Use test data generators.</li>
+				<li>Use automated tests from the beginning.</li>
+			</ul>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h1>Problems I didn't have</h1>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<p>Page load time</p>
+			<ul>
+				<li>For a single page app this is not so important.</li>
+				<li>Data is all loaded asynchronously.</li>
+			</ul>
+			<p>Cross platform</p>
+			<ul>
+				<li>We did not have to think about resource constrained devices like phones.</li>
+				<li>This type of image heavy app would be more difficult on the web.</li>
+			</ul>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h1>Lessons learned</h1>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<p><a href="">node-webkit</a> looks like a really good solution<span class=sub> - although it wasn't available when we started</span></p>
+			<p>We should have thought more about our rendering<span class=sub> - i.e. using a templating system, native methods, or another library, rather than just using jQuery because it was there</span></p>
+			<p>Write more tests<span class=sub> - this would have helped enourmously when we came to refactor to improve performance</span></p>
+			<p>Write benchmarks too<span class=sub> - it's very hard to eyeball performance with so many different data sets and users. Concrete numbers are necessary to make progress</span></p>
+			<p>Backbone is still a good choice<span class=sub> - it is very extensible and suitable for non-standard applications like Autographer. It doesn't assume too much.</span></p>
+		</div>
+	</div>
+	<!--
+	<div class="page">
+		<div class="centred">
+		</div>
+	</div>
+	<pre class=block><code class=language-javascript>
+	</code></pre>
+	-->
+	<div class="page">
+		<div class="centred">
+			<h2>Autographer</h2>
+			<p><a href="http://autographer.com">autographer.com</a></p>
+			<p><a href="http://www.omgplc.com/companies/life">OMG Life</a></p>
+		</div>
+	</div>
+	<div id="page-n" class="page">
+		<div class="centred" id="contact-details">
+			<h2>Joe Bain</h2>
+			<p><a href="http://twitter.com/oh_cripes">@oh_cripes</a></p>
+			<p><a href="http://joeba.in">http://joeba.in/</a></p>
+		</div>
+	</div>
+</body>

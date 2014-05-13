@@ -1,0 +1,224 @@
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-Black.ttf");
+	font-weight: 900;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-Bold.ttf");
+	font-weight: 700;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-Semibold.ttf");
+	font-weight: 500;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-Regular.ttf");
+	font-weight: 400;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-Light.ttf");
+	font-weight: 300;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-ExtraLight.ttf");
+	font-weight: 100;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-BlackIt.ttf");
+	font-weight: 900;
+	font-style: italic;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-BoldIt.ttf");
+	font-weight: 700;
+	font-style: italic;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-SemiboldIt.ttf");
+	font-weight: 500;
+	font-style: italic;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-It.ttf");
+	font-weight: 400;
+	font-style: italic;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-LightIt.ttf");
+	font-weight: 300;
+	font-style: italic;
+}
+@font-face {
+	font-family: SourceSans;
+	src: url("../font/SourceSansPro-ExtraLightIt.ttf");
+	font-weight: 100;
+	font-style: italic;
+}
+
+body {
+	font-family: SourceSans, Helvetica, Arial, sans-serif;
+	opacity:0;
+	-webkit-transition:opacity 1s;
+	-moz-transition:opacity 1s;
+	-o-transition:opacity 1s;
+	overflow-x:hidden;
+}
+* {
+	margin:0;
+	padding:0;
+/*    text-align:center;*/
+
+	box-sizing:border-box;
+}
+.img-wrap {
+    text-align:center;
+}
+h1 {
+	font-family: SourceSans, Helvetica, Arial, sans-serif;
+	font-size: 150px;		
+	padding:10px 40px;
+	font-weight: 100;
+}
+h2 {
+	letter-spacing: 0.03em;
+	font-family: SourceSans, Helvetica, Arial, sans-serif;
+	font-size: 80px;		
+	padding:10px 40px;
+	font-weight: 100;
+}
+h3 {
+	font-family: SourceSans, Helvetica, Arial, sans-serif;
+	font-size: 45px;		
+	padding:10px 40px;
+	font-weight: 600;
+}
+a {
+	text-decoration:none;
+	font-family: SourceSans, Helvetica, Arial, sans-serif;
+	color:inherit;
+	text-decoration:underline;
+}
+a:hover {
+	text-decoration:none;
+}
+
+p {
+	font-size:40px;
+	padding:20px 40px;
+}
+p.item {
+	text-align:left;
+	margin-left:70px;
+}
+span.sub {
+	display:block;
+	text-align:right;
+	margin-right:70px;
+	font-size:70%;
+}
+span.sub:after {
+	line-height: 1px;
+	content: ".";
+	font-size: 50px;
+	margin-right: -15px;
+	margin-left: 3px;
+}
+
+ul {
+	padding-left: 15%;
+}
+li {
+	margin: 10px 15px;
+	list-style-type: none;
+	font-size:35px;
+	text-align:left;
+}
+li:nth-child(odd) {
+	color:#e45e3b;
+}
+li:nth-child(even) {
+	color:#ad3b1d;
+}
+
+pre.block {
+	text-align:left;
+	font-size:20px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+p code, li code {
+	font-size: 80%;
+}
+
+.page {
+	width:100%;
+	min-height:600px;
+	position:relative;		
+}
+.page:nth-child(odd) {
+	color: #002a41;
+	background-color:#f7f7f7;
+}
+.page:nth-child(even) {
+	color:#f7f7f7;
+	background-color: #002a41;
+}
+.page:nth-child(odd) h2 {
+	color:#0071b5;
+}
+.page:nth-child(even) h2 {
+	color: #d1d1d1;
+}
+
+/*.centred {*/
+/*    margin:0;*/
+/*    padding:0 20px;*/
+/*    display:inline-block;*/
+/*}*/
+.post-centred {
+	display:block;
+	position:absolute;
+	margin:auto;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+}
+#game {
+	margin: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;		
+}
+p.comment {
+	font-size: 25px;
+}
+
+.down-arrow {
+	position:absolute;
+	margin:auto;
+	lefT:0;
+	right:0;
+	bottom: 200px;
+}
+
+#credits-link {
+	width:100%;
+	text-align:center;
+	color:white;
+	bottom:50px;
+}
+
