@@ -23,9 +23,11 @@
 			<h2>About me</h2>
 			<p>I have been working at OMG Life on Autographer, a wearable camera.</p>
 			<p>I had a background writing C#, Java, TCL and Objective-C. Now freelance.</p>
+			<p>
 			<div class=img-wrap>
 				<img src=img/autographer.jpg>
 			</div>
+			</p>
 			<p>
 			The camera takes between 500 and 2000 images a day. It is sold with an ecosystem of software - desktop, mobile and web.
 			</p>
@@ -148,14 +150,25 @@ ViewPool.prototype.get = function() {
 	</div>
 	<div class="page">
 		<div class="centred">
+			<p>
 			<div class=img-wrap>
 				<img src=img/autographer-stream.png>
 			</div>
+			</p>
 			<p>The viewable content has to be updated whenever the user scrolls one row or more.</p>
-			<p>Originally we would clear and readd every element.</p>
+			<p>Originally we would clear and re-add every element.</p>
 			<p>Changed to incremental addictions and removals. Only add elements which are not already on the page and remove those which are no longer in view.</p>
 			<p>We build up an array of rows with images and date markers when the data changes. This is like a proxy for the DOM.</p>
 			<p>We cache about 8 pages so we don't have to make so many requests.</p>
+		</div>
+	</div>
+	<div class="page">
+		<div class="centred">
+			<h2>Don't show everything</h2>
+			<p>Most <code>View</code>s don't draw the entire <code>Collection</code> assigned to them.</p>
+			<p>The Stream shows only what you can see plus an extra row each side.</p>
+			<p>A much larger set (8-10 pages) is retrieved from the server and held in a <code>Collection.</code></p>
+			<p>The Map clusters points and only draws a subset of what it receives.</p>
 		</div>
 	</div>
 	<div class="page">
@@ -168,18 +181,22 @@ ViewPool.prototype.get = function() {
 	</div>
 	<div class="page">
 		<div class="centred">
+			<p>
 			<div class=img-wrap>
 				<img src=img/autographer-rows.png>
 			</div>
+			</p>
 			<p>Every image was being loaded in with a list of tags and full metadata.</p>
 			<p>We only need to know whether the image is a favourite or has a tag.</p>
 		</div>
 	</div>
 	<div class="page">
 		<div class="centred">
+			<p>
 			<div class=img-wrap>
 				<img src=img/autographer-calendar.png>
 			</div>
+			</p>
 			<p>We would load every image for a day in the month up-front.</p>
 			<p>Better user experience if we only load once the user interacts.</p>
 		</div>
@@ -196,7 +213,7 @@ ViewPool.prototype.get = function() {
 			<ul>
 				<li><code>Model</code>s are shared between <code>Collection</code>s.</li>
 				<li>All <code>Model</code>s are added to a master <code>Collection</code>.</li>
-				<li><code>destory()</code>ing a model removes it from every collection.</li>
+				<li><code>destroy()</code>ing a model removes it from every collection.</li>
 			</ul>
 		</div>
 	</div>
@@ -209,28 +226,28 @@ var proxyOne = new ProxyPhotoCollection(master);
 var proxyTwo = new ProxyPhotoCollection(master);
 			</code></pre>
 			<p class=comment>
-			<code>PhotoCollection</code> is a <code>Backbone.Collection</code><br>
-			<code>ProxyPhotoCollection</code> is a <code>Backbone.ProxyPhotoCollection</code>
+			//<code>PhotoCollection</code> is a <code>Backbone.Collection</code><br>
+			//<code>ProxyPhotoCollection</code> is a <code>Backbone.ProxyCollection</code>
 			</p>
 			<pre class=block><code class=language-javascript>
 proxyOne.fetch({pages: [1,2]});
 			</code></pre>
 			<p class=comment>
-			<code>proxyOne</code> will load pages 1 and 2, <code>proxyTwo</code> will stay empty. <code>master</code><br>
-			<code>proxyOne</code> have the same contents once <code>fetch()</code> completes.
+			//<code>proxyOne</code> will load pages 1 and 2, <code>proxyTwo</code> will stay empty.<br>
+			//<code>master</code> and <code>proxyOne</code> have the same contents once <code>fetch()</code> completes.
 			</p>
 			<pre class=block><code class=language-javascript>
 proxyTwo.fetch({pages: [2,3]});
 			</code></pre>
 			<p class=comment>
-			<code>proxyTwo</code> will share the photos from page 2 with <code>proxyOne</code>.<br>
-			<code>master</code> contains pages 1, 2 and 3.
+			//<code>proxyTwo</code> will share the photos from page 2 with <code>proxyOne</code>.<br>
+			//<code>master</code> contains pages 1, 2 and 3.
 			</p>
 			<pre class=block><code class=language-javascript>
 proxyTwo.at(0).destroy();
 			</code></pre>
 			<p class=comment>
-			The photo is removed from all three <code>collection</code>s.
+			//The photo is removed from all three <code>collection</code>s.
 			</p>
 		</div>
 	</div>
@@ -282,7 +299,7 @@ proxyTwo.at(0).destroy();
 			<p>We should have thought more about our rendering<span class=sub> - i.e. using a templating system, native methods, or another library, rather than just using jQuery because it was there</span></p>
 			<p>Write more tests<span class=sub> - this would have helped enourmously when we came to refactor to improve performance</span></p>
 			<p>Write benchmarks too<span class=sub> - it's very hard to eyeball performance with so many different data sets and users. Concrete numbers are necessary to make progress</span></p>
-			<p>Backbone is still a good choice<span class=sub> - it is very extensible and suitable for non-standard applications like Autographer. It doesn't assume too much.</span></p>
+			<p>Backbone is still a good choice<span class=sub> - it is very extensible and suitable for non-standard applications like Autographer. It doesn't assume too much</span></p>
 		</div>
 	</div>
 	<!--

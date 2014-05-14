@@ -1,4 +1,4 @@
-### Bakcbone.js - Handling Large Collections
+### Backbone.js - Handling Large Collections
 
 Problems:
 
