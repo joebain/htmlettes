@@ -102,10 +102,12 @@ function loop(scheduledTime) {
 }
 
 function getTime() {
+	// Must share a timebase with the timestamp requestAnimationFrame passes to
+	// loop(), which is milliseconds since page load - not the epoch.
 	if (lastScheduledTime) {
 		return lastScheduledTime;
 	} else {
-		return new Date().getTime();
+		return performance.now();
 	}
 }
 
@@ -126,8 +128,8 @@ function _init() {
 	document.addEventListener("touchstart", touchstart, false);
 	document.addEventListener("touchend", touchend, false);
 	document.addEventListener("touchmove", touchmove, false);
-	firstTime = new Date().getTime();
-	lastTime = new Date().getTime();
+	firstTime = getTime();
+	lastTime = getTime();
 	gameDuration = 0;
 	paused = false;
 
@@ -148,19 +150,10 @@ function _init() {
 
 var soundToggleEl;
 function setupSM() {
-	soundManager.url = '';
-	soundManager.flashVersion = 9;
-	soundManager.useFlashBlock = false;
-	
-	//init sounds anyway so stuff is not null
 	initSounds();
-	soundManager.onready(function() {
-		initSounds();
-		if (settings.sound === false) {
-			soundManager.mute();
-		}
-	});
-	soundManager.ontimeout(soundError);
+	if (settings.sound === false) {
+		soundManager.mute();
+	}
 
 	soundToggleEl = $("#soundToggle");
 	if (soundToggleEl[0]) {
